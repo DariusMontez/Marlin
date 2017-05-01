@@ -24,13 +24,13 @@
 
 #include "../../../Marlin.h"
 
-#if ENABLED(USE_WATCHDOG)
+#if OPTION_ENABLED(USE_WATCHDOG)
 
 #include "watchdog_AVR.h"
 
 // Initialize watchdog with a 4 sec interrupt time
 void watchdog_init() {
-  #if ENABLED(WATCHDOG_RESET_MANUAL)
+  #if OPTION_ENABLED(WATCHDOG_RESET_MANUAL)
     // We enable the watchdog timer, but only for the interrupt.
     // Take care, as this requires the correct order of operation, with interrupts disabled. See the datasheet of any AVR chip for details.
     wdt_reset();
@@ -46,7 +46,7 @@ void watchdog_init() {
 //===========================================================================
 
 // Watchdog timer interrupt, called if main program blocks >4sec and manual reset is enabled.
-#if ENABLED(WATCHDOG_RESET_MANUAL)
+#if OPTION_ENABLED(WATCHDOG_RESET_MANUAL)
   ISR(WDT_vect) {
     SERIAL_ERROR_START;
     SERIAL_ERRORLNPGM("Something is wrong, please turn off the printer.");

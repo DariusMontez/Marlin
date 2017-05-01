@@ -22,7 +22,7 @@
 
 #include "MarlinConfig.h"
 
-#if ENABLED(AUTO_BED_LEVELING_UBL)
+#if OPTION_ENABLED(AUTO_BED_LEVELING_UBL)
   //#include "vector_3.h"
   //#include "qr_solve.h"
 
@@ -306,7 +306,7 @@
   static bool repeat_flag, c_flag, x_flag, y_flag;
   static float x_pos, y_pos, measured_z, card_thickness = 0.0, ubl_constant = 0.0;
 
-  #if ENABLED(ULTRA_LCD)
+  #if OPTION_ENABLED(ULTRA_LCD)
     extern void lcd_setstatus(const char* message, const bool persist);
     extern void lcd_setstatuspgm(const char* message, const uint8_t level);
   #endif
@@ -673,7 +673,7 @@
 
     LEAVE:
 
-    #if ENABLED(ULTRA_LCD)
+    #if OPTION_ENABLED(ULTRA_LCD)
       lcd_reset_alert_level();
       lcd_setstatuspgm("");
       lcd_quick_feedback();
@@ -978,7 +978,7 @@
   }
 
   bool g29_parameter_parsing() {
-    #if ENABLED(ULTRA_LCD)
+    #if OPTION_ENABLED(ULTRA_LCD)
       lcd_setstatuspgm("Doing G29 UBL!");
       lcd_quick_feedback();
     #endif
@@ -1023,7 +1023,7 @@
       ubl.store_state();
     }
 
-    #if ENABLED(ENABLE_LEVELING_FADE_HEIGHT)
+    #if OPTION_ENABLED(ENABLE_LEVELING_FADE_HEIGHT)
       if (code_seen('F') && code_has_value()) {
         const float fh = code_value_float();
         if (!WITHIN(fh, 0.0, 100.0)) {
@@ -1133,7 +1133,7 @@
     SERIAL_EOL;
     safe_delay(50);
 
-    #if ENABLED(ENABLE_LEVELING_FADE_HEIGHT)
+    #if OPTION_ENABLED(ENABLE_LEVELING_FADE_HEIGHT)
       SERIAL_PROTOCOLLNPAIR("g29_correction_fade_height : ", ubl.state.g29_correction_fade_height);
     #endif
 
@@ -1340,7 +1340,7 @@
     save_ubl_active_state_and_disable();
     memset(not_done, 0xFF, sizeof(not_done));
 
-    #if ENABLED(ULTRA_LCD)
+    #if OPTION_ENABLED(ULTRA_LCD)
       lcd_setstatuspgm("Fine Tuning Mesh");
     #endif
 
@@ -1427,7 +1427,7 @@
 
     do_blocking_move_to_xy(lx, ly);
 
-    #if ENABLED(ULTRA_LCD)
+    #if OPTION_ENABLED(ULTRA_LCD)
       lcd_setstatuspgm("Done Editing Mesh");
     #endif
     SERIAL_ECHOLNPGM("Done Editing Mesh");

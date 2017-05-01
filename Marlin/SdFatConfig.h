@@ -31,7 +31,7 @@
  * \brief configuration definitions
  */
 #include "Marlin.h"
-#if ENABLED(SDSUPPORT)
+#if OPTION_ENABLED(SDSUPPORT)
 
 #ifndef SdFatConfig_h
   #define SdFatConfig_h

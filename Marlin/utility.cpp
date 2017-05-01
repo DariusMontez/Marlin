@@ -33,7 +33,7 @@ void safe_delay(millis_t ms) {
   delay(ms);
 }
 
-#if ENABLED(ULTRA_LCD)
+#if OPTION_ENABLED(ULTRA_LCD)
 
   char conv[9];
 
@@ -129,7 +129,7 @@ void safe_delay(millis_t ms) {
     return conv;
   }
 
-  #if ENABLED(LCD_DECIMAL_SMALL_XY)
+  #if OPTION_ENABLED(LCD_DECIMAL_SMALL_XY)
 
     // Convert float to rj string with 1234, _123, -123, _-12, 12.3, _1.2, or -1.2 format
     char *ftostr4sign(const float& fx) {

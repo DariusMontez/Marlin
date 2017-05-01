@@ -33,17 +33,13 @@ FORCE_INLINE void endstop_ISR_worker( void ) {
 void endstop_ISR(void) { endstop_ISR_worker(); }
 
 #if defined(ARDUINO_ARCH_AVR)
-
   #include "HAL_AVR/endstop_interrupts.h"
-
 #elif defined(ARDUINO_ARCH_SAM)
-
   #include "HAL_DUE/endstop_interrupts.h"
-
+#elif defined(ARDUINO_ARCH_ESP32)
+  #include "HAL_ESP/endstop_interrupts.h"
 #else
-
   #error Unsupported Platform!
-
 #endif
 
 #endif /* HAL_ENDSTOP_INTERRUPTS_H_ */

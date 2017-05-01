@@ -156,19 +156,19 @@
 #include "ultralcd.h"
 #include "configuration_store.h"
 
-#if ENABLED(MESH_BED_LEVELING)
+#if OPTION_ENABLED(MESH_BED_LEVELING)
   #include "mesh_bed_leveling.h"
 #endif
 
-#if ENABLED(HAVE_TMC2130)
+#if OPTION_ENABLED(HAVE_TMC2130)
   #include "stepper_indirection.h"
 #endif
 
-#if ENABLED(AUTO_BED_LEVELING_UBL)
+#if OPTION_ENABLED(AUTO_BED_LEVELING_UBL)
   #include "UBL.h"
 #endif
 
-#if ENABLED(ABL_BILINEAR_SUBDIVISION)
+#if OPTION_ENABLED(ABL_BILINEAR_SUBDIVISION)
   extern void bed_level_virt_interpolate();
 #endif
 
@@ -181,7 +181,7 @@ void Config_Postprocess() {
 
   // Make sure delta kinematics are updated before refreshing the
   // planner position so the stepper counts will be set correctly.
-  #if ENABLED(DELTA)
+  #if OPTION_ENABLED(DELTA)
     recalc_delta_settings(delta_radius, delta_diagonal_rod);
   #endif
 
@@ -189,19 +189,19 @@ void Config_Postprocess() {
   // and init stepper.count[], planner.position[] with current_position
   planner.refresh_positioning();
 
-  #if ENABLED(PIDTEMP)
+  #if OPTION_ENABLED(PIDTEMP)
     thermalManager.updatePID();
   #endif
 
   calculate_volumetric_multipliers();
 
-  #if DISABLED(NO_WORKSPACE_OFFSETS) || ENABLED(DUAL_X_CARRIAGE) || ENABLED(DELTA)
+  #if OPTION_DISABLED(NO_WORKSPACE_OFFSETS) || OPTION_ENABLED(DUAL_X_CARRIAGE) || OPTION_ENABLED(DELTA)
     // Software endstops depend on home_offset
     LOOP_XYZ(i) update_software_endstops((AxisEnum)i);
   #endif
 }
 
-#if ENABLED(EEPROM_SETTINGS)
+#if OPTION_ENABLED(EEPROM_SETTINGS)
 
   uint16_t eeprom_checksum;
   const char version[4] = EEPROM_VERSION;
@@ -277,7 +277,7 @@ void Config_Postprocess() {
     EEPROM_WRITE(planner.min_travel_feedrate_mm_s);
     EEPROM_WRITE(planner.min_segment_time);
     EEPROM_WRITE(planner.max_jerk);
-    #if ENABLED(NO_WORKSPACE_OFFSETS)
+    #if OPTION_ENABLED(NO_WORKSPACE_OFFSETS)
       float home_offset[XYZ] = { 0 };
     #endif
     EEPROM_WRITE(home_offset);
@@ -292,7 +292,7 @@ void Config_Postprocess() {
     // Mesh Bed Leveling
     //
 
-    #if ENABLED(MESH_BED_LEVELING)
+    #if OPTION_ENABLED(MESH_BED_LEVELING)
       // Compile time test that sizeof(mbl.z_values) is as expected
       typedef char c_assert[(sizeof(mbl.z_values) == (MESH_NUM_X_POINTS) * (MESH_NUM_Y_POINTS) * sizeof(dummy)) ? 1 : -1];
       const bool leveling_is_on = TEST(mbl.status, MBL_STATUS_HAS_MESH_BIT);
@@ -334,7 +334,7 @@ void Config_Postprocess() {
     // Bilinear Auto Bed Leveling
     //
 
-    #if ENABLED(AUTO_BED_LEVELING_BILINEAR)
+    #if OPTION_ENABLED(AUTO_BED_LEVELING_BILINEAR)
       // Compile time test that sizeof(bed_level_grid) is as expected
       typedef char c_assert[(sizeof(bed_level_grid) == (ABL_GRID_MAX_POINTS_X) * (ABL_GRID_MAX_POINTS_Y) * sizeof(dummy)) ? 1 : -1];
       const uint8_t grid_max_x = ABL_GRID_MAX_POINTS_X, grid_max_y = ABL_GRID_MAX_POINTS_Y;
@@ -356,14 +356,14 @@ void Config_Postprocess() {
     #endif // AUTO_BED_LEVELING_BILINEAR
 
     // 9 floats for DELTA / Z_DUAL_ENDSTOPS
-    #if ENABLED(DELTA)
+    #if OPTION_ENABLED(DELTA)
       EEPROM_WRITE(endstop_adj);               // 3 floats
       EEPROM_WRITE(delta_radius);              // 1 float
       EEPROM_WRITE(delta_diagonal_rod);        // 1 float
       EEPROM_WRITE(delta_segments_per_second); // 1 float
       EEPROM_WRITE(delta_diagonal_rod_trim);   // 3 floats
       EEPROM_WRITE(delta_tower_angle_trim);    // 3 floats
-    #elif ENABLED(Z_DUAL_ENDSTOPS)
+    #elif OPTION_ENABLED(Z_DUAL_ENDSTOPS)
       EEPROM_WRITE(z_endstop_adj);             // 1 float
       dummy = 0.0f;
       for (uint8_t q = 11; q--;) EEPROM_WRITE(dummy);
@@ -372,7 +372,7 @@ void Config_Postprocess() {
       for (uint8_t q = 12; q--;) EEPROM_WRITE(dummy);
     #endif
 
-    #if DISABLED(ULTIPANEL)
+    #if OPTION_DISABLED(ULTIPANEL)
       const int lcd_preheat_hotend_temp[2] = { PREHEAT_1_TEMP_HOTEND, PREHEAT_2_TEMP_HOTEND },
                 lcd_preheat_bed_temp[2] = { PREHEAT_1_TEMP_BED, PREHEAT_2_TEMP_BED },
                 lcd_preheat_fan_speed[2] = { PREHEAT_1_FAN_SPEED, PREHEAT_2_FAN_SPEED };
@@ -384,12 +384,12 @@ void Config_Postprocess() {
 
     for (uint8_t e = 0; e < MAX_EXTRUDERS; e++) {
 
-      #if ENABLED(PIDTEMP)
+      #if OPTION_ENABLED(PIDTEMP)
         if (e < HOTENDS) {
           EEPROM_WRITE(PID_PARAM(Kp, e));
           EEPROM_WRITE(PID_PARAM(Ki, e));
           EEPROM_WRITE(PID_PARAM(Kd, e));
-          #if ENABLED(PID_EXTRUSION_SCALING)
+          #if OPTION_ENABLED(PID_EXTRUSION_SCALING)
             EEPROM_WRITE(PID_PARAM(Kc, e));
           #else
             dummy = 1.0f; // 1.0 = default kc
@@ -407,12 +407,12 @@ void Config_Postprocess() {
 
     } // Hotends Loop
 
-    #if DISABLED(PID_EXTRUSION_SCALING)
+    #if OPTION_DISABLED(PID_EXTRUSION_SCALING)
       int lpq_len = 20;
     #endif
     EEPROM_WRITE(lpq_len);
 
-    #if DISABLED(PIDTEMPBED)
+    #if OPTION_DISABLED(PIDTEMPBED)
       dummy = DUMMY_PID_VALUE;
       for (uint8_t q = 3; q--;) EEPROM_WRITE(dummy);
     #else
@@ -426,7 +426,7 @@ void Config_Postprocess() {
     #endif
     EEPROM_WRITE(lcd_contrast);
 
-    #if ENABLED(FWRETRACT)
+    #if OPTION_ENABLED(FWRETRACT)
       EEPROM_WRITE(autoretract_enabled);
       EEPROM_WRITE(retract_length);
       #if EXTRUDERS > 1
@@ -457,62 +457,62 @@ void Config_Postprocess() {
 
     // Save TCM2130 Configuration, and placeholder values
     uint16_t val;
-    #if ENABLED(HAVE_TMC2130)
-      #if ENABLED(X_IS_TMC2130)
+    #if OPTION_ENABLED(HAVE_TMC2130)
+      #if OPTION_ENABLED(X_IS_TMC2130)
         val = stepperX.getCurrent();
       #else
         val = 0;
       #endif
       EEPROM_WRITE(val);
-      #if ENABLED(Y_IS_TMC2130)
+      #if OPTION_ENABLED(Y_IS_TMC2130)
         val = stepperY.getCurrent();
       #else
         val = 0;
       #endif
       EEPROM_WRITE(val);
-      #if ENABLED(Z_IS_TMC2130)
+      #if OPTION_ENABLED(Z_IS_TMC2130)
         val = stepperZ.getCurrent();
       #else
         val = 0;
       #endif
       EEPROM_WRITE(val);
-      #if ENABLED(X2_IS_TMC2130)
+      #if OPTION_ENABLED(X2_IS_TMC2130)
         val = stepperX2.getCurrent();
       #else
         val = 0;
       #endif
       EEPROM_WRITE(val);
-      #if ENABLED(Y2_IS_TMC2130)
+      #if OPTION_ENABLED(Y2_IS_TMC2130)
         val = stepperY2.getCurrent();
       #else
         val = 0;
       #endif
       EEPROM_WRITE(val);
-      #if ENABLED(Z2_IS_TMC2130)
+      #if OPTION_ENABLED(Z2_IS_TMC2130)
         val = stepperZ2.getCurrent();
       #else
         val = 0;
       #endif
       EEPROM_WRITE(val);
-      #if ENABLED(E0_IS_TMC2130)
+      #if OPTION_ENABLED(E0_IS_TMC2130)
         val = stepperE0.getCurrent();
       #else
         val = 0;
       #endif
       EEPROM_WRITE(val);
-      #if ENABLED(E1_IS_TMC2130)
+      #if OPTION_ENABLED(E1_IS_TMC2130)
         val = stepperE1.getCurrent();
       #else
         val = 0;
       #endif
       EEPROM_WRITE(val);
-      #if ENABLED(E2_IS_TMC2130)
+      #if OPTION_ENABLED(E2_IS_TMC2130)
         val = stepperE2.getCurrent();
       #else
         val = 0;
       #endif
       EEPROM_WRITE(val);
-      #if ENABLED(E3_IS_TMC2130)
+      #if OPTION_ENABLED(E3_IS_TMC2130)
         val = stepperE3.getCurrent();
       #else
         val = 0;
@@ -539,7 +539,7 @@ void Config_Postprocess() {
       SERIAL_ECHOLNPGM(" bytes)");
     }
 
-    #if ENABLED(AUTO_BED_LEVELING_UBL)
+    #if OPTION_ENABLED(AUTO_BED_LEVELING_UBL)
       ubl.store_state();
       if (ubl.state.eeprom_storage_slot >= 0)
         ubl.store_mesh(ubl.state.eeprom_storage_slot);
@@ -606,7 +606,7 @@ void Config_Postprocess() {
       EEPROM_READ(planner.min_segment_time);
       EEPROM_READ(planner.max_jerk);
 
-      #if ENABLED(NO_WORKSPACE_OFFSETS)
+      #if OPTION_ENABLED(NO_WORKSPACE_OFFSETS)
         float home_offset[XYZ];
       #endif
       EEPROM_READ(home_offset);
@@ -628,7 +628,7 @@ void Config_Postprocess() {
       EEPROM_READ(mesh_num_x);
       EEPROM_READ(mesh_num_y);
 
-      #if ENABLED(MESH_BED_LEVELING)
+      #if OPTION_ENABLED(MESH_BED_LEVELING)
         mbl.status = leveling_is_on ? _BV(MBL_STATUS_HAS_MESH_BIT) : 0;
         mbl.z_offset = dummy;
         if (mesh_num_x == MESH_NUM_X_POINTS && mesh_num_y == MESH_NUM_Y_POINTS) {
@@ -667,13 +667,13 @@ void Config_Postprocess() {
       uint8_t grid_max_x, grid_max_y;
       EEPROM_READ(grid_max_x);                       // 1 byte
       EEPROM_READ(grid_max_y);                       // 1 byte
-      #if ENABLED(AUTO_BED_LEVELING_BILINEAR)
+      #if OPTION_ENABLED(AUTO_BED_LEVELING_BILINEAR)
         if (grid_max_x == ABL_GRID_MAX_POINTS_X && grid_max_y == ABL_GRID_MAX_POINTS_Y) {
           set_bed_leveling_enabled(false);
           EEPROM_READ(bilinear_grid_spacing);        // 2 ints
           EEPROM_READ(bilinear_start);               // 2 ints
           EEPROM_READ(bed_level_grid);               // 9 to 256 floats
-          #if ENABLED(ABL_BILINEAR_SUBDIVISION)
+          #if OPTION_ENABLED(ABL_BILINEAR_SUBDIVISION)
             bed_level_virt_interpolate();
           #endif
           //set_bed_leveling_enabled(leveling_is_on);
@@ -688,14 +688,14 @@ void Config_Postprocess() {
           for (uint16_t q = grid_max_x * grid_max_y; q--;) EEPROM_READ(dummy);
         }
 
-      #if ENABLED(DELTA)
+      #if OPTION_ENABLED(DELTA)
         EEPROM_READ(endstop_adj);               // 3 floats
         EEPROM_READ(delta_radius);              // 1 float
         EEPROM_READ(delta_diagonal_rod);        // 1 float
         EEPROM_READ(delta_segments_per_second); // 1 float
         EEPROM_READ(delta_diagonal_rod_trim);   // 3 floats
         EEPROM_READ(delta_tower_angle_trim);    // 3 floats
-      #elif ENABLED(Z_DUAL_ENDSTOPS)
+      #elif OPTION_ENABLED(Z_DUAL_ENDSTOPS)
         EEPROM_READ(z_endstop_adj);
         dummy = 0.0f;
         for (uint8_t q=11; q--;) EEPROM_READ(dummy);
@@ -704,7 +704,7 @@ void Config_Postprocess() {
         for (uint8_t q=12; q--;) EEPROM_READ(dummy);
       #endif
 
-      #if DISABLED(ULTIPANEL)
+      #if OPTION_DISABLED(ULTIPANEL)
         int lcd_preheat_hotend_temp[2], lcd_preheat_bed_temp[2], lcd_preheat_fan_speed[2];
       #endif
 
@@ -712,7 +712,7 @@ void Config_Postprocess() {
       EEPROM_READ(lcd_preheat_bed_temp);
       EEPROM_READ(lcd_preheat_fan_speed);
 
-      #if ENABLED(PIDTEMP)
+      #if OPTION_ENABLED(PIDTEMP)
         for (uint8_t e = 0; e < MAX_EXTRUDERS; e++) {
           EEPROM_READ(dummy); // Kp
           if (e < HOTENDS && dummy != DUMMY_PID_VALUE) {
@@ -720,7 +720,7 @@ void Config_Postprocess() {
             PID_PARAM(Kp, e) = dummy;
             EEPROM_READ(PID_PARAM(Ki, e));
             EEPROM_READ(PID_PARAM(Kd, e));
-            #if ENABLED(PID_EXTRUSION_SCALING)
+            #if OPTION_ENABLED(PID_EXTRUSION_SCALING)
               EEPROM_READ(PID_PARAM(Kc, e));
             #else
               EEPROM_READ(dummy);
@@ -735,12 +735,12 @@ void Config_Postprocess() {
         for (uint8_t q = MAX_EXTRUDERS * 4; q--;) EEPROM_READ(dummy);  // Kp, Ki, Kd, Kc
       #endif // !PIDTEMP
 
-      #if DISABLED(PID_EXTRUSION_SCALING)
+      #if OPTION_DISABLED(PID_EXTRUSION_SCALING)
         int lpq_len;
       #endif
       EEPROM_READ(lpq_len);
 
-      #if ENABLED(PIDTEMPBED)
+      #if OPTION_ENABLED(PIDTEMPBED)
         EEPROM_READ(dummy); // bedKp
         if (dummy != DUMMY_PID_VALUE) {
           thermalManager.bedKp = dummy;
@@ -756,7 +756,7 @@ void Config_Postprocess() {
       #endif
       EEPROM_READ(lcd_contrast);
 
-      #if ENABLED(FWRETRACT)
+      #if OPTION_ENABLED(FWRETRACT)
         EEPROM_READ(autoretract_enabled);
         EEPROM_READ(retract_length);
         #if EXTRUDERS > 1
@@ -783,45 +783,45 @@ void Config_Postprocess() {
       }
 
       uint16_t val;
-      #if ENABLED(HAVE_TMC2130)
+      #if OPTION_ENABLED(HAVE_TMC2130)
         EEPROM_READ(val);
-        #if ENABLED(X_IS_TMC2130)
+        #if OPTION_ENABLED(X_IS_TMC2130)
           stepperX.setCurrent(val, R_SENSE, HOLD_MULTIPLIER);
         #endif
         EEPROM_READ(val);
-        #if ENABLED(Y_IS_TMC2130)
+        #if OPTION_ENABLED(Y_IS_TMC2130)
           stepperY.setCurrent(val, R_SENSE, HOLD_MULTIPLIER);
         #endif
         EEPROM_READ(val);
-        #if ENABLED(Z_IS_TMC2130)
+        #if OPTION_ENABLED(Z_IS_TMC2130)
           stepperZ.setCurrent(val, R_SENSE, HOLD_MULTIPLIER);
         #endif
         EEPROM_READ(val);
-        #if ENABLED(X2_IS_TMC2130)
+        #if OPTION_ENABLED(X2_IS_TMC2130)
           stepperX2.setCurrent(val, R_SENSE, HOLD_MULTIPLIER);
         #endif
         EEPROM_READ(val);
-        #if ENABLED(Y2_IS_TMC2130)
+        #if OPTION_ENABLED(Y2_IS_TMC2130)
           stepperY2.setCurrent(val, R_SENSE, HOLD_MULTIPLIER);
         #endif
         EEPROM_READ(val);
-        #if ENABLED(Z2_IS_TMC2130)
+        #if OPTION_ENABLED(Z2_IS_TMC2130)
           stepperZ2.setCurrent(val, R_SENSE, HOLD_MULTIPLIER);
         #endif
         EEPROM_READ(val);
-        #if ENABLED(E0_IS_TMC2130)
+        #if OPTION_ENABLED(E0_IS_TMC2130)
           stepperE0.setCurrent(val, R_SENSE, HOLD_MULTIPLIER);
         #endif
         EEPROM_READ(val);
-        #if ENABLED(E1_IS_TMC2130)
+        #if OPTION_ENABLED(E1_IS_TMC2130)
           stepperE1.setCurrent(val, R_SENSE, HOLD_MULTIPLIER);
         #endif
         EEPROM_READ(val);
-        #if ENABLED(E2_IS_TMC2130)
+        #if OPTION_ENABLED(E2_IS_TMC2130)
           stepperE2.setCurrent(val, R_SENSE, HOLD_MULTIPLIER);
         #endif
         EEPROM_READ(val);
-        #if ENABLED(E3_IS_TMC2130)
+        #if OPTION_ENABLED(E3_IS_TMC2130)
           stepperE3.setCurrent(val, R_SENSE, HOLD_MULTIPLIER);
         #endif
       #else
@@ -845,7 +845,7 @@ void Config_Postprocess() {
         Config_ResetDefault();
       }
 
-      #if ENABLED(AUTO_BED_LEVELING_UBL)
+      #if OPTION_ENABLED(AUTO_BED_LEVELING_UBL)
         ubl.eeprom_start = (eeprom_index + 32) & 0xFFF8; // Pad the end of configuration data so it
                                                          // can float up or down a little bit without
                                                          // disrupting the Unified Bed Leveling data
@@ -883,7 +883,7 @@ void Config_Postprocess() {
         }
       #endif
     }
-    #if ENABLED(EEPROM_CHITCHAT)
+    #if OPTION_ENABLED(EEPROM_CHITCHAT)
       Config_PrintSettings();
     #endif
 
@@ -922,7 +922,7 @@ void Config_ResetDefault() {
   planner.max_jerk[Y_AXIS] = DEFAULT_YJERK;
   planner.max_jerk[Z_AXIS] = DEFAULT_ZJERK;
   planner.max_jerk[E_AXIS] = DEFAULT_EJERK;
-  #if DISABLED(NO_WORKSPACE_OFFSETS)
+  #if OPTION_DISABLED(NO_WORKSPACE_OFFSETS)
     ZERO(home_offset);
   #endif
 
@@ -952,7 +952,7 @@ void Config_ResetDefault() {
     zprobe_zoffset = Z_PROBE_OFFSET_FROM_EXTRUDER;
   #endif
 
-  #if ENABLED(DELTA)
+  #if OPTION_ENABLED(DELTA)
     const float adj[ABC] = DELTA_ENDSTOP_ADJ,
                 drt[ABC] = { DELTA_DIAGONAL_ROD_TRIM_TOWER_1, DELTA_DIAGONAL_ROD_TRIM_TOWER_2, DELTA_DIAGONAL_ROD_TRIM_TOWER_3 },
                 dta[ABC] = { DELTA_TOWER_ANGLE_TRIM_1, DELTA_TOWER_ANGLE_TRIM_2, DELTA_TOWER_ANGLE_TRIM_3 };
@@ -962,11 +962,11 @@ void Config_ResetDefault() {
     delta_segments_per_second = DELTA_SEGMENTS_PER_SECOND;
     COPY(delta_diagonal_rod_trim, drt);
     COPY(delta_tower_angle_trim, dta);
-  #elif ENABLED(Z_DUAL_ENDSTOPS)
+  #elif OPTION_ENABLED(Z_DUAL_ENDSTOPS)
     z_endstop_adj = 0;
   #endif
 
-  #if ENABLED(ULTIPANEL)
+  #if OPTION_ENABLED(ULTIPANEL)
     lcd_preheat_hotend_temp[0] = PREHEAT_1_TEMP_HOTEND;
     lcd_preheat_hotend_temp[1] = PREHEAT_2_TEMP_HOTEND;
     lcd_preheat_bed_temp[0] = PREHEAT_1_TEMP_BED;
@@ -979,30 +979,30 @@ void Config_ResetDefault() {
     lcd_contrast = DEFAULT_LCD_CONTRAST;
   #endif
 
-  #if ENABLED(PIDTEMP)
-    #if ENABLED(PID_PARAMS_PER_HOTEND) && HOTENDS > 1
+  #if OPTION_ENABLED(PIDTEMP)
+    #if OPTION_ENABLED(PID_PARAMS_PER_HOTEND) && HOTENDS > 1
       HOTEND_LOOP()
     #endif
     {
       PID_PARAM(Kp, e) = DEFAULT_Kp;
       PID_PARAM(Ki, e) = scalePID_i(DEFAULT_Ki);
       PID_PARAM(Kd, e) = scalePID_d(DEFAULT_Kd);
-      #if ENABLED(PID_EXTRUSION_SCALING)
+      #if OPTION_ENABLED(PID_EXTRUSION_SCALING)
         PID_PARAM(Kc, e) = DEFAULT_Kc;
       #endif
     }
-    #if ENABLED(PID_EXTRUSION_SCALING)
+    #if OPTION_ENABLED(PID_EXTRUSION_SCALING)
       lpq_len = 20; // default last-position-queue size
     #endif
   #endif // PIDTEMP
 
-  #if ENABLED(PIDTEMPBED)
+  #if OPTION_ENABLED(PIDTEMPBED)
     thermalManager.bedKp = DEFAULT_bedKp;
     thermalManager.bedKi = scalePID_i(DEFAULT_bedKi);
     thermalManager.bedKd = scalePID_d(DEFAULT_bedKd);
   #endif
 
-  #if ENABLED(FWRETRACT)
+  #if OPTION_ENABLED(FWRETRACT)
     autoretract_enabled = false;
     retract_length = RETRACT_LENGTH;
     #if EXTRUDERS > 1
@@ -1018,7 +1018,7 @@ void Config_ResetDefault() {
   #endif
 
   volumetric_enabled =
-  #if ENABLED(VOLUMETRIC_DEFAULT_ON)
+  #if OPTION_ENABLED(VOLUMETRIC_DEFAULT_ON)
     true
   #else
     false
@@ -1028,42 +1028,42 @@ void Config_ResetDefault() {
     filament_size[q] = DEFAULT_NOMINAL_FILAMENT_DIA;
 
   endstops.enable_globally(
-    #if ENABLED(ENDSTOPS_ALWAYS_ON_DEFAULT)
+    #if OPTION_ENABLED(ENDSTOPS_ALWAYS_ON_DEFAULT)
       (true)
     #else
       (false)
     #endif
   );
 
-  #if ENABLED(HAVE_TMC2130)
-    #if ENABLED(X_IS_TMC2130)
+  #if OPTION_ENABLED(HAVE_TMC2130)
+    #if OPTION_ENABLED(X_IS_TMC2130)
       stepperX.setCurrent(X_MAX_CURRENT, R_SENSE, HOLD_MULTIPLIER);
     #endif
-    #if ENABLED(Y_IS_TMC2130)
+    #if OPTION_ENABLED(Y_IS_TMC2130)
       stepperY.setCurrent(Y_MAX_CURRENT, R_SENSE, HOLD_MULTIPLIER);
     #endif
-    #if ENABLED(Z_IS_TMC2130)
+    #if OPTION_ENABLED(Z_IS_TMC2130)
       stepperZ.setCurrent(Z_MAX_CURRENT, R_SENSE, HOLD_MULTIPLIER);
     #endif
-    #if ENABLED(X2_IS_TMC2130)
+    #if OPTION_ENABLED(X2_IS_TMC2130)
       stepperX2.setCurrent(X2_MAX_CURRENT, R_SENSE, HOLD_MULTIPLIER);
     #endif
-    #if ENABLED(Y2_IS_TMC2130)
+    #if OPTION_ENABLED(Y2_IS_TMC2130)
       stepperY2.setCurrent(Y2_MAX_CURRENT, R_SENSE, HOLD_MULTIPLIER);
     #endif
-    #if ENABLED(Z2_IS_TMC2130)
+    #if OPTION_ENABLED(Z2_IS_TMC2130)
       stepperZ2.setCurrent(Z2_MAX_CURRENT, R_SENSE, HOLD_MULTIPLIER);
     #endif
-    #if ENABLED(E0_IS_TMC2130)
+    #if OPTION_ENABLED(E0_IS_TMC2130)
       stepperE0.setCurrent(E0_MAX_CURRENT, R_SENSE, HOLD_MULTIPLIER);
     #endif
-    #if ENABLED(E1_IS_TMC2130)
+    #if OPTION_ENABLED(E1_IS_TMC2130)
       stepperE1.setCurrent(E1_MAX_CURRENT, R_SENSE, HOLD_MULTIPLIER);
     #endif
-    #if ENABLED(E2_IS_TMC2130)
+    #if OPTION_ENABLED(E2_IS_TMC2130)
       stepperE2.setCurrent(E2_MAX_CURRENT, R_SENSE, HOLD_MULTIPLIER);
     #endif
-    #if ENABLED(E3_IS_TMC2130)
+    #if OPTION_ENABLED(E3_IS_TMC2130)
       stepperE3.setCurrent(E3_MAX_CURRENT, R_SENSE, HOLD_MULTIPLIER);
     #endif
   #endif
@@ -1074,7 +1074,7 @@ void Config_ResetDefault() {
   SERIAL_ECHOLNPGM("Hardcoded Default Settings Loaded");
 }
 
-#if DISABLED(DISABLE_M503)
+#if OPTION_DISABLED(DISABLE_M503)
 
   #define CONFIG_ECHO_START do{ if (!forReplay) SERIAL_ECHO_START; }while(0)
 
@@ -1093,11 +1093,11 @@ void Config_ResetDefault() {
     SERIAL_ECHOPAIR("  M92 X", planner.axis_steps_per_mm[X_AXIS]);
     SERIAL_ECHOPAIR(" Y", planner.axis_steps_per_mm[Y_AXIS]);
     SERIAL_ECHOPAIR(" Z", planner.axis_steps_per_mm[Z_AXIS]);
-    #if DISABLED(DISTINCT_E_FACTORS)
+    #if OPTION_DISABLED(DISTINCT_E_FACTORS)
       SERIAL_ECHOPAIR(" E", planner.axis_steps_per_mm[E_AXIS]);
     #endif
     SERIAL_EOL;
-    #if ENABLED(DISTINCT_E_FACTORS)
+    #if OPTION_ENABLED(DISTINCT_E_FACTORS)
       for (uint8_t i = 0; i < E_STEPPERS; i++) {
         SERIAL_ECHOPAIR("  M92 T", (int)i);
         SERIAL_ECHOLNPAIR(" E", planner.axis_steps_per_mm[E_AXIS + i]);
@@ -1113,11 +1113,11 @@ void Config_ResetDefault() {
     SERIAL_ECHOPAIR("  M203 X", planner.max_feedrate_mm_s[X_AXIS]);
     SERIAL_ECHOPAIR(" Y", planner.max_feedrate_mm_s[Y_AXIS]);
     SERIAL_ECHOPAIR(" Z", planner.max_feedrate_mm_s[Z_AXIS]);
-    #if DISABLED(DISTINCT_E_FACTORS)
+    #if OPTION_DISABLED(DISTINCT_E_FACTORS)
       SERIAL_ECHOPAIR(" E", planner.max_feedrate_mm_s[E_AXIS]);
     #endif
     SERIAL_EOL;
-    #if ENABLED(DISTINCT_E_FACTORS)
+    #if OPTION_ENABLED(DISTINCT_E_FACTORS)
       for (uint8_t i = 0; i < E_STEPPERS; i++) {
         SERIAL_ECHOPAIR("  M203 T", (int)i);
         SERIAL_ECHOLNPAIR(" E", planner.max_feedrate_mm_s[E_AXIS + i]);
@@ -1129,14 +1129,14 @@ void Config_ResetDefault() {
       SERIAL_ECHOLNPGM("Maximum Acceleration (mm/s2):");
       CONFIG_ECHO_START;
     }
-    SERIAL_ECHOPAIR("  M201 X", planner.max_acceleration_mm_per_s2[X_AXIS]);
-    SERIAL_ECHOPAIR(" Y", planner.max_acceleration_mm_per_s2[Y_AXIS]);
-    SERIAL_ECHOPAIR(" Z", planner.max_acceleration_mm_per_s2[Z_AXIS]);
-    #if DISABLED(DISTINCT_E_FACTORS)
-      SERIAL_ECHOPAIR(" E", planner.max_acceleration_mm_per_s2[E_AXIS]);
+    SERIAL_ECHOPAIR("  M201 X", (int)planner.max_acceleration_mm_per_s2[X_AXIS]);
+    SERIAL_ECHOPAIR(" Y", (int)planner.max_acceleration_mm_per_s2[Y_AXIS]);
+    SERIAL_ECHOPAIR(" Z", (int)planner.max_acceleration_mm_per_s2[Z_AXIS]);
+    #if OPTION_DISABLED(DISTINCT_E_FACTORS)
+      SERIAL_ECHOPAIR(" E", (int)planner.max_acceleration_mm_per_s2[E_AXIS]);
     #endif
     SERIAL_EOL;
-    #if ENABLED(DISTINCT_E_FACTORS)
+    #if OPTION_ENABLED(DISTINCT_E_FACTORS)
       for (uint8_t i = 0; i < E_STEPPERS; i++) {
         SERIAL_ECHOPAIR("  M201 T", (int)i);
         SERIAL_ECHOLNPAIR(" E", planner.max_acceleration_mm_per_s2[E_AXIS + i]);
@@ -1167,7 +1167,7 @@ void Config_ResetDefault() {
     SERIAL_ECHOPAIR(" E", planner.max_jerk[E_AXIS]);
     SERIAL_EOL;
 
-    #if DISABLED(NO_WORKSPACE_OFFSETS)
+    #if OPTION_DISABLED(NO_WORKSPACE_OFFSETS)
       CONFIG_ECHO_START;
       if (!forReplay) {
         SERIAL_ECHOLNPGM("Home offset (mm)");
@@ -1189,14 +1189,14 @@ void Config_ResetDefault() {
         SERIAL_ECHOPAIR("  M218 T", (int)e);
         SERIAL_ECHOPAIR(" X", hotend_offset[X_AXIS][e]);
         SERIAL_ECHOPAIR(" Y", hotend_offset[Y_AXIS][e]);
-        #if ENABLED(DUAL_X_CARRIAGE) || ENABLED(SWITCHING_EXTRUDER)
+        #if OPTION_ENABLED(DUAL_X_CARRIAGE) || OPTION_ENABLED(SWITCHING_EXTRUDER)
           SERIAL_ECHOPAIR(" Z", hotend_offset[Z_AXIS][e]);
         #endif
         SERIAL_EOL;
       }
     #endif
 
-    #if ENABLED(MESH_BED_LEVELING)
+    #if OPTION_ENABLED(MESH_BED_LEVELING)
 
       if (!forReplay) {
         SERIAL_ECHOLNPGM("Mesh Bed Leveling:");
@@ -1214,7 +1214,7 @@ void Config_ResetDefault() {
         }
       }
 
-    #elif ENABLED(AUTO_BED_LEVELING_UBL)
+    #elif OPTION_ENABLED(AUTO_BED_LEVELING_UBL)
 
       if (!forReplay) {
         SERIAL_ECHOLNPGM("Unified Bed Leveling:");
@@ -1259,7 +1259,7 @@ void Config_ResetDefault() {
 
     #endif
 
-    #if ENABLED(DELTA)
+    #if OPTION_ENABLED(DELTA)
       CONFIG_ECHO_START;
       if (!forReplay) {
         SERIAL_ECHOLNPGM("Endstop adjustment (mm):");
@@ -1284,7 +1284,7 @@ void Config_ResetDefault() {
       SERIAL_ECHOPAIR(" J", delta_tower_angle_trim[B_AXIS]);
       SERIAL_ECHOPAIR(" K", delta_tower_angle_trim[C_AXIS]);
       SERIAL_EOL;
-    #elif ENABLED(Z_DUAL_ENDSTOPS)
+    #elif OPTION_ENABLED(Z_DUAL_ENDSTOPS)
       CONFIG_ECHO_START;
       if (!forReplay) {
         SERIAL_ECHOLNPGM("Z2 Endstop adjustment (mm):");
@@ -1294,7 +1294,7 @@ void Config_ResetDefault() {
       SERIAL_EOL;
     #endif // DELTA
 
-    #if ENABLED(ULTIPANEL)
+    #if OPTION_ENABLED(ULTIPANEL)
       CONFIG_ECHO_START;
       if (!forReplay) {
         SERIAL_ECHOLNPGM("Material heatup parameters:");
@@ -1315,7 +1315,7 @@ void Config_ResetDefault() {
       if (!forReplay) {
         SERIAL_ECHOLNPGM("PID settings:");
       }
-      #if ENABLED(PIDTEMP)
+      #if OPTION_ENABLED(PIDTEMP)
         #if HOTENDS > 1
           if (forReplay) {
             HOTEND_LOOP() {
@@ -1324,7 +1324,7 @@ void Config_ResetDefault() {
               SERIAL_ECHOPAIR(" P", PID_PARAM(Kp, e));
               SERIAL_ECHOPAIR(" I", unscalePID_i(PID_PARAM(Ki, e)));
               SERIAL_ECHOPAIR(" D", unscalePID_d(PID_PARAM(Kd, e)));
-              #if ENABLED(PID_EXTRUSION_SCALING)
+              #if OPTION_ENABLED(PID_EXTRUSION_SCALING)
                 SERIAL_ECHOPAIR(" C", PID_PARAM(Kc, e));
                 if (e == 0) SERIAL_ECHOPAIR(" L", lpq_len);
               #endif
@@ -1339,7 +1339,7 @@ void Config_ResetDefault() {
           SERIAL_ECHOPAIR("  M301 P", PID_PARAM(Kp, 0)); // for compatibility with hosts, only echo values for E0
           SERIAL_ECHOPAIR(" I", unscalePID_i(PID_PARAM(Ki, 0)));
           SERIAL_ECHOPAIR(" D", unscalePID_d(PID_PARAM(Kd, 0)));
-          #if ENABLED(PID_EXTRUSION_SCALING)
+          #if OPTION_ENABLED(PID_EXTRUSION_SCALING)
             SERIAL_ECHOPAIR(" C", PID_PARAM(Kc, 0));
             SERIAL_ECHOPAIR(" L", lpq_len);
           #endif
@@ -1347,7 +1347,7 @@ void Config_ResetDefault() {
         }
       #endif // PIDTEMP
 
-      #if ENABLED(PIDTEMPBED)
+      #if OPTION_ENABLED(PIDTEMPBED)
         CONFIG_ECHO_START;
         SERIAL_ECHOPAIR("  M304 P", thermalManager.bedKp);
         SERIAL_ECHOPAIR(" I", unscalePID_i(thermalManager.bedKi));
@@ -1367,7 +1367,7 @@ void Config_ResetDefault() {
       SERIAL_EOL;
     #endif
 
-    #if ENABLED(FWRETRACT)
+    #if OPTION_ENABLED(FWRETRACT)
 
       CONFIG_ECHO_START;
       if (!forReplay) {
@@ -1454,41 +1454,41 @@ void Config_ResetDefault() {
     /**
      * TMC2130 stepper driver current
      */
-    #if ENABLED(HAVE_TMC2130)
+    #if OPTION_ENABLED(HAVE_TMC2130)
       CONFIG_ECHO_START;
       if (!forReplay) {
         SERIAL_ECHOLNPGM("Stepper driver current:");
         CONFIG_ECHO_START;
       }
       SERIAL_ECHO("  M906");
-      #if ENABLED(X_IS_TMC2130)
+      #if OPTION_ENABLED(X_IS_TMC2130)
         SERIAL_ECHOPAIR(" X", stepperX.getCurrent());
       #endif
-      #if ENABLED(Y_IS_TMC2130)
+      #if OPTION_ENABLED(Y_IS_TMC2130)
         SERIAL_ECHOPAIR(" Y", stepperY.getCurrent());
       #endif
-      #if ENABLED(Z_IS_TMC2130)
+      #if OPTION_ENABLED(Z_IS_TMC2130)
         SERIAL_ECHOPAIR(" Z", stepperZ.getCurrent());
       #endif
-      #if ENABLED(X2_IS_TMC2130)
+      #if OPTION_ENABLED(X2_IS_TMC2130)
         SERIAL_ECHOPAIR(" X2", stepperX2.getCurrent());
       #endif
-      #if ENABLED(Y2_IS_TMC2130)
+      #if OPTION_ENABLED(Y2_IS_TMC2130)
         SERIAL_ECHOPAIR(" Y2", stepperY2.getCurrent());
       #endif
-      #if ENABLED(Z2_IS_TMC2130)
+      #if OPTION_ENABLED(Z2_IS_TMC2130)
         SERIAL_ECHOPAIR(" Z2", stepperZ2.getCurrent());
       #endif
-      #if ENABLED(E0_IS_TMC2130)
+      #if OPTION_ENABLED(E0_IS_TMC2130)
         SERIAL_ECHOPAIR(" E0", stepperE0.getCurrent());
       #endif
-      #if ENABLED(E1_IS_TMC2130)
+      #if OPTION_ENABLED(E1_IS_TMC2130)
         SERIAL_ECHOPAIR(" E1", stepperE1.getCurrent());
       #endif
-      #if ENABLED(E2_IS_TMC2130)
+      #if OPTION_ENABLED(E2_IS_TMC2130)
         SERIAL_ECHOPAIR(" E2", stepperE2.getCurrent());
       #endif
-      #if ENABLED(E3_IS_TMC2130)
+      #if OPTION_ENABLED(E3_IS_TMC2130)
         SERIAL_ECHOPAIR(" E3", stepperE3.getCurrent());
       #endif
       SERIAL_EOL;

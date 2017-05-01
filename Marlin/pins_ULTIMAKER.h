@@ -106,11 +106,11 @@
 //
 // LCD / Controller
 //
-#if ENABLED(ULTRA_LCD)
+#if OPTION_ENABLED(ULTRA_LCD)
 
   #define BEEPER_PIN 18
 
-  #if ENABLED(NEWPANEL)
+  #if OPTION_ENABLED(NEWPANEL)
 
     #define LCD_PINS_RS 20
     #define LCD_PINS_ENABLE 17

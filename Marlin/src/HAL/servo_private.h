@@ -49,6 +49,8 @@
   #include "HAL_AVR/ServoTimers.h"
 #elif defined(ARDUINO_ARCH_SAM)
   #include "HAL_DUE/ServoTimers.h"
+#elif defined(ARDUINO_ARCH_ESP32)
+  #include "HAL_ESP/ServoTimers.h"
 #else
   #error "This library only supports boards with an AVR or SAM3X processor."
 #endif

@@ -42,7 +42,7 @@
 
 #include "Marlin.h"
 
-#if ENABLED(M100_FREE_MEMORY_WATCHER)
+#if OPTION_ENABLED(M100_FREE_MEMORY_WATCHER)
 extern char* __brkval;
 extern size_t  __heap_start, __heap_end, __flp;
 extern char __bss_end;
@@ -69,7 +69,7 @@ void gcode_M100() {
   // probably caused by bad pointers.  Any unexpected values will be flagged in
   // the right hand column to help spotting them.
   //
-  #if ENABLED(M100_FREE_MEMORY_DUMPER) // Disable to remove Dump sub-command
+  #if OPTION_ENABLED(M100_FREE_MEMORY_DUMPER) // Disable to remove Dump sub-command
     if (code_seen('D')) {
       ptr = __brkval ? __brkval : &__bss_end;
       //
@@ -140,7 +140,7 @@ void gcode_M100() {
   // M100 C x  Corrupts x locations in the free memory pool and reports the locations of the corruption.
   // This is useful to check the correctness of the M100 D and the M100 F commands.
   //
-  #if ENABLED(M100_FREE_MEMORY_CORRUPTOR)
+  #if OPTION_ENABLED(M100_FREE_MEMORY_CORRUPTOR)
     if (code_seen('C')) {
       int x = code_value_int(); // x gets the # of locations to corrupt within the memory pool
       SERIAL_ECHOLNPGM("Corrupting free memory block.\n");

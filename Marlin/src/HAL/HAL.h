@@ -83,6 +83,10 @@ void spiSendBlock(uint8_t token, const uint8_t* buf);
   #define CPU_32_BIT
   #include "HAL_DUE/HAL_Due.h"
   #include "math_32bit.h"
+#elif defined(ARDUINO_ARCH_ESP32)
+  #define CPU_32_BIT
+  #include "HAL_ESP/HAL_ESP.h"
+  #include "math_32bit.h"
 #else
   #error Unsupported Platform!
 #endif

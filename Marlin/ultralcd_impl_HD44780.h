@@ -40,12 +40,12 @@ extern volatile uint8_t buttons;  //an extended version of the last checked butt
 // macro name. The mapping is independent of whether the button is directly connected or
 // via a shift/i2c register.
 
-#if ENABLED(ULTIPANEL)
+#if OPTION_ENABLED(ULTIPANEL)
 
   //
   // Setup other button mappings of each panel
   //
-  #if ENABLED(LCD_I2C_VIKI)
+  #if OPTION_ENABLED(LCD_I2C_VIKI)
     #define B_I2C_BTN_OFFSET 3 // (the first three bit positions reserved for EN_A, EN_B, EN_C)
 
     // button and encoder bit positions within 'buttons'
@@ -68,7 +68,7 @@ extern volatile uint8_t buttons;  //an extended version of the last checked butt
     // I2C buttons take too long to read inside an interrupt context and so we read them during lcd_update
     #define LCD_HAS_SLOW_BUTTONS
 
-  #elif ENABLED(LCD_I2C_PANELOLU2)
+  #elif OPTION_ENABLED(LCD_I2C_PANELOLU2)
 
     #if !BUTTON_EXISTS(ENC) // Use I2C if not directly connected to a pin
 
@@ -84,7 +84,7 @@ extern volatile uint8_t buttons;  //an extended version of the last checked butt
 
     #endif
 
-  #elif DISABLED(NEWPANEL) // old style ULTIPANEL
+  #elif OPTION_DISABLED(NEWPANEL) // old style ULTIPANEL
     // Shift register bits correspond to buttons:
     #define BL_LE 7   // Left
     #define BL_UP 6   // Up
@@ -105,7 +105,7 @@ extern volatile uint8_t buttons;  //an extended version of the last checked butt
 
 ////////////////////////////////////
 // Create LCD class instance and chipset-specific information
-#if ENABLED(LCD_I2C_TYPE_PCF8575)
+#if OPTION_ENABLED(LCD_I2C_TYPE_PCF8575)
   // note: these are register mapped pins on the PCF8575 controller not Arduino pins
   #define LCD_I2C_PIN_BL  3
   #define LCD_I2C_PIN_EN  2
@@ -122,7 +122,7 @@ extern volatile uint8_t buttons;  //an extended version of the last checked butt
   #define LCD_CLASS LiquidCrystal_I2C
   LCD_CLASS lcd(LCD_I2C_ADDRESS, LCD_I2C_PIN_EN, LCD_I2C_PIN_RW, LCD_I2C_PIN_RS, LCD_I2C_PIN_D4, LCD_I2C_PIN_D5, LCD_I2C_PIN_D6, LCD_I2C_PIN_D7);
 
-#elif ENABLED(LCD_I2C_TYPE_MCP23017)
+#elif OPTION_ENABLED(LCD_I2C_TYPE_MCP23017)
   //for the LED indicators (which maybe mapped to different things in lcd_implementation_update_indicators())
   #define LED_A 0x04 //100
   #define LED_B 0x02 //010
@@ -133,30 +133,30 @@ extern volatile uint8_t buttons;  //an extended version of the last checked butt
   #include <Wire.h>
   #include <LiquidTWI2.h>
   #define LCD_CLASS LiquidTWI2
-  #if ENABLED(DETECT_DEVICE)
+  #if OPTION_ENABLED(DETECT_DEVICE)
     LCD_CLASS lcd(LCD_I2C_ADDRESS, 1);
   #else
     LCD_CLASS lcd(LCD_I2C_ADDRESS);
   #endif
 
-#elif ENABLED(LCD_I2C_TYPE_MCP23008)
+#elif OPTION_ENABLED(LCD_I2C_TYPE_MCP23008)
   #include <Wire.h>
   #include <LiquidTWI2.h>
   #define LCD_CLASS LiquidTWI2
-  #if ENABLED(DETECT_DEVICE)
+  #if OPTION_ENABLED(DETECT_DEVICE)
     LCD_CLASS lcd(LCD_I2C_ADDRESS, 1);
   #else
     LCD_CLASS lcd(LCD_I2C_ADDRESS);
   #endif
 
-#elif ENABLED(LCD_I2C_TYPE_PCA8574)
+#elif OPTION_ENABLED(LCD_I2C_TYPE_PCA8574)
   #include <LiquidCrystal_I2C.h>
   #define LCD_CLASS LiquidCrystal_I2C
   LCD_CLASS lcd(LCD_I2C_ADDRESS, LCD_WIDTH, LCD_HEIGHT);
 
 // 2 wire Non-latching LCD SR from:
 // https://bitbucket.org/fmalpartida/new-liquidcrystal/wiki/schematics#!shiftregister-connection
-#elif ENABLED(SR_LCD_2W_NL)
+#elif OPTION_ENABLED(SR_LCD_2W_NL)
   extern "C" void __cxa_pure_virtual() { while (1); }
   #include <LCD.h>
   #include <LiquidCrystal_SR.h>
@@ -166,7 +166,7 @@ extern volatile uint8_t buttons;  //an extended version of the last checked butt
   #else
     LCD_CLASS lcd(SR_DATA_PIN, SR_CLK_PIN);
   #endif
-#elif ENABLED(LCM1602)
+#elif OPTION_ENABLED(LCM1602)
   #include <Wire.h>
   #include <LCD.h>
   #include <LiquidCrystal_I2C.h>
@@ -181,7 +181,7 @@ extern volatile uint8_t buttons;  //an extended version of the last checked butt
 
 #include "utf_mapper.h"
 
-#if ENABLED(LCD_PROGRESS_BAR)
+#if OPTION_ENABLED(LCD_PROGRESS_BAR)
   static millis_t progress_bar_ms = 0;
   #if PROGRESS_MSG_EXPIRE > 0
     static millis_t expire_status_ms = 0;
@@ -189,12 +189,12 @@ extern volatile uint8_t buttons;  //an extended version of the last checked butt
   #define LCD_STR_PROGRESS  "\x03\x04\x05"
 #endif
 
-#if ENABLED(LCD_HAS_STATUS_INDICATORS)
+#if OPTION_ENABLED(LCD_HAS_STATUS_INDICATORS)
   static void lcd_implementation_update_indicators();
 #endif
 
 static void lcd_set_custom_characters(
-  #if ENABLED(LCD_PROGRESS_BAR)
+  #if OPTION_ENABLED(LCD_PROGRESS_BAR)
     const bool info_screen_charset = true
   #endif
 ) {
@@ -265,7 +265,7 @@ static void lcd_set_custom_characters(
   lcd.createChar(LCD_STR_FEEDRATE[0], feedrate);
   lcd.createChar(LCD_STR_CLOCK[0], clock);
 
-  #if ENABLED(SDSUPPORT)
+  #if OPTION_ENABLED(SDSUPPORT)
     static byte refresh[8] = {
       B00000,
       B00110,
@@ -287,7 +287,7 @@ static void lcd_set_custom_characters(
       B00000
     }; //thanks joris
 
-    #if ENABLED(LCD_PROGRESS_BAR)
+    #if OPTION_ENABLED(LCD_PROGRESS_BAR)
       static byte progress[3][8] = { {
         B00000,
         B10000,
@@ -340,28 +340,28 @@ static void lcd_set_custom_characters(
 }
 
 static void lcd_implementation_init(
-  #if ENABLED(LCD_PROGRESS_BAR)
+  #if OPTION_ENABLED(LCD_PROGRESS_BAR)
     const bool info_screen_charset = true
   #endif
 ) {
 
-  #if ENABLED(LCD_I2C_TYPE_PCF8575)
+  #if OPTION_ENABLED(LCD_I2C_TYPE_PCF8575)
     lcd.begin(LCD_WIDTH, LCD_HEIGHT);
     #ifdef LCD_I2C_PIN_BL
       lcd.setBacklightPin(LCD_I2C_PIN_BL, POSITIVE);
       lcd.setBacklight(HIGH);
     #endif
 
-  #elif ENABLED(LCD_I2C_TYPE_MCP23017)
+  #elif OPTION_ENABLED(LCD_I2C_TYPE_MCP23017)
     lcd.setMCPType(LTI_TYPE_MCP23017);
     lcd.begin(LCD_WIDTH, LCD_HEIGHT);
     lcd_implementation_update_indicators();
 
-  #elif ENABLED(LCD_I2C_TYPE_MCP23008)
+  #elif OPTION_ENABLED(LCD_I2C_TYPE_MCP23008)
     lcd.setMCPType(LTI_TYPE_MCP23008);
     lcd.begin(LCD_WIDTH, LCD_HEIGHT);
 
-  #elif ENABLED(LCD_I2C_TYPE_PCA8574)
+  #elif OPTION_ENABLED(LCD_I2C_TYPE_PCA8574)
     lcd.init();
     lcd.backlight();
 
@@ -370,7 +370,7 @@ static void lcd_implementation_init(
   #endif
 
   lcd_set_custom_characters(
-    #if ENABLED(LCD_PROGRESS_BAR)
+    #if OPTION_ENABLED(LCD_PROGRESS_BAR)
       info_screen_charset
     #endif
   );
@@ -391,7 +391,7 @@ void lcd_print(const char* const str) {
 
 void lcd_print(char c) { charset_mapper(c); }
 
-#if ENABLED(SHOW_BOOTSCREEN)
+#if OPTION_ENABLED(SHOW_BOOTSCREEN)
 
   void lcd_erase_line(const int line) {
     lcd.setCursor(0, line);
@@ -534,7 +534,7 @@ void lcd_print(char c) { charset_mapper(c); }
     lcd.clear();
 
     lcd_set_custom_characters(
-      #if ENABLED(LCD_PROGRESS_BAR)
+      #if OPTION_ENABLED(LCD_PROGRESS_BAR)
         false
       #endif
     );
@@ -563,7 +563,7 @@ FORCE_INLINE void _draw_axis_label(const AxisEnum axis, const char* const pstr, 
     if (!axis_homed[axis])
       lcd.print('?');
     else {
-      #if DISABLED(DISABLE_REDUCED_ACCURACY_WARNING)
+      #if OPTION_DISABLED(DISABLE_REDUCED_ACCURACY_WARNING)
         if (!axis_known_position[axis])
           lcd.print(' ');
         else
@@ -573,7 +573,7 @@ FORCE_INLINE void _draw_axis_label(const AxisEnum axis, const char* const pstr, 
   }
 }
 
-#if ENABLED(LCD_PROGRESS_BAR)
+#if OPTION_ENABLED(LCD_PROGRESS_BAR)
 
   inline void lcd_draw_progress_bar(const uint8_t percent) {
     int tix = (int)(percent * (LCD_WIDTH) * 3) / 100,
@@ -689,7 +689,7 @@ static void lcd_implementation_status_screen() {
 
     #if LCD_WIDTH < 20
 
-      #if ENABLED(SDSUPPORT)
+      #if OPTION_ENABLED(SDSUPPORT)
         lcd.setCursor(0, 2);
         lcd_printPGM(PSTR("SD"));
         if (IS_SD_PRINTING)
@@ -744,7 +744,7 @@ static void lcd_implementation_status_screen() {
     lcd.print(itostr3(feedrate_percentage));
     lcd.print('%');
 
-    #if LCD_WIDTH >= 20 && ENABLED(SDSUPPORT)
+    #if LCD_WIDTH >= 20 && OPTION_ENABLED(SDSUPPORT)
 
       lcd.setCursor(7, 2);
       lcd_printPGM(PSTR("SD"));
@@ -773,14 +773,14 @@ static void lcd_implementation_status_screen() {
 
   lcd.setCursor(0, LCD_HEIGHT - 1);
 
-  #if ENABLED(LCD_PROGRESS_BAR)
+  #if OPTION_ENABLED(LCD_PROGRESS_BAR)
 
     // Draw the progress bar if the message has shown long enough
     // or if there is no message set.
     if (card.isFileOpen() && ELAPSED(millis(), progress_bar_ms + PROGRESS_BAR_MSG_TIME) || !lcd_status_message[0])
       return lcd_draw_progress_bar(card.percentDone());
 
-  #elif ENABLED(FILAMENT_LCD_DISPLAY) && ENABLED(SDSUPPORT)
+  #elif OPTION_ENABLED(FILAMENT_LCD_DISPLAY) && OPTION_ENABLED(SDSUPPORT)
 
     // Show Filament Diameter and Volumetric Multiplier %
     // After allowing lcd_status_message to show for 5 seconds
@@ -798,9 +798,9 @@ static void lcd_implementation_status_screen() {
   lcd_print(lcd_status_message);
 }
 
-#if ENABLED(ULTIPANEL)
+#if OPTION_ENABLED(ULTIPANEL)
 
-  #if ENABLED(FILAMENT_CHANGE_FEATURE)
+  #if OPTION_ENABLED(FILAMENT_CHANGE_FEATURE)
 
     static void lcd_implementation_hotend_status(const uint8_t row) {
       if (row < LCD_HEIGHT) {
@@ -907,7 +907,7 @@ static void lcd_implementation_status_screen() {
     }
   }
 
-  #if ENABLED(SDSUPPORT)
+  #if OPTION_ENABLED(SDSUPPORT)
 
     static void lcd_implementation_drawmenu_sd(const bool sel, const uint8_t row, const char* const pstr, const char* filename, char* const longFilename, const uint8_t concat, const char post_char) {
       UNUSED(pstr);
@@ -942,16 +942,16 @@ static void lcd_implementation_status_screen() {
   #define lcd_implementation_drawmenu_gcode(sel, row, pstr, gcode) lcd_implementation_drawmenu_generic(sel, row, pstr, '>', ' ')
   #define lcd_implementation_drawmenu_function(sel, row, pstr, data) lcd_implementation_drawmenu_generic(sel, row, pstr, '>', ' ')
 
-  #if ENABLED(LCD_HAS_SLOW_BUTTONS)
+  #if OPTION_ENABLED(LCD_HAS_SLOW_BUTTONS)
 
     extern millis_t next_button_update_ms;
 
     static uint8_t lcd_implementation_read_slow_buttons() {
-      #if ENABLED(LCD_I2C_TYPE_MCP23017)
+      #if OPTION_ENABLED(LCD_I2C_TYPE_MCP23017)
         // Reading these buttons this is likely to be too slow to call inside interrupt context
         // so they are called during normal lcd_update
         uint8_t slow_bits = lcd.readButtons() << B_I2C_BTN_OFFSET;
-        #if ENABLED(LCD_I2C_VIKI)
+        #if OPTION_ENABLED(LCD_I2C_VIKI)
           if ((slow_bits & (B_MI | B_RI)) && PENDING(millis(), next_button_update_ms)) // LCD clicked
             slow_bits &= ~(B_MI | B_RI); // Disable LCD clicked buttons if screen is updated
         #endif // LCD_I2C_VIKI
@@ -963,7 +963,7 @@ static void lcd_implementation_status_screen() {
 
 #endif // ULTIPANEL
 
-#if ENABLED(LCD_HAS_STATUS_INDICATORS)
+#if OPTION_ENABLED(LCD_HAS_STATUS_INDICATORS)
 
   static void lcd_implementation_update_indicators() {
     // Set the LEDS - referred to as backlights by the LiquidTWI2 library

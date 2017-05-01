@@ -33,7 +33,7 @@
 #define MAPPER_C2C3_TR
 #define DISPLAY_CHARSET_ISO10646_TR
 
-#if DISABLED(DOGLCD)
+#if OPTION_DISABLED(DOGLCD)
   #error "Turkish needs a graphical display."
 #endif
 

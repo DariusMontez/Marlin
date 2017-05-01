@@ -27,7 +27,7 @@
 #ifndef UNIFIED_BED_LEVELING_H
 #define UNIFIED_BED_LEVELING_H
 
-  #if ENABLED(AUTO_BED_LEVELING_UBL)
+  #if OPTION_ENABLED(AUTO_BED_LEVELING_UBL)
 
     #define UBL_VERSION "1.00"
     #define UBL_OK false
@@ -71,7 +71,7 @@
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    #if ENABLED(ULTRA_LCD)
+    #if OPTION_ENABLED(ULTRA_LCD)
       extern char lcd_status_message[];
       void lcd_quick_feedback();
     #endif
@@ -95,7 +95,7 @@
             mesh_x_dist = MESH_X_DIST,
             mesh_y_dist = MESH_Y_DIST;
 
-      #if ENABLED(ENABLE_LEVELING_FADE_HEIGHT)
+      #if OPTION_ENABLED(ENABLE_LEVELING_FADE_HEIGHT)
         float g29_correction_fade_height = 10.0,
               g29_fade_height_multiplier = 1.0 / 10.0; // It's cheaper to do a floating point multiply than divide,
                                                        // so keep this value and its reciprocal.
@@ -249,7 +249,7 @@
             SERIAL_CHAR(')');
             SERIAL_EOL;
 
-            #if ENABLED(ULTRA_LCD)
+            #if OPTION_ENABLED(ULTRA_LCD)
               strcpy(lcd_status_message, "get_z_correction() indexes out of range.");
               lcd_quick_feedback();
             #endif
@@ -266,7 +266,7 @@
                     mesh_index_to_ypos[cy], z1,
                     mesh_index_to_ypos[cy + 1], z2);
 
-          #if ENABLED(DEBUG_LEVELING_FEATURE)
+          #if OPTION_ENABLED(DEBUG_LEVELING_FEATURE)
             if (DEBUGGING(MESH_ADJUST)) {
               SERIAL_ECHOPAIR(" raw get_z_correction(", lx0);
               SERIAL_CHAR(',')
@@ -276,7 +276,7 @@
             }
           #endif
 
-          #if ENABLED(DEBUG_LEVELING_FEATURE)
+          #if OPTION_ENABLED(DEBUG_LEVELING_FEATURE)
             if (DEBUGGING(MESH_ADJUST)) {
               SERIAL_ECHOPGM(" >>>---> ");
               SERIAL_ECHO_F(z0, 6);
@@ -290,7 +290,7 @@
                            // because part of the Mesh is undefined and we don't have the
                            // information we need to complete the height correction.
 
-            #if ENABLED(DEBUG_LEVELING_FEATURE)
+            #if OPTION_ENABLED(DEBUG_LEVELING_FEATURE)
               if (DEBUGGING(MESH_ADJUST)) {
                 SERIAL_ECHOPAIR("??? Yikes!  NAN in get_z_correction(", lx0);
                 SERIAL_CHAR(',');
@@ -310,7 +310,7 @@
          *  Returns 1.0 if g29_correction_fade_height is 0.0.
          *  Returns 0.0 if Z is past the specified 'Fade Height'.
          */
-        #if ENABLED(ENABLE_LEVELING_FADE_HEIGHT)
+        #if OPTION_ENABLED(ENABLE_LEVELING_FADE_HEIGHT)
 
           static FORCE_INLINE float fade_scaling_factor_for_z(const float &lz) {
             if (state.g29_correction_fade_height == 0.0) return 1.0;

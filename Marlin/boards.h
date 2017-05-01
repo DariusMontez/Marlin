@@ -116,6 +116,7 @@
 #define BOARD_RAMPS4DUE_EEF    1546  // RAMPS4DUE (Power outputs: Hotend0, Hotend1, Fan)
 #define BOARD_RAMPS4DUE_SF     1548  // RAMPS4DUE (Power outputs: Spindle, Controller Fan)
 #define BOARD_ALLIGATOR        1602  // Alligator Board R2
+#define BOARD_ESP32            1701
 
 #define MB(board) (MOTHERBOARD==BOARD_##board)
 

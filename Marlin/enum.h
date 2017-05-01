@@ -111,7 +111,7 @@ enum TempState {
   StartupDelay // Startup, delay initial temp reading a tiny bit so the hardware can settle
 };
 
-#if ENABLED(EMERGENCY_PARSER)
+#if OPTION_ENABLED(EMERGENCY_PARSER)
   enum e_parser_state {
     state_RESET,
     state_N,
@@ -128,14 +128,14 @@ enum TempState {
   };
 #endif
 
-#if ENABLED(FILAMENT_CHANGE_FEATURE)
+#if OPTION_ENABLED(FILAMENT_CHANGE_FEATURE)
   enum FilamentChangeMenuResponse {
     FILAMENT_CHANGE_RESPONSE_WAIT_FOR,
     FILAMENT_CHANGE_RESPONSE_EXTRUDE_MORE,
     FILAMENT_CHANGE_RESPONSE_RESUME_PRINT
   };
 
-  #if ENABLED(ULTIPANEL)
+  #if OPTION_ENABLED(ULTIPANEL)
     enum FilamentChangeMessage {
       FILAMENT_CHANGE_MESSAGE_INIT,
       FILAMENT_CHANGE_MESSAGE_UNLOAD,
@@ -155,7 +155,7 @@ enum TempState {
  * States for managing Marlin and host communication
  * Marlin sends messages if blocked or busy
  */
-#if ENABLED(HOST_KEEPALIVE_FEATURE)
+#if OPTION_ENABLED(HOST_KEEPALIVE_FEATURE)
   enum MarlinBusyState {
     NOT_BUSY,           // Not in a handler
     IN_HANDLER,         // Processing a GCode
@@ -181,7 +181,7 @@ enum LCDViewAction {
   LCDVIEW_CALL_NO_REDRAW
 };
 
-#if ENABLED(DUAL_X_CARRIAGE)
+#if OPTION_ENABLED(DUAL_X_CARRIAGE)
   enum DualXMode {
     DXC_FULL_CONTROL_MODE,
     DXC_AUTO_PARK_MODE,

@@ -39,7 +39,7 @@
   #define AVR_MOSI_PIN 51
   #define AVR_SS_PIN   53
 #elif defined(__AVR_AT90USB1287__) || defined(__AVR_AT90USB1286__) || defined(__AVR_AT90USB646__) || defined(__AVR_AT90USB647__)
-  #if ENABLED(AT90USBxx_TEENSYPP_ASSIGNMENTS)
+  #if OPTION_ENABLED(AT90USBxx_TEENSYPP_ASSIGNMENTS)
     // Teensy pin assignments
     #define AVR_SCK_PIN  21
     #define AVR_MISO_PIN 23

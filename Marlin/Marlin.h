@@ -39,21 +39,21 @@
 
 #include "WString.h"
 
-#if ENABLED(PRINTCOUNTER)
+#if OPTION_ENABLED(PRINTCOUNTER)
   #include "printcounter.h"
 #else
   #include "stopwatch.h"
 #endif
 
 void idle(
-  #if ENABLED(FILAMENT_CHANGE_FEATURE)
+  #if OPTION_ENABLED(FILAMENT_CHANGE_FEATURE)
     bool no_stepper_sleep = false  // pass true to keep steppers from disabling on timeout
   #endif
 );
 
 void manage_inactivity(bool ignore_stepper_queue = false);
 
-#if ENABLED(DUAL_X_CARRIAGE) || ENABLED(DUAL_NOZZLE_DUPLICATION_MODE)
+#if OPTION_ENABLED(DUAL_X_CARRIAGE) || OPTION_ENABLED(DUAL_NOZZLE_DUPLICATION_MODE)
   extern bool extruder_duplication_enabled;
 #endif
 
@@ -90,7 +90,7 @@ void manage_inactivity(bool ignore_stepper_queue = false);
   #define disable_z() NOOP
 #endif
 
-#if ENABLED(MIXING_EXTRUDER)
+#if OPTION_ENABLED(MIXING_EXTRUDER)
 
   /**
    * Mixing steppers synchronize their enable (and direction) together
@@ -148,7 +148,7 @@ void manage_inactivity(bool ignore_stepper_queue = false);
 
 #endif // !MIXING_EXTRUDER
 
-#if ENABLED(G38_PROBE_TARGET)
+#if OPTION_ENABLED(G38_PROBE_TARGET)
   extern bool G38_move,        // flag to tell the interrupt handler that a G38 command is being run
               G38_endstop_hit; // flag from the interrupt handler to indicate if the endstop went active
 #endif
@@ -169,7 +169,7 @@ void kill(const char*);
 
 void quickstop_stepper();
 
-#if ENABLED(FILAMENT_RUNOUT_SENSOR)
+#if OPTION_ENABLED(FILAMENT_RUNOUT_SENSOR)
   void handle_filament_runout();
 #endif
 
@@ -187,7 +187,7 @@ void clear_command_queue();
 extern millis_t previous_cmd_ms;
 inline void refresh_cmd_timeout() { previous_cmd_ms = millis(); }
 
-#if ENABLED(FAST_PWM_FAN)
+#if OPTION_ENABLED(FAST_PWM_FAN)
   void setPwmFrequency(uint8_t pin, int val);
 #endif
 
@@ -209,14 +209,14 @@ extern bool axis_known_position[XYZ]; // axis[n].is_known
 extern bool axis_homed[XYZ]; // axis[n].is_homed
 extern volatile bool wait_for_heatup;
 
-#if ENABLED(EMERGENCY_PARSER) || ENABLED(ULTIPANEL)
+#if OPTION_ENABLED(EMERGENCY_PARSER) || OPTION_ENABLED(ULTIPANEL)
   extern volatile bool wait_for_user;
 #endif
 
 extern float current_position[NUM_AXIS];
 
 // Workspace offsets
-#if DISABLED(NO_WORKSPACE_OFFSETS)
+#if OPTION_DISABLED(NO_WORKSPACE_OFFSETS)
   extern float position_shift[XYZ],
                home_offset[XYZ],
                workspace_offset[XYZ];
@@ -251,7 +251,7 @@ extern float soft_endstop_max[XYZ];
   #define clamp_to_software_endstops(x) NOOP
 #endif
 
-#if DISABLED(NO_WORKSPACE_OFFSETS) || ENABLED(DUAL_X_CARRIAGE) || ENABLED(DELTA)
+#if OPTION_DISABLED(NO_WORKSPACE_OFFSETS) || OPTION_ENABLED(DUAL_X_CARRIAGE) || OPTION_ENABLED(DELTA)
   void update_software_endstops(const AxisEnum axis);
 #endif
 
@@ -266,7 +266,7 @@ float code_value_temp_diff();
   void inverse_kinematics(const float logical[XYZ]);
 #endif
 
-#if ENABLED(DELTA)
+#if OPTION_ENABLED(DELTA)
   extern float endstop_adj[ABC],
                delta_radius,
                delta_diagonal_rod,
@@ -279,7 +279,7 @@ float code_value_temp_diff();
   void forward_kinematics_SCARA(const float &a, const float &b);
 #endif
 
-#if ENABLED(AUTO_BED_LEVELING_BILINEAR)
+#if OPTION_ENABLED(AUTO_BED_LEVELING_BILINEAR)
   extern int bilinear_grid_spacing[2], bilinear_start[2];
   extern float bed_level_grid[ABL_GRID_MAX_POINTS_X][ABL_GRID_MAX_POINTS_Y];
   float bilinear_z_offset(float logical[XYZ]);
@@ -290,7 +290,7 @@ float code_value_temp_diff();
   void reset_bed_level();
 #endif
 
-#if ENABLED(Z_DUAL_ENDSTOPS)
+#if OPTION_ENABLED(Z_DUAL_ENDSTOPS)
   extern float z_endstop_adj;
 #endif
 
@@ -298,7 +298,7 @@ float code_value_temp_diff();
   extern float zprobe_zoffset;
 #endif
 
-#if ENABLED(HOST_KEEPALIVE_FEATURE)
+#if OPTION_ENABLED(HOST_KEEPALIVE_FEATURE)
   extern MarlinBusyState busy_state;
   #define KEEPALIVE_STATE(n) do{ busy_state = n; }while(0)
 #else
@@ -309,12 +309,12 @@ float code_value_temp_diff();
   extern int fanSpeeds[FAN_COUNT];
 #endif
 
-#if ENABLED(BARICUDA)
+#if OPTION_ENABLED(BARICUDA)
   extern int baricuda_valve_pressure;
   extern int baricuda_e_to_p_pressure;
 #endif
 
-#if ENABLED(FILAMENT_WIDTH_SENSOR)
+#if OPTION_ENABLED(FILAMENT_WIDTH_SENSOR)
   extern bool filament_sensor;         // Flag that filament sensor readings should control extrusion
   extern float filament_width_nominal, // Theoretical filament diameter i.e., 3.00 or 1.75
                filament_width_meas;    // Measured filament diameter
@@ -323,15 +323,15 @@ float code_value_temp_diff();
   extern int meas_delay_cm;            // Delay distance
 #endif
 
-#if ENABLED(FILAMENT_CHANGE_FEATURE)
+#if OPTION_ENABLED(FILAMENT_CHANGE_FEATURE)
   extern FilamentChangeMenuResponse filament_change_menu_response;
 #endif
 
-#if ENABLED(PID_EXTRUSION_SCALING)
+#if OPTION_ENABLED(PID_EXTRUSION_SCALING)
   extern int lpq_len;
 #endif
 
-#if ENABLED(FWRETRACT)
+#if OPTION_ENABLED(FWRETRACT)
   extern bool autoretract_enabled;
   extern bool retracted[EXTRUDERS]; // extruder[n].retracted
   extern float retract_length, retract_length_swap, retract_feedrate_mm_s, retract_zlift;
@@ -339,7 +339,7 @@ float code_value_temp_diff();
 #endif
 
 // Print job timer
-#if ENABLED(PRINTCOUNTER)
+#if OPTION_ENABLED(PRINTCOUNTER)
   extern PrintCounter print_job_timer;
 #else
   extern Stopwatch print_job_timer;
@@ -352,7 +352,7 @@ extern uint8_t active_extruder;
   void print_heaterstates();
 #endif
 
-#if ENABLED(MIXING_EXTRUDER)
+#if OPTION_ENABLED(MIXING_EXTRUDER)
   extern float mixing_factor[MIXING_STEPPERS];
 #endif
 
@@ -366,7 +366,7 @@ void do_blocking_move_to_x(const float &x, const float &fr_mm_s=0.0);
 void do_blocking_move_to_z(const float &z, const float &fr_mm_s=0.0);
 void do_blocking_move_to_xy(const float &x, const float &y, const float &fr_mm_s=0.0);
 
-#if ENABLED(Z_PROBE_ALLEN_KEY) || ENABLED(Z_PROBE_SLED) || HAS_PROBING_PROCEDURE || HOTENDS > 1 || ENABLED(NOZZLE_CLEAN_FEATURE) || ENABLED(NOZZLE_PARK_FEATURE)
+#if OPTION_ENABLED(Z_PROBE_ALLEN_KEY) || OPTION_ENABLED(Z_PROBE_SLED) || HAS_PROBING_PROCEDURE || HOTENDS > 1 || OPTION_ENABLED(NOZZLE_CLEAN_FEATURE) || OPTION_ENABLED(NOZZLE_PARK_FEATURE)
   bool axis_unhomed_error(const bool x, const bool y, const bool z);
 #endif
 

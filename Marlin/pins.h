@@ -225,14 +225,14 @@
   #include "pins_RAMPS4DUE.h"
 #elif MB(ALLIGATOR)
   #include "pins_ALLIGATOR_R2.h"
-#elif MB(99)
-  #include "pins_99.h"
 #elif MB(AJ4P)
   #include "pins_AJ4P.h"
 #elif MB(MKS_13)
   #include "pins_MKS_13.h"
 #elif MB(SAINSMART_2IN1)
   #include "pins_SAINSMART_2IN1.h"
+#elif MB(ESP32)
+  #include "pins_ESP32.h"
 #else
   #error "Unknown MOTHERBOARD value set in Configuration.h"
 #endif
@@ -407,7 +407,7 @@
       #endif
     #endif
   #endif
-#elif ENABLED(MIXING_EXTRUDER)
+#elif OPTION_ENABLED(MIXING_EXTRUDER)
   #undef _E1_PINS
   #define _E1_PINS E1_STEP_PIN, E1_DIR_PIN, E1_ENABLE_PIN,
   #if MIXING_STEPPERS > 2
@@ -462,37 +462,37 @@
 //
 // Disable unused endstop / probe pins
 //
-#if DISABLED(Z_MIN_PROBE_ENDSTOP)
+#if OPTION_DISABLED(Z_MIN_PROBE_ENDSTOP)
   #undef Z_MIN_PROBE_PIN
   #define Z_MIN_PROBE_PIN    -1
 #endif
 
-#if DISABLED(USE_XMAX_PLUG)
+#if OPTION_DISABLED(USE_XMAX_PLUG)
   #undef X_MAX_PIN
   #define X_MAX_PIN          -1
 #endif
 
-#if DISABLED(USE_YMAX_PLUG)
+#if OPTION_DISABLED(USE_YMAX_PLUG)
   #undef Y_MAX_PIN
   #define Y_MAX_PIN          -1
 #endif
 
-#if DISABLED(USE_ZMAX_PLUG)
+#if OPTION_DISABLED(USE_ZMAX_PLUG)
   #undef Z_MAX_PIN
   #define Z_MAX_PIN          -1
 #endif
 
-#if DISABLED(USE_XMIN_PLUG)
+#if OPTION_DISABLED(USE_XMIN_PLUG)
   #undef X_MIN_PIN
   #define X_MIN_PIN          -1
 #endif
 
-#if DISABLED(USE_YMIN_PLUG)
+#if OPTION_DISABLED(USE_YMIN_PLUG)
   #undef Y_MIN_PIN
   #define Y_MIN_PIN          -1
 #endif
 
-#if DISABLED(USE_ZMIN_PLUG)
+#if OPTION_DISABLED(USE_ZMIN_PLUG)
   #undef Z_MIN_PIN
   #define Z_MIN_PIN          -1
 #endif
@@ -509,7 +509,7 @@
 #define _EPIN(p,q) __EPIN(p,q)
 
 // The X2 axis, if any, should be the next open extruder port
-#if ENABLED(DUAL_X_CARRIAGE) || ENABLED(X_DUAL_STEPPER_DRIVERS)
+#if OPTION_ENABLED(DUAL_X_CARRIAGE) || OPTION_ENABLED(X_DUAL_STEPPER_DRIVERS)
   #ifndef X2_STEP_PIN
     #define X2_STEP_PIN   _EPIN(E_STEPPERS, STEP)
     #define X2_DIR_PIN    _EPIN(E_STEPPERS, DIR)
@@ -523,7 +523,7 @@
 #endif
 
 // The Y2 axis, if any, should be the next open extruder port
-#if ENABLED(Y_DUAL_STEPPER_DRIVERS)
+#if OPTION_ENABLED(Y_DUAL_STEPPER_DRIVERS)
   #ifndef Y2_STEP_PIN
     #define Y2_STEP_PIN   _EPIN(Y2_E_INDEX, STEP)
     #define Y2_DIR_PIN    _EPIN(Y2_E_INDEX, DIR)
@@ -537,7 +537,7 @@
 #endif
 
 // The Z2 axis, if any, should be the next open extruder port
-#if ENABLED(Z_DUAL_STEPPER_DRIVERS)
+#if OPTION_ENABLED(Z_DUAL_STEPPER_DRIVERS)
   #ifndef Z2_STEP_PIN
     #define Z2_STEP_PIN   _EPIN(Z2_E_INDEX, STEP)
     #define Z2_DIR_PIN    _EPIN(Z2_E_INDEX, DIR)

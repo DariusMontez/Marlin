@@ -52,9 +52,9 @@
 //=============================Thermal Settings  ============================
 //===========================================================================
 
-#if DISABLED(PIDTEMPBED)
+#if OPTION_DISABLED(PIDTEMPBED)
   #define BED_CHECK_INTERVAL 5000 // ms between checks in bang-bang control
-  #if ENABLED(BED_LIMIT_SWITCHING)
+  #if OPTION_ENABLED(BED_LIMIT_SWITCHING)
     #define BED_HYSTERESIS 2 // Only disable heating if T>target+BED_HYSTERESIS and enable heating if T>target-BED_HYSTERESIS
   #endif
 #endif
@@ -73,7 +73,7 @@
  *
  * If you get false positives for "Thermal Runaway" increase THERMAL_PROTECTION_HYSTERESIS and/or THERMAL_PROTECTION_PERIOD
  */
-#if ENABLED(THERMAL_PROTECTION_HOTENDS)
+#if OPTION_ENABLED(THERMAL_PROTECTION_HOTENDS)
   #define THERMAL_PROTECTION_PERIOD 40        // Seconds
   #define THERMAL_PROTECTION_HYSTERESIS 4     // Degrees Celsius
 
@@ -93,7 +93,7 @@
 /**
  * Thermal Protection parameters for the bed are just as above for hotends.
  */
-#if ENABLED(THERMAL_PROTECTION_BED)
+#if OPTION_ENABLED(THERMAL_PROTECTION_BED)
   #define THERMAL_PROTECTION_BED_PERIOD 20    // Seconds
   #define THERMAL_PROTECTION_BED_HYSTERESIS 2 // Degrees Celsius
 
@@ -110,11 +110,11 @@
   #define WATCH_BED_TEMP_INCREASE 2               // Degrees Celsius
 #endif
 
-#if ENABLED(PIDTEMP)
+#if OPTION_ENABLED(PIDTEMP)
   // this adds an experimental additional term to the heating power, proportional to the extrusion speed.
   // if Kc is chosen well, the additional required power due to increased melting should be compensated.
   //#define PID_EXTRUSION_SCALING
-  #if ENABLED(PID_EXTRUSION_SCALING)
+  #if OPTION_ENABLED(PID_EXTRUSION_SCALING)
     #define DEFAULT_Kc (100) //heating power=Kc*(e_speed)
     #define LPQ_MAX_LEN 50
   #endif
@@ -131,7 +131,7 @@
  * On an Ultimaker, some initial testing worked with M109 S215 B260 F1 in the start.gcode
  */
 #define AUTOTEMP
-#if ENABLED(AUTOTEMP)
+#if OPTION_ENABLED(AUTOTEMP)
   #define AUTOTEMP_OLDWEIGHT 0.98
 #endif
 
@@ -172,7 +172,7 @@
 // If the machine is idle and the temperature over MINTEMP
 // then extrude some filament every couple of SECONDS.
 //#define EXTRUDER_RUNOUT_PREVENT
-#if ENABLED(EXTRUDER_RUNOUT_PREVENT)
+#if OPTION_ENABLED(EXTRUDER_RUNOUT_PREVENT)
   #define EXTRUDER_RUNOUT_MINTEMP 190
   #define EXTRUDER_RUNOUT_SECONDS 30
   #define EXTRUDER_RUNOUT_SPEED 1500  // mm/m
@@ -250,7 +250,7 @@
 // Uncomment this option to drive two X axis motors.
 // The next unused E driver will be assigned to the second X stepper.
 //#define X_DUAL_STEPPER_DRIVERS
-#if ENABLED(X_DUAL_STEPPER_DRIVERS)
+#if OPTION_ENABLED(X_DUAL_STEPPER_DRIVERS)
   // Set true if the two X motors need to rotate in opposite directions
   #define INVERT_X2_VS_X_DIR true
 #endif
@@ -260,7 +260,7 @@
 // Uncomment this option to drive two Y axis motors.
 // The next unused E driver will be assigned to the second Y stepper.
 //#define Y_DUAL_STEPPER_DRIVERS
-#if ENABLED(Y_DUAL_STEPPER_DRIVERS)
+#if OPTION_ENABLED(Y_DUAL_STEPPER_DRIVERS)
   // Set true if the two Y motors need to rotate in opposite directions
   #define INVERT_Y2_VS_Y_DIR true
 #endif
@@ -270,7 +270,7 @@
 // The next unused E driver will be assigned to the second Z stepper.
 //#define Z_DUAL_STEPPER_DRIVERS
 
-#if ENABLED(Z_DUAL_STEPPER_DRIVERS)
+#if OPTION_ENABLED(Z_DUAL_STEPPER_DRIVERS)
 
   // Z_DUAL_ENDSTOPS is a feature to enable the use of 2 endstops for both Z steppers - Let's call them Z stepper and Z2 stepper.
   // That way the machine is capable to align the bed during home, since both Z steppers are homed.
@@ -283,7 +283,7 @@
 
   //#define Z_DUAL_ENDSTOPS
 
-  #if ENABLED(Z_DUAL_ENDSTOPS)
+  #if OPTION_ENABLED(Z_DUAL_ENDSTOPS)
     #define Z2_USE_ENDSTOP _XMAX_
   #endif
 
@@ -294,7 +294,7 @@
 // prevents hot-end ooze contaminating the print. It also reduces the weight of each x-carriage
 // allowing faster printing speeds. Connect your X2 stepper to the first unused E plug.
 //#define DUAL_X_CARRIAGE
-#if ENABLED(DUAL_X_CARRIAGE)
+#if OPTION_ENABLED(DUAL_X_CARRIAGE)
   // Configuration for second X-carriage
   // Note: the first x-carriage is defined as the x-carriage which homes to the minimum endstop;
   // the second x-carriage always homes to the maximum endstop.
@@ -367,7 +367,7 @@
 
 // @section lcd
 
-#if ENABLED(ULTIPANEL)
+#if OPTION_ENABLED(ULTIPANEL)
   #define MANUAL_FEEDRATE {50*60, 50*60, 4*60, 60} // Feedrates for manual moves along X, Y, Z, E from panel
   #define ULTIPANEL_FEEDMULTIPLY  // Comment to disable setting feedrate multiplier via encoder
 #endif
@@ -425,7 +425,7 @@
 // On the Info Screen, display XY with one decimal place when possible
 //#define LCD_DECIMAL_SMALL_XY
 
-#if ENABLED(SDSUPPORT)
+#if OPTION_ENABLED(SDSUPPORT)
 
   // Some RAMPS and other boards don't detect when an SD card is inserted. You can work
   // around this by connecting a push button or single throw switch to the pin defined
@@ -468,7 +468,7 @@
   //#define SDCARD_SORT_ALPHA
 
   // SD Card Sorting options
-  #if ENABLED(SDCARD_SORT_ALPHA)
+  #if OPTION_ENABLED(SDCARD_SORT_ALPHA)
     #define SDSORT_LIMIT       40     // Maximum number of sorted items (10-256).
     #define FOLDER_SORTING     -1     // -1=above  0=none  1=below
     #define SDSORT_GCODE       false  // Allow turning sorting on/off with LCD and M34 g-code.
@@ -481,7 +481,7 @@
   // Show a progress bar on HD44780 LCDs for SD printing
   //#define LCD_PROGRESS_BAR
 
-  #if ENABLED(LCD_PROGRESS_BAR)
+  #if OPTION_ENABLED(LCD_PROGRESS_BAR)
     // Amount of time (ms) to show the bar
     #define PROGRESS_BAR_BAR_TIME 2000
     // Amount of time (ms) to show the status message
@@ -516,7 +516,7 @@
  * controller events, as there is a trade-off between reliable
  * printing performance versus fast display updates.
  */
-#if ENABLED(DOGLCD)
+#if OPTION_ENABLED(DOGLCD)
   // Enable to save many cycles by drawing a hollow frame on the Info Screen
   #define XYZ_HOLLOW_FRAME
 
@@ -542,7 +542,7 @@
 // in case the firmware gets stuck and doesn't do temperature regulation.
 #define USE_WATCHDOG
 
-#if ENABLED(USE_WATCHDOG)
+#if OPTION_ENABLED(USE_WATCHDOG)
   // If you have a watchdog reboot in an ArduinoMega2560 then the device will hang forever, as a watchdog reset will leave the watchdog on.
   // The "WATCHDOG_RESET_MANUAL" goes around this by not using the hardware reset.
   //  However, THIS FEATURE IS UNSAFE!, as it will only work if interrupts are disabled. And the code could hang in an interrupt routine with interrupts disabled.
@@ -555,7 +555,7 @@
 // it can e.g. be used to change z-positions in the print startup phase in real-time
 // does not respect endstops!
 //#define BABYSTEPPING
-#if ENABLED(BABYSTEPPING)
+#if OPTION_ENABLED(BABYSTEPPING)
   #define BABYSTEP_XY  //not only z, but also XY in the menu. more clutter, more functions
                        //not implemented for deltabots!
   #define BABYSTEP_INVERT_Z false  //true for inverse movements in Z
@@ -573,7 +573,7 @@
 // so: v ^ 2 is proportional to number of steps we advance the extruder
 //#define ADVANCE
 
-#if ENABLED(ADVANCE)
+#if OPTION_ENABLED(ADVANCE)
   #define EXTRUDER_ADVANCE_K .0
   #define D_FILAMENT 2.85
 #endif
@@ -587,7 +587,7 @@
  */
 //#define LIN_ADVANCE
 
-#if ENABLED(LIN_ADVANCE)
+#if OPTION_ENABLED(LIN_ADVANCE)
   #define LIN_ADVANCE_K 75
 
   /**
@@ -621,7 +621,7 @@
 // Default mesh area is an area with an inset margin on the print area.
 // Below are the macros that are used to define the borders for the mesh area,
 // made available here for specialized needs, ie dual extruder setup.
-#if ENABLED(MESH_BED_LEVELING)
+#if OPTION_ENABLED(MESH_BED_LEVELING)
   #define MESH_MIN_X (X_MIN_POS + MESH_INSET)
   #define MESH_MAX_X (X_MAX_POS - (MESH_INSET))
   #define MESH_MIN_Y (Y_MIN_POS + MESH_INSET)
@@ -640,7 +640,7 @@
 
 // G38.2 and G38.3 Probe Target
 //#define G38_PROBE_TARGET
-#if ENABLED(G38_PROBE_TARGET)
+#if OPTION_ENABLED(G38_PROBE_TARGET)
   #define G38_MINIMUM_MOVE 0.0275 // minimum distance in mm that will produce a move (determined using the print statement in check_move)
 #endif
 
@@ -664,7 +664,7 @@
 
 // The number of linear motions that can be in the plan at any give time.
 // THE BLOCK_BUFFER_SIZE NEEDS TO BE A POWER OF 2, i.g. 8,16,32 because shifts and ors are used to do the ring-buffering.
-#if ENABLED(SDSUPPORT)
+#if OPTION_ENABLED(SDSUPPORT)
   #define BLOCK_BUFFER_SIZE 16 // SD,LCD,Buttons take more memory, block buffer needs to be smaller
 #else
   #define BLOCK_BUFFER_SIZE 16 // maximize block buffer
@@ -709,7 +709,7 @@
 // the moves are than replaced by the firmware controlled ones.
 
 //#define FWRETRACT  //ONLY PARTIALLY TESTED
-#if ENABLED(FWRETRACT)
+#if OPTION_ENABLED(FWRETRACT)
   #define MIN_RETRACT 0.1                //minimum extruded mm to accept a automatic gcode retraction attempt
   #define RETRACT_LENGTH 3               //default retract length (positive mm)
   #define RETRACT_LENGTH_SWAP 13         //default swap retract length (positive mm), for extruder change
@@ -729,7 +729,7 @@
  * This feature is required for the default FILAMENT_RUNOUT_SCRIPT.
  */
 //#define FILAMENT_CHANGE_FEATURE
-#if ENABLED(FILAMENT_CHANGE_FEATURE)
+#if OPTION_ENABLED(FILAMENT_CHANGE_FEATURE)
   #define FILAMENT_CHANGE_X_POS 3             // X position of hotend
   #define FILAMENT_CHANGE_Y_POS 3             // Y position of hotend
   #define FILAMENT_CHANGE_Z_ADD 10            // Z addition of hotend (lift)
@@ -768,7 +768,7 @@
  */
 //#define HAVE_TMCDRIVER
 
-#if ENABLED(HAVE_TMCDRIVER)
+#if OPTION_ENABLED(HAVE_TMCDRIVER)
 
   //#define X_IS_TMC
   //#define X2_IS_TMC
@@ -837,7 +837,7 @@
  */
 //#define HAVE_TMC2130
 
-#if ENABLED(HAVE_TMC2130)
+#if OPTION_ENABLED(HAVE_TMC2130)
   #define STEALTHCHOP
 
   /**
@@ -924,7 +924,7 @@
    */
   #define  TMC2130_ADV() {  }
 
-#endif // ENABLED(HAVE_TMC2130)
+#endif // OPTION_ENABLED(HAVE_TMC2130)
 
 // @section L6470
 
@@ -935,7 +935,7 @@
  */
 
 //#define HAVE_L6470DRIVER
-#if ENABLED(HAVE_L6470DRIVER)
+#if OPTION_ENABLED(HAVE_L6470DRIVER)
 
   //#define X_IS_L6470
   //#define X2_IS_L6470

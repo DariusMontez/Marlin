@@ -127,7 +127,7 @@ class Buzzer {
         this->state.endtime = now + this->state.tone.duration;
 
         if (this->state.tone.frequency > 0) {
-          #if ENABLED(SPEAKER)
+          #if OPTION_ENABLED(SPEAKER)
             CRITICAL_SECTION_START;
             ::tone(BEEPER_PIN, this->state.tone.frequency, this->state.tone.duration);
             CRITICAL_SECTION_END;

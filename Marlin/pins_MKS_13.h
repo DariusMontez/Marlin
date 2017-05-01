@@ -46,7 +46,7 @@
 //
 // LCD / Controller
 //
-#if ENABLED(VIKI2) || ENABLED(miniVIKI)
+#if OPTION_ENABLED(VIKI2) || OPTION_ENABLED(miniVIKI)
   /**
    * VIKI2 Has two groups of wires with...
    *

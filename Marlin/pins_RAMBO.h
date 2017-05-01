@@ -63,7 +63,7 @@
   #define Z_MIN_PROBE_PIN  30
 #endif
 
-#if ENABLED(Z_PROBE_SLED)
+#if OPTION_ENABLED(Z_PROBE_SLED)
   #define SLED_PIN         -1
 #endif
 
@@ -145,11 +145,11 @@
 //
 // LCD / Controller
 //
-#if ENABLED(ULTRA_LCD)
+#if OPTION_ENABLED(ULTRA_LCD)
 
   #define KILL_PIN 80
 
-  #if ENABLED(NEWPANEL)
+  #if OPTION_ENABLED(NEWPANEL)
 
     #define LCD_PINS_RS 70
     #define LCD_PINS_ENABLE 71
@@ -158,7 +158,7 @@
     #define LCD_PINS_D6 74
     #define LCD_PINS_D7 75
 
-    #if ENABLED(VIKI2) || ENABLED(miniVIKI)
+    #if OPTION_ENABLED(VIKI2) || OPTION_ENABLED(miniVIKI)
       #define BEEPER_PIN 44
       // NB: Panucatt's Viki 2.0 wiring diagram (v1.2) indicates that the
       //     beeper/buzzer is connected to pin 33; however, the pin used in the

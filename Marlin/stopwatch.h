@@ -103,7 +103,7 @@ class Stopwatch {
      */
     millis_t duration();
 
-    #if ENABLED(DEBUG_STOPWATCH)
+    #if OPTION_ENABLED(DEBUG_STOPWATCH)
 
       /**
        * @brief Prints a debug message

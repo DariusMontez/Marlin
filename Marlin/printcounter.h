@@ -50,7 +50,7 @@ class PrintCounter: public Stopwatch {
      * @brief EEPROM address
      * @details Defines the start offset address where the data is stored.
      */
-    #if ENABLED(I2C_EEPROM) || ENABLED(SPI_EEPROM)
+    #if OPTION_ENABLED(I2C_EEPROM) || OPTION_ENABLED(SPI_EEPROM)
       // round up address to next page boundary (assuming 32 byte pages)
       const uint32_t address = 0x40;
     #elif defined(CPU_32_BIT)
@@ -166,7 +166,7 @@ class PrintCounter: public Stopwatch {
     bool stop();
     void reset();
 
-    #if ENABLED(DEBUG_PRINTCOUNTER)
+    #if OPTION_ENABLED(DEBUG_PRINTCOUNTER)
 
       /**
        * @brief Prints a debug message

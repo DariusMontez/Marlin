@@ -28,13 +28,13 @@
 void Config_ResetDefault();
 bool Config_StoreSettings();
 
-#if DISABLED(DISABLE_M503)
+#if OPTION_DISABLED(DISABLE_M503)
   void Config_PrintSettings(bool forReplay=false);
 #else
   FORCE_INLINE void Config_PrintSettings(bool forReplay=false) {}
 #endif
 
-#if ENABLED(EEPROM_SETTINGS)
+#if OPTION_ENABLED(EEPROM_SETTINGS)
   bool Config_RetrieveSettings();
 #else
   FORCE_INLINE bool Config_RetrieveSettings() { Config_ResetDefault(); Config_PrintSettings(); return true; }

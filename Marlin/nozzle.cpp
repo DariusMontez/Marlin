@@ -16,9 +16,9 @@ void Nozzle::stroke(
   __attribute__((unused)) point_t const &end,
   __attribute__((unused)) uint8_t const &strokes
 ) {
-  #if ENABLED(NOZZLE_CLEAN_FEATURE)
+  #if OPTION_ENABLED(NOZZLE_CLEAN_FEATURE)
 
-    #if ENABLED(NOZZLE_CLEAN_GOBACK)
+    #if OPTION_ENABLED(NOZZLE_CLEAN_GOBACK)
       // Store the current coords
       point_t const initial = {
         current_position[X_AXIS],
@@ -38,7 +38,7 @@ void Nozzle::stroke(
       do_blocking_move_to_xy(start.x, start.y);
     }
 
-    #if ENABLED(NOZZLE_CLEAN_GOBACK)
+    #if OPTION_ENABLED(NOZZLE_CLEAN_GOBACK)
       // Move the nozzle to the initial point
       do_blocking_move_to(initial.x, initial.y, initial.z);
     #endif // NOZZLE_CLEAN_GOBACK
@@ -61,14 +61,14 @@ void Nozzle::zigzag(
   __attribute__((unused)) uint8_t const &strokes,
   __attribute__((unused)) uint8_t const &objects
 ) {
-  #if ENABLED(NOZZLE_CLEAN_FEATURE)
+  #if OPTION_ENABLED(NOZZLE_CLEAN_FEATURE)
     float const A =  nozzle_clean_horizontal ? nozzle_clean_height : nozzle_clean_length, // [twice the] Amplitude
                 P = (nozzle_clean_horizontal ? nozzle_clean_length : nozzle_clean_height) / (objects << 1); // Period
 
     // Don't allow impossible triangles
     if (A <= 0.0f || P <= 0.0f ) return;
 
-    #if ENABLED(NOZZLE_CLEAN_GOBACK)
+    #if OPTION_ENABLED(NOZZLE_CLEAN_GOBACK)
       // Store the current coords
       point_t const initial = {
         current_position[X_AXIS],
@@ -97,7 +97,7 @@ void Nozzle::zigzag(
       }
     }
 
-    #if ENABLED(NOZZLE_CLEAN_GOBACK)
+    #if OPTION_ENABLED(NOZZLE_CLEAN_GOBACK)
       // Move the nozzle to the initial point
       do_blocking_move_to_z(initial.z);
       do_blocking_move_to_xy(initial.x, initial.y);
@@ -121,10 +121,10 @@ void Nozzle::circle(
   __attribute__((unused)) uint8_t const &strokes,
   __attribute__((unused)) float const &radius
 ) {
-  #if ENABLED(NOZZLE_CLEAN_FEATURE)
+  #if OPTION_ENABLED(NOZZLE_CLEAN_FEATURE)
     if (strokes == 0) return;
 
-    #if ENABLED(NOZZLE_CLEAN_GOBACK)
+    #if OPTION_ENABLED(NOZZLE_CLEAN_GOBACK)
       // Store the current coords
       point_t const initial = {
         current_position[X_AXIS],
@@ -156,7 +156,7 @@ void Nozzle::circle(
     // Let's be safe
     do_blocking_move_to_xy(start.x, start.y);
 
-    #if ENABLED(NOZZLE_CLEAN_GOBACK)
+    #if OPTION_ENABLED(NOZZLE_CLEAN_GOBACK)
       // Move the nozzle to the initial point
       if (start.z <= initial.z) {
         // As above order is important
@@ -184,8 +184,8 @@ void Nozzle::clean(
   __attribute__((unused)) float const &radius,
   __attribute__((unused)) uint8_t const &objects
 ) {
-  #if ENABLED(NOZZLE_CLEAN_FEATURE)
-    #if ENABLED(DELTA)
+  #if OPTION_ENABLED(NOZZLE_CLEAN_FEATURE)
+    #if OPTION_ENABLED(DELTA)
       if (current_position[Z_AXIS] > delta_clip_start_height)
         do_blocking_move_to_z(delta_clip_start_height);
     #endif
@@ -213,7 +213,7 @@ void Nozzle::clean(
 void Nozzle::park(
   __attribute__((unused)) uint8_t const &z_action
 ) {
-  #if ENABLED(NOZZLE_PARK_FEATURE)
+  #if OPTION_ENABLED(NOZZLE_PARK_FEATURE)
     float const z = current_position[Z_AXIS];
     point_t const park = NOZZLE_PARK_POINT;
 

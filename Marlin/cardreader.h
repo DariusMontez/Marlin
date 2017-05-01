@@ -25,7 +25,7 @@
 
 #include "MarlinConfig.h"
 
-#if ENABLED(SDSUPPORT)
+#if OPTION_ENABLED(SDSUPPORT)
 
 #define MAX_DIR_DEPTH 10          // Maximum folder depth
 
@@ -55,7 +55,7 @@ public:
   void getStatus();
   void printingHasFinished();
 
-  #if ENABLED(LONG_FILENAME_HOST_SUPPORT)
+  #if OPTION_ENABLED(LONG_FILENAME_HOST_SUPPORT)
     void printLongPath(char *path);
   #endif
 
@@ -69,10 +69,10 @@ public:
   void updir();
   void setroot();
 
-  #if ENABLED(SDCARD_SORT_ALPHA)
+  #if OPTION_ENABLED(SDCARD_SORT_ALPHA)
     void presort();
     void getfilename_sorted(const uint16_t nr);
-    #if ENABLED(SDSORT_GCODE)
+    #if OPTION_ENABLED(SDSORT_GCODE)
       FORCE_INLINE void setSortOn(bool b) { sort_alpha = b; presort(); }
       FORCE_INLINE void setSortFolders(int i) { sort_folders = i; presort(); }
       //FORCE_INLINE void setSortReverse(bool b) { sort_reverse = b; }
@@ -96,41 +96,41 @@ private:
   uint8_t workDirDepth;
 
   // Sort files and folders alphabetically.
-  #if ENABLED(SDCARD_SORT_ALPHA)
+  #if OPTION_ENABLED(SDCARD_SORT_ALPHA)
     uint16_t sort_count;        // Count of sorted items in the current directory
-    #if ENABLED(SDSORT_GCODE)
+    #if OPTION_ENABLED(SDSORT_GCODE)
       bool sort_alpha;          // Flag to enable / disable the feature
       int sort_folders;         // Flag to enable / disable folder sorting
       //bool sort_reverse;      // Flag to enable / disable reverse sorting
     #endif
 
     // By default the sort index is static
-    #if ENABLED(SDSORT_DYNAMIC_RAM)
+    #if OPTION_ENABLED(SDSORT_DYNAMIC_RAM)
       uint8_t *sort_order;
     #else
       uint8_t sort_order[SDSORT_LIMIT];
     #endif
 
     // Cache filenames to speed up SD menus.
-    #if ENABLED(SDSORT_USES_RAM)
+    #if OPTION_ENABLED(SDSORT_USES_RAM)
 
       // If using dynamic ram for names, allocate on the heap.
-      #if ENABLED(SDSORT_CACHE_NAMES)
-        #if ENABLED(SDSORT_DYNAMIC_RAM)
+      #if OPTION_ENABLED(SDSORT_CACHE_NAMES)
+        #if OPTION_ENABLED(SDSORT_DYNAMIC_RAM)
           char **sortshort, **sortnames;
         #else
           char sortshort[SDSORT_LIMIT][FILENAME_LENGTH];
           char sortnames[SDSORT_LIMIT][FILENAME_LENGTH];
         #endif
-      #elif DISABLED(SDSORT_USES_STACK)
+      #elif OPTION_DISABLED(SDSORT_USES_STACK)
         char sortnames[SDSORT_LIMIT][FILENAME_LENGTH];
       #endif
 
       // Folder sorting uses an isDir array when caching items.
       #if HAS_FOLDER_SORTING
-        #if ENABLED(SDSORT_DYNAMIC_RAM)
+        #if OPTION_ENABLED(SDSORT_DYNAMIC_RAM)
           uint8_t *isDir;
-        #elif ENABLED(SDSORT_CACHE_NAMES) || DISABLED(SDSORT_USES_STACK)
+        #elif OPTION_ENABLED(SDSORT_CACHE_NAMES) || OPTION_DISABLED(SDSORT_USES_STACK)
           uint8_t isDir[(SDSORT_LIMIT+7)>>3];
         #endif
       #endif
@@ -159,7 +159,7 @@ private:
   char* diveDirName;
   void lsDive(const char *prepend, SdFile parent, const char * const match=NULL);
 
-  #if ENABLED(SDCARD_SORT_ALPHA)
+  #if OPTION_ENABLED(SDCARD_SORT_ALPHA)
     void flush_presort();
   #endif
 };
@@ -169,7 +169,7 @@ extern CardReader card;
 #define IS_SD_PRINTING (card.sdprinting)
 
 #if PIN_EXISTS(SD_DETECT)
-  #if ENABLED(SD_DETECT_INVERTED)
+  #if OPTION_ENABLED(SD_DETECT_INVERTED)
     #define IS_SD_INSERTED (READ(SD_DETECT_PIN) != 0)
   #else
     #define IS_SD_INSERTED (READ(SD_DETECT_PIN) == 0)

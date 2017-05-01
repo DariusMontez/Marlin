@@ -73,7 +73,7 @@
 // Public functions
 // --------------------------------------------------------------------------
 
-#if ENABLED(SDSUPPORT)
+#if OPTION_ENABLED(SDSUPPORT)
   #include "../../../SdFatUtil.h"
   int freeMemory() { return SdFatUtil::FreeRam(); }
 #else

@@ -33,7 +33,7 @@
 
 #include "../../../Marlin.h"
 
-#if ENABLED(EMERGENCY_PARSER)
+#if OPTION_ENABLED(EMERGENCY_PARSER)
   #include "../../../stepper.h"
 #endif
 
@@ -49,7 +49,7 @@
     #endif
   #endif
 
-  #if ENABLED(EMERGENCY_PARSER)
+  #if OPTION_ENABLED(EMERGENCY_PARSER)
 
     #include "language.h"
 
@@ -155,7 +155,7 @@
       }
     CRITICAL_SECTION_END;
 
-    #if ENABLED(EMERGENCY_PARSER)
+    #if OPTION_ENABLED(EMERGENCY_PARSER)
       emergency_parser(c);
     #endif
   }
@@ -515,6 +515,6 @@
 #endif // !USBCON && (UBRRH || UBRR0H || UBRR1H || UBRR2H || UBRR3H)
 
 // For AT90USB targets use the UART for BT interfacing
-#if defined(USBCON) && ENABLED(BLUETOOTH)
+#if defined(USBCON) && OPTION_ENABLED(BLUETOOTH)
   HardwareSerial bluetoothSerial;
 #endif

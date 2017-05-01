@@ -76,7 +76,7 @@
 #define TEMP_BED_PIN        1   // Analog Input
 
 // SPI for Max6675 or Max31855 Thermocouple
-#if DISABLED(SDSUPPORT)
+#if OPTION_DISABLED(SDSUPPORT)
   #define MAX6675_SS       66 // Do not use pin 53 if there is even the remote possibility of using Display/SD card
 #else
   #define MAX6675_SS       66 // Do not use pin 49 as this is tied to the switch inside the SD card socket to detect if there is an SD card present
@@ -85,7 +85,7 @@
 //
 // Heaters / Fans
 //
-#if ENABLED(RAMPS_V_1_0)
+#if OPTION_ENABLED(RAMPS_V_1_0)
   #define HEATER_0_PIN     12
   #define HEATER_BED_PIN   -1
   #define FAN_PIN          11

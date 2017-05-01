@@ -30,7 +30,7 @@ PrintCounter::PrintCounter(): super() {
 }
 
 millis_t PrintCounter::deltaDuration() {
-  #if ENABLED(DEBUG_PRINTCOUNTER)
+  #if OPTION_ENABLED(DEBUG_PRINTCOUNTER)
     PrintCounter::debug(PSTR("deltaDuration"));
   #endif
 
@@ -44,7 +44,7 @@ bool PrintCounter::isLoaded() {
 }
 
 void PrintCounter::incFilamentUsed(double const &amount) {
-  #if ENABLED(DEBUG_PRINTCOUNTER)
+  #if OPTION_ENABLED(DEBUG_PRINTCOUNTER)
     PrintCounter::debug(PSTR("incFilamentUsed"));
   #endif
 
@@ -56,7 +56,7 @@ void PrintCounter::incFilamentUsed(double const &amount) {
 
 
 void PrintCounter::initStats() {
-  #if ENABLED(DEBUG_PRINTCOUNTER)
+  #if OPTION_ENABLED(DEBUG_PRINTCOUNTER)
     PrintCounter::debug(PSTR("initStats"));
   #endif
 
@@ -68,7 +68,7 @@ void PrintCounter::initStats() {
 }
 
 void PrintCounter::loadStats() {
-  #if ENABLED(DEBUG_PRINTCOUNTER)
+  #if OPTION_ENABLED(DEBUG_PRINTCOUNTER)
     PrintCounter::debug(PSTR("loadStats"));
   #endif
 
@@ -81,7 +81,7 @@ void PrintCounter::loadStats() {
 }
 
 void PrintCounter::saveStats() {
-  #if ENABLED(DEBUG_PRINTCOUNTER)
+  #if OPTION_ENABLED(DEBUG_PRINTCOUNTER)
     PrintCounter::debug(PSTR("saveStats"));
   #endif
 
@@ -118,7 +118,7 @@ void PrintCounter::showStats() {
   SERIAL_ECHOPGM("Total time: ");
   SERIAL_ECHO(buffer);
 
-  #if ENABLED(DEBUG_PRINTCOUNTER)
+  #if OPTION_ENABLED(DEBUG_PRINTCOUNTER)
     SERIAL_ECHOPGM(" (");
     SERIAL_ECHO(this->data.printTime);
     SERIAL_CHAR(')');
@@ -130,7 +130,7 @@ void PrintCounter::showStats() {
   SERIAL_ECHOPGM(", Longest job: ");
   SERIAL_ECHO(buffer);
 
-  #if ENABLED(DEBUG_PRINTCOUNTER)
+  #if OPTION_ENABLED(DEBUG_PRINTCOUNTER)
     SERIAL_ECHOPGM(" (");
     SERIAL_ECHO(this->data.longestPrint);
     SERIAL_CHAR(')');
@@ -158,7 +158,7 @@ void PrintCounter::tick() {
   const static uint16_t i = this->updateInterval * 1000;
 
   if (now - update_last >= i) {
-    #if ENABLED(DEBUG_PRINTCOUNTER)
+    #if OPTION_ENABLED(DEBUG_PRINTCOUNTER)
       PrintCounter::debug(PSTR("tick"));
     #endif
 
@@ -176,7 +176,7 @@ void PrintCounter::tick() {
 
 // @Override
 bool PrintCounter::start() {
-  #if ENABLED(DEBUG_PRINTCOUNTER)
+  #if OPTION_ENABLED(DEBUG_PRINTCOUNTER)
     PrintCounter::debug(PSTR("start"));
   #endif
 
@@ -194,7 +194,7 @@ bool PrintCounter::start() {
 
 // @Override
 bool PrintCounter::stop() {
-  #if ENABLED(DEBUG_PRINTCOUNTER)
+  #if OPTION_ENABLED(DEBUG_PRINTCOUNTER)
     PrintCounter::debug(PSTR("stop"));
   #endif
 
@@ -213,7 +213,7 @@ bool PrintCounter::stop() {
 
 // @Override
 void PrintCounter::reset() {
-  #if ENABLED(DEBUG_PRINTCOUNTER)
+  #if OPTION_ENABLED(DEBUG_PRINTCOUNTER)
     PrintCounter::debug(PSTR("stop"));
   #endif
 
@@ -221,7 +221,7 @@ void PrintCounter::reset() {
   this->lastDuration = 0;
 }
 
-#if ENABLED(DEBUG_PRINTCOUNTER)
+#if OPTION_ENABLED(DEBUG_PRINTCOUNTER)
 
   void PrintCounter::debug(const char func[]) {
     if (DEBUGGING(INFO)) {

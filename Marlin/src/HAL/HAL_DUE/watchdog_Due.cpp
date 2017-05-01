@@ -24,7 +24,7 @@
  
 #include "../../../MarlinConfig.h"
 
-#if ENABLED(USE_WATCHDOG)
+#if OPTION_ENABLED(USE_WATCHDOG)
 
   #include "watchdog_Due.h"
 

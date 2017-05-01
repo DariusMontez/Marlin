@@ -22,7 +22,7 @@
 
 #include "Marlin.h"
 
-#if ENABLED(MESH_BED_LEVELING)
+#if OPTION_ENABLED(MESH_BED_LEVELING)
 
   enum MeshLevelingState {
     MeshReport,
@@ -103,7 +103,7 @@
     }
 
     static float get_z(const float &x0, const float &y0
-      #if ENABLED(ENABLE_LEVELING_FADE_HEIGHT)
+      #if OPTION_ENABLED(ENABLE_LEVELING_FADE_HEIGHT)
         , const float &factor
       #endif
     ) {
@@ -113,7 +113,7 @@
                   z0 = calc_z0(y0, index_to_ypos[cy], z1, index_to_ypos[cy + 1], z2);
 
       return z_offset + z0
-        #if ENABLED(ENABLE_LEVELING_FADE_HEIGHT)
+        #if OPTION_ENABLED(ENABLE_LEVELING_FADE_HEIGHT)
           * factor
         #endif
       ;

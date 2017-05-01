@@ -25,7 +25,7 @@
 
 #include "Marlin.h"
 
-#if ENABLED(ULTRA_LCD)
+#if OPTION_ENABLED(ULTRA_LCD)
 
   #define BUTTON_EXISTS(BN) (defined(BTN_## BN) && BTN_## BN >= 0)
   #define BUTTON_PRESSED(BN) !READ(BTN_## BN)
@@ -50,14 +50,14 @@
     void lcd_buzz(long duration, uint16_t freq);
   #endif
 
-  #if ENABLED(LCD_PROGRESS_BAR) && PROGRESS_MSG_EXPIRE > 0
+  #if OPTION_ENABLED(LCD_PROGRESS_BAR) && PROGRESS_MSG_EXPIRE > 0
     void dontExpireStatus();
   #endif
 
-  #if ENABLED(DOGLCD)
+  #if OPTION_ENABLED(DOGLCD)
     extern int lcd_contrast;
     void set_lcd_contrast(int value);
-  #elif ENABLED(SHOW_BOOTSCREEN)
+  #elif OPTION_ENABLED(SHOW_BOOTSCREEN)
     void bootscreen();
   #endif
 
@@ -66,7 +66,7 @@
 
   #define LCD_UPDATE_INTERVAL 100
 
-  #if ENABLED(ULTIPANEL)
+  #if OPTION_ENABLED(ULTIPANEL)
 
     #define BLEN_A 0
     #define BLEN_B 1
@@ -83,7 +83,7 @@
     void lcd_quick_feedback();        // Audible feedback for a button click - could also be visual
     void lcd_completion_feedback(const bool good=true);
 
-    #if ENABLED(FILAMENT_CHANGE_FEATURE)
+    #if OPTION_ENABLED(FILAMENT_CHANGE_FEATURE)
       void lcd_filament_change_show_message(const FilamentChangeMessage message);
     #endif // FILAMENT_CHANGE_FEATURE
 
@@ -93,13 +93,13 @@
 
   #endif
 
-  #if ENABLED(FILAMENT_LCD_DISPLAY) && ENABLED(SDSUPPORT)
+  #if OPTION_ENABLED(FILAMENT_LCD_DISPLAY) && OPTION_ENABLED(SDSUPPORT)
     extern millis_t previous_lcd_status_ms;
   #endif
 
   bool lcd_blink();
 
-  #if ENABLED(REPRAPWORLD_KEYPAD) // is also ULTIPANEL and NEWPANEL
+  #if OPTION_ENABLED(REPRAPWORLD_KEYPAD) // is also ULTIPANEL and NEWPANEL
 
     #define REPRAPWORLD_BTN_OFFSET 0 // bit offset into buttons for shift register values
 
@@ -142,7 +142,7 @@
                                             )
 
     #define LCD_CLICKED ((buttons & EN_C) || (buttons_reprapworld_keypad & EN_REPRAPWORLD_KEYPAD_F1))
-  #elif ENABLED(NEWPANEL)
+  #elif OPTION_ENABLED(NEWPANEL)
     #define LCD_CLICKED (buttons & EN_C)
   #else
     #define LCD_CLICKED false
@@ -164,7 +164,7 @@
 
 #endif // ULTRA_LCD
 
-#if ENABLED(AUTO_BED_LEVELING_UBL)
+#if OPTION_ENABLED(AUTO_BED_LEVELING_UBL)
   void lcd_mesh_edit_setup(float initial);
   float lcd_mesh_edit();
   void lcd_z_offset_edit_setup(float);

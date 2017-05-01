@@ -24,7 +24,7 @@
 
 #include "../../MarlinConfig.h"
 
-#if ENABLED(SPI_EEPROM)
+#if OPTION_ENABLED(SPI_EEPROM)
 
 #include "HAL.h"
 
@@ -114,4 +114,4 @@ void eeprom_update_block(const void* src, void* eeprom_address, size_t n) {
 }
 
 
-#endif // ENABLED(SPI_EEPROM)
+#endif // OPTION_ENABLED(SPI_EEPROM)

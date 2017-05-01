@@ -125,7 +125,7 @@
 #define TEMP_BED_PIN       14   // Analog Input
 
 // SPI for Max6675 or Max31855 Thermocouple
-#if DISABLED(SDSUPPORT)
+#if OPTION_DISABLED(SDSUPPORT)
   #define MAX6675_SS       66 // Do not use pin 53 if there is even the remote possibility of using Display/SD card
 #else
   #define MAX6675_SS       66 // Do not use pin 49 as this is tied to the switch inside the SD card socket to detect if there is an SD card present
@@ -134,7 +134,7 @@
 //
 // Augmentation for auto-assigning RAMPS plugs
 //
-#if DISABLED(IS_RAMPS_EEB) && DISABLED(IS_RAMPS_EEF) && DISABLED(IS_RAMPS_EFB) && DISABLED(IS_RAMPS_EFF) && DISABLED(IS_RAMPS_SF) && !PIN_EXISTS(MOSFET_D)
+#if OPTION_DISABLED(IS_RAMPS_EEB) && OPTION_DISABLED(IS_RAMPS_EEF) && OPTION_DISABLED(IS_RAMPS_EFB) && OPTION_DISABLED(IS_RAMPS_EFF) && OPTION_DISABLED(IS_RAMPS_SF) && !PIN_EXISTS(MOSFET_D)
   #if HOTENDS > 1
     #if TEMP_SENSOR_BED
       #define IS_RAMPS_EEB
@@ -166,19 +166,19 @@
 
 #define HEATER_0_PIN     RAMPS_D10_PIN
 
-#if ENABLED(IS_RAMPS_EFB)                      // Hotend, Fan, Bed
+#if OPTION_ENABLED(IS_RAMPS_EFB)                      // Hotend, Fan, Bed
   #define FAN_PIN        RAMPS_D9_PIN
   #define HEATER_BED_PIN RAMPS_D8_PIN
-#elif ENABLED(IS_RAMPS_EEF)                    // Hotend, Hotend, Fan
+#elif OPTION_ENABLED(IS_RAMPS_EEF)                    // Hotend, Hotend, Fan
   #define HEATER_1_PIN   RAMPS_D9_PIN
   #define FAN_PIN        RAMPS_D8_PIN
-#elif ENABLED(IS_RAMPS_EEB)                    // Hotend, Hotend, Bed
+#elif OPTION_ENABLED(IS_RAMPS_EEB)                    // Hotend, Hotend, Bed
   #define HEATER_1_PIN   RAMPS_D9_PIN
   #define HEATER_BED_PIN RAMPS_D8_PIN
-#elif ENABLED(IS_RAMPS_EFF)                    // Hotend, Fan, Fan
+#elif OPTION_ENABLED(IS_RAMPS_EFF)                    // Hotend, Fan, Fan
   #define FAN_PIN        RAMPS_D9_PIN
   #define FAN1_PIN       RAMPS_D8_PIN
-#elif ENABLED(IS_RAMPS_SF)                     // Spindle, Fan
+#elif OPTION_ENABLED(IS_RAMPS_SF)                     // Spindle, Fan
   #define FAN_PIN        RAMPS_D8_PIN
 #else                                          // Non-specific are "EFB" (i.e., "EFBF" or "EFBE")
   #define FAN_PIN        RAMPS_D9_PIN
@@ -211,13 +211,13 @@
 //
 // LCD / Controller
 //
-#if ENABLED(ULTRA_LCD)
+#if OPTION_ENABLED(ULTRA_LCD)
 
-  #if ENABLED(REPRAPWORLD_GRAPHICAL_LCD)
+  #if OPTION_ENABLED(REPRAPWORLD_GRAPHICAL_LCD)
     #define LCD_PINS_RS     49 // CS chip select /SS chip slave select
     #define LCD_PINS_ENABLE 51 // SID (MOSI)
     #define LCD_PINS_D4     52 // SCK (CLK) clock
-  #elif ENABLED(NEWPANEL) && ENABLED(PANEL_ONE)
+  #elif OPTION_ENABLED(NEWPANEL) && OPTION_ENABLED(PANEL_ONE)
     #define LCD_PINS_RS 40
     #define LCD_PINS_ENABLE 42
     #define LCD_PINS_D4 65
@@ -231,7 +231,7 @@
     #define LCD_PINS_D5 25
     #define LCD_PINS_D6 27
     #define LCD_PINS_D7 29
-    #if DISABLED(NEWPANEL)
+    #if OPTION_DISABLED(NEWPANEL)
       #define BEEPER_PIN 33
       // Buttons are attached to a shift register
       // Not wired yet
@@ -242,9 +242,9 @@
     #endif
   #endif
 
-  #if ENABLED(NEWPANEL)
+  #if OPTION_ENABLED(NEWPANEL)
 
-    #if ENABLED(REPRAP_DISCOUNT_SMART_CONTROLLER)
+    #if OPTION_ENABLED(REPRAP_DISCOUNT_SMART_CONTROLLER)
       #define BEEPER_PIN 37
 
       #define BTN_EN1 31
@@ -254,23 +254,23 @@
       #define SD_DETECT_PIN 49
       #define KILL_PIN 41
 
-      #if ENABLED(BQ_LCD_SMART_CONTROLLER)
+      #if OPTION_ENABLED(BQ_LCD_SMART_CONTROLLER)
         #define LCD_BACKLIGHT_PIN 39
       #endif
 
-    #elif ENABLED(REPRAPWORLD_GRAPHICAL_LCD)
+    #elif OPTION_ENABLED(REPRAPWORLD_GRAPHICAL_LCD)
       #define BTN_EN1 64
       #define BTN_EN2 59
       #define BTN_ENC 63
       #define SD_DETECT_PIN 42
-    #elif ENABLED(LCD_I2C_PANELOLU2)
+    #elif OPTION_ENABLED(LCD_I2C_PANELOLU2)
       #define BTN_EN1 47  // reverse if the encoder turns the wrong way.
       #define BTN_EN2 43
       #define BTN_ENC 32
       #define LCD_SDSS 53
       #define SD_DETECT_PIN -1
       #define KILL_PIN 41
-    #elif ENABLED(LCD_I2C_VIKI)
+    #elif OPTION_ENABLED(LCD_I2C_VIKI)
       #define BTN_EN1 22  // reverse if the encoder turns the wrong way.
       #define BTN_EN2 7   // http://files.panucatt.com/datasheets/viki_wiring_diagram.pdf
                           // tells about 40/42.
@@ -278,7 +278,7 @@
       #define BTN_ENC -1
       #define LCD_SDSS 53
       #define SD_DETECT_PIN 49
-    #elif ENABLED(VIKI2) || ENABLED(miniVIKI)
+    #elif OPTION_ENABLED(VIKI2) || OPTION_ENABLED(miniVIKI)
       #define BEEPER_PIN       33
 
       // Pins for DOGM SPI LCD Support
@@ -298,7 +298,7 @@
       #define STAT_LED_RED_PIN 32
       #define STAT_LED_BLUE_PIN 35
 
-    #elif ENABLED(ELB_FULL_GRAPHIC_CONTROLLER)
+    #elif OPTION_ENABLED(ELB_FULL_GRAPHIC_CONTROLLER)
       #define BTN_EN1 35  // reverse if the encoder turns the wrong way.
       #define BTN_EN2 37
       #define BTN_ENC 31
@@ -309,7 +309,7 @@
       #define DOGLCD_CS 29
       #define DOGLCD_A0 27
       #define LCD_BACKLIGHT_PIN 33
-    #elif ENABLED(MINIPANEL)
+    #elif OPTION_ENABLED(MINIPANEL)
       #define BEEPER_PIN 42
       // Pins for DOGM SPI LCD Support
       #define DOGLCD_A0  44
@@ -337,14 +337,14 @@
       #define BEEPER_PIN 33
 
       // buttons are directly attached using AUX-2
-      #if ENABLED(REPRAPWORLD_KEYPAD)
+      #if OPTION_ENABLED(REPRAPWORLD_KEYPAD)
         #define BTN_EN1 64 // encoder
         #define BTN_EN2 59 // encoder
         #define BTN_ENC 63 // enter button
         #define SHIFT_OUT 40 // shift register
         #define SHIFT_CLK 44 // shift register
         #define SHIFT_LD 42 // shift register
-      #elif ENABLED(PANEL_ONE)
+      #elif OPTION_ENABLED(PANEL_ONE)
         #define BTN_EN1 59 // AUX2 PIN 3
         #define BTN_EN2 63 // AUX2 PIN 4
         #define BTN_ENC 49 // AUX3 PIN 7
@@ -354,7 +354,7 @@
         #define BTN_ENC 31 // the click
       #endif
 
-      #if ENABLED(G3D_PANEL)
+      #if OPTION_ENABLED(G3D_PANEL)
         #define SD_DETECT_PIN 49
         #define KILL_PIN 41
       #else

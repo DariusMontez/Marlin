@@ -224,7 +224,7 @@ class TWIBus {
 
     #endif
 
-    #if ENABLED(DEBUG_TWIBUS)
+    #if OPTION_ENABLED(DEBUG_TWIBUS)
 
       /**
        * @brief Prints a debug message

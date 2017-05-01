@@ -26,7 +26,7 @@
 
 #include "MarlinConfig.h"
 
-#if ENABLED(AUTO_BED_LEVELING_UBL) && ENABLED(UBL_G26_MESH_EDITING)
+#if OPTION_ENABLED(AUTO_BED_LEVELING_UBL) && OPTION_ENABLED(UBL_G26_MESH_EDITING)
 
   #include "Marlin.h"
   #include "Configuration.h"
@@ -118,7 +118,7 @@
 
   extern float feedrate;
   extern Planner planner;
-  //#if ENABLED(ULTRA_LCD)
+  //#if OPTION_ENABLED(ULTRA_LCD)
     extern char lcd_status_message[];
   //#endif
   extern float destination[XYZE];
@@ -236,7 +236,7 @@
     do {
 
       if (ubl_lcd_clicked()) {              // Check if the user wants to stop the Mesh Validation
-        #if ENABLED(ULTRA_LCD)
+        #if OPTION_ENABLED(ULTRA_LCD)
           lcd_setstatuspgm(PSTR("Mesh Validation Stopped."), 99);
           lcd_quick_feedback();
         #endif
@@ -767,7 +767,7 @@
    */
   bool turn_on_heaters() {
     #if HAS_TEMP_BED
-      #if ENABLED(ULTRA_LCD)
+      #if OPTION_ENABLED(ULTRA_LCD)
         if (bed_temp > 25) {
           lcd_setstatuspgm(PSTR("G26 Heating Bed."), 99);
           lcd_quick_feedback();
@@ -778,7 +778,7 @@
             if (ubl_lcd_clicked()) return exit_from_g26();
             idle();
           }
-      #if ENABLED(ULTRA_LCD)
+      #if OPTION_ENABLED(ULTRA_LCD)
         }
         lcd_setstatuspgm(PSTR("G26 Heating Nozzle."), 99);
         lcd_quick_feedback();
@@ -792,7 +792,7 @@
       idle();
     }
 
-    #if ENABLED(ULTRA_LCD)
+    #if OPTION_ENABLED(ULTRA_LCD)
       lcd_reset_alert_level();
       lcd_setstatuspgm(PSTR(""));
       lcd_quick_feedback();
@@ -837,7 +837,7 @@
 
       while (ubl_lcd_clicked()) idle();           // Debounce Encoder Wheel
 
-      #if ENABLED(ULTRA_LCD)
+      #if OPTION_ENABLED(ULTRA_LCD)
         strcpy_P(lcd_status_message, PSTR("Done Priming")); // We can't do lcd_setstatuspgm() without having it continue;
                                                             // So...  We cheat to get a message up.
         lcd_setstatuspgm(PSTR("Done Priming"), 99);
@@ -848,7 +848,7 @@
 
     }
     else {
-      #if ENABLED(ULTRA_LCD)
+      #if OPTION_ENABLED(ULTRA_LCD)
         lcd_setstatuspgm(PSTR("Fixed Length Prime."), 99);
         lcd_quick_feedback();
       #endif

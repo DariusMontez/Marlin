@@ -27,7 +27,7 @@
 #ifdef ARDUINO_ARCH_AVR
   #ifdef USBCON
     #include "HardwareSerial.h"
-    #if ENABLED(BLUETOOTH)
+    #if OPTION_ENABLED(BLUETOOTH)
       #define MYSERIAL bluetoothSerial
     #else
       #define MYSERIAL Serial
@@ -37,6 +37,8 @@
     #define MYSERIAL customizedSerial
   #endif
 #endif
+
+#include "src/HAL/HAL.h"
 
 extern const char echomagic[] PROGMEM;
 extern const char errormagic[] PROGMEM;

@@ -82,7 +82,7 @@ typedef struct {
   int32_t steps[NUM_AXIS];                  // Step count along each axis
   uint32_t step_event_count;                // The number of step events required to complete this block
 
-  #if ENABLED(MIXING_EXTRUDER)
+  #if OPTION_ENABLED(MIXING_EXTRUDER)
     uint32_t mix_event_count[MIXING_STEPPERS]; // Scaled step_event_count for the mixing steppers
   #endif
 
@@ -93,10 +93,10 @@ typedef struct {
   uint8_t direction_bits;                   // The direction bit set for this block (refers to *_DIRECTION_BIT in config.h)
 
   // Advance extrusion
-  #if ENABLED(LIN_ADVANCE)
+  #if OPTION_ENABLED(LIN_ADVANCE)
     bool use_advance_lead;
     uint32_t abs_adv_steps_multiplier8; // Factorised by 2^8 to avoid float
-  #elif ENABLED(ADVANCE)
+  #elif OPTION_ENABLED(ADVANCE)
     int32_t advance_rate;
     volatile int32_t initial_advance;
     volatile int32_t final_advance;
@@ -120,7 +120,7 @@ typedef struct {
     uint16_t fan_speed[FAN_COUNT];
   #endif
 
-  #if ENABLED(BARICUDA)
+  #if OPTION_ENABLED(BARICUDA)
     uint32_t valve_pressure, e_to_p_pressure;
   #endif
 
@@ -141,7 +141,7 @@ class Planner {
     static volatile uint8_t block_buffer_head,  // Index of the next block to be pushed
                             block_buffer_tail;
 
-    #if ENABLED(DISTINCT_E_FACTORS)
+    #if OPTION_ENABLED(DISTINCT_E_FACTORS)
       static uint8_t last_extruder;             // Respond to extruder change
     #endif
 
@@ -164,7 +164,7 @@ class Planner {
       static matrix_3x3 bed_level_matrix; // Transform to compensate for bed level
     #endif
 
-    #if ENABLED(ENABLE_LEVELING_FADE_HEIGHT)
+    #if OPTION_ENABLED(ENABLE_LEVELING_FADE_HEIGHT)
       static float z_fade_height, inverse_z_fade_height;
     #endif
 
@@ -191,7 +191,7 @@ class Planner {
      */
     static uint32_t cutoff_long;
 
-    #if ENABLED(DISABLE_INACTIVE_EXTRUDER)
+    #if OPTION_ENABLED(DISABLE_INACTIVE_EXTRUDER)
       /**
        * Counters to manage disabling inactive extruders
        */
@@ -207,13 +207,13 @@ class Planner {
       static long axis_segment_time[2][3];
     #endif
 
-    #if ENABLED(LIN_ADVANCE)
+    #if OPTION_ENABLED(LIN_ADVANCE)
       static float position_float[NUM_AXIS];
       static float extruder_advance_k;
       static float advance_ed_ratio;
     #endif
 
-    #if ENABLED(ULTRA_LCD)
+    #if OPTION_ENABLED(ULTRA_LCD)
       volatile static uint32_t block_buffer_runtime_us; //Theoretical block buffer runtime in µs
     #endif
 
@@ -244,7 +244,7 @@ class Planner {
 
     static bool is_full() { return (block_buffer_tail == BLOCK_MOD(block_buffer_head + 1)); }
 
-    #if PLANNER_LEVELING && DISABLED(AUTO_BED_LEVELING_UBL)
+    #if PLANNER_LEVELING && OPTION_DISABLED(AUTO_BED_LEVELING_UBL)
 
       #define ARG_X float lx
       #define ARG_Y float ly
@@ -266,7 +266,7 @@ class Planner {
 
     #endif
 
-    #if ENABLED(LIN_ADVANCE)
+    #if OPTION_ENABLED(LIN_ADVANCE)
       static void set_extruder_advance_k(const float &k) { extruder_advance_k = k; };
       static float get_extruder_advance_k() { return extruder_advance_k; };
       static void set_advance_ed_ratio(const float &ratio) { advance_ed_ratio = ratio; };
@@ -300,7 +300,7 @@ class Planner {
      *  extruder     - target extruder
      */
     static FORCE_INLINE void buffer_line(ARG_X, ARG_Y, ARG_Z, const float &e, const float &fr_mm_s, const uint8_t extruder) {
-      #if PLANNER_LEVELING && DISABLED(AUTO_BED_LEVELING_UBL) && IS_CARTESIAN
+      #if PLANNER_LEVELING && OPTION_DISABLED(AUTO_BED_LEVELING_UBL) && IS_CARTESIAN
         apply_leveling(lx, ly, lz);
       #endif
       _buffer_line(lx, ly, lz, e, fr_mm_s, extruder);
@@ -316,7 +316,7 @@ class Planner {
      *  extruder - target extruder
      */
     static FORCE_INLINE void buffer_line_kinematic(const float ltarget[XYZE], const float &fr_mm_s, const uint8_t extruder) {
-      #if PLANNER_LEVELING && DISABLED(AUTO_BED_LEVELING_UBL)
+      #if PLANNER_LEVELING && OPTION_DISABLED(AUTO_BED_LEVELING_UBL)
         float lpos[XYZ] = { ltarget[X_AXIS], ltarget[Y_AXIS], ltarget[Z_AXIS] };
         apply_leveling(lpos);
       #else
@@ -340,7 +340,7 @@ class Planner {
      * Clears previous speed values.
      */
     static FORCE_INLINE void set_position_mm(ARG_X, ARG_Y, ARG_Z, const float &e) {
-      #if PLANNER_LEVELING && DISABLED(AUTO_BED_LEVELING_UBL) && IS_CARTESIAN
+      #if PLANNER_LEVELING && OPTION_DISABLED(AUTO_BED_LEVELING_UBL) && IS_CARTESIAN
         apply_leveling(lx, ly, lz);
       #endif
       _set_position_mm(lx, ly, lz, e);
@@ -376,21 +376,21 @@ class Planner {
     static block_t* get_current_block() {
       if (blocks_queued()) {
         block_t* block = &block_buffer[block_buffer_tail];
-        #if ENABLED(ULTRA_LCD)
+        #if OPTION_ENABLED(ULTRA_LCD)
           block_buffer_runtime_us -= block->segment_time; //We can't be sure how long an active block will take, so don't count it.
         #endif
         SBI(block->flag, BLOCK_BIT_BUSY);
         return block;
       }
       else {
-        #if ENABLED(ULTRA_LCD)
+        #if OPTION_ENABLED(ULTRA_LCD)
           clear_block_buffer_runtime(); // paranoia. Buffer is empty now - so reset accumulated time to zero.
         #endif
         return NULL;
       }
     }
 
-    #if ENABLED(ULTRA_LCD)
+    #if OPTION_ENABLED(ULTRA_LCD)
 
       static uint16_t block_buffer_runtime() {
         CRITICAL_SECTION_START
@@ -413,7 +413,7 @@ class Planner {
 
     #endif
 
-    #if ENABLED(AUTOTEMP)
+    #if OPTION_ENABLED(AUTOTEMP)
       static float autotemp_min, autotemp_max, autotemp_factor;
       static bool autotemp_enabled;
       static void getHighESpeed();

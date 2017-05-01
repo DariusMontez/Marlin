@@ -25,7 +25,7 @@
 
 void safe_delay(millis_t ms);
 
-#if ENABLED(ULTRA_LCD)
+#if OPTION_ENABLED(ULTRA_LCD)
 
   // Convert unsigned int to string with 12 format
   char* itostr2(const uint8_t& x);
@@ -69,7 +69,7 @@ void safe_delay(millis_t ms);
   // Convert float to rj string with 123 or -12 format
   FORCE_INLINE char *ftostr3(const float& x) { return itostr3((int)x); }
 
-  #if ENABLED(LCD_DECIMAL_SMALL_XY)
+  #if OPTION_ENABLED(LCD_DECIMAL_SMALL_XY)
     // Convert float to rj string with 1234, _123, 12.3, _1.2, -123, _-12, or -1.2 format
     char *ftostr4sign(const float& fx);
   #else

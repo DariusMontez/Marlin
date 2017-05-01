@@ -69,7 +69,7 @@
   #error "Oops!  Make sure you have 'Teensy++ 2.0' selected from the 'Tools -> Boards' menu."
 #endif
 
-#if DISABLED(AT90USBxx_TEENSYPP_ASSIGNMENTS) // use Teensyduino Teensy++2.0 pin assignments instead of Marlin alphabetical.
+#if OPTION_DISABLED(AT90USBxx_TEENSYPP_ASSIGNMENTS) // use Teensyduino Teensy++2.0 pin assignments instead of Marlin alphabetical.
   #error "Uncomment #define AT90USBxx_TEENSYPP_ASSIGNMENTS in fastio.h for this config"
   // (or build from command line)
 #endif
@@ -128,7 +128,7 @@
 //
 // LCD / Controller
 //
-#if ENABLED(ULTIPANEL)
+#if OPTION_ENABLED(ULTIPANEL)
   #define LCD_PINS_RS         8
   #define LCD_PINS_ENABLE     9
   #define LCD_PINS_D4        10

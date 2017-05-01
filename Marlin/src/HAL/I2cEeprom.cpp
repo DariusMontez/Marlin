@@ -25,7 +25,7 @@
 
 #include "../../MarlinConfig.h"
 
-#if ENABLED(I2C_EEPROM)
+#if OPTION_ENABLED(I2C_EEPROM)
 
 // --------------------------------------------------------------------------
 // Includes
@@ -158,5 +158,5 @@ void eeprom_read_block(void* pos, const void* eeprom_address, size_t n) {
 }
 
 
-#endif // ENABLED(I2C_EEPROM)
+#endif // OPTION_ENABLED(I2C_EEPROM)
 

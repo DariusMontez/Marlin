@@ -127,13 +127,13 @@
 #define LCD_PINS_D6        -1
 #define LCD_PINS_D7        -1
 
-#if ENABLED(SAV_3DLCD)
+#if OPTION_ENABLED(SAV_3DLCD)
   // For LCD SHIFT register LCD
   #define SR_DATA_PIN         EXT_AUX_SDA_D1
   #define SR_CLK_PIN          EXT_AUX_SCL_D0
 #endif  // SAV_3DLCD
 
-#if ENABLED(SAV_3DLCD) || ENABLED(SAV_3DGLCD)
+#if OPTION_ENABLED(SAV_3DLCD) || OPTION_ENABLED(SAV_3DGLCD)
   #define BTN_EN1            EXT_AUX_A1_IO
   #define BTN_EN2            EXT_AUX_A0_IO
   #define BTN_ENC            EXT_AUX_PWM_D24

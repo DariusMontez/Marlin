@@ -115,11 +115,11 @@
 //
 // LCD / Controller
 //
-#if ENABLED(ULTRA_LCD)
+#if OPTION_ENABLED(ULTRA_LCD)
 
   #define KILL_PIN         32
 
-  #if ENABLED(NEWPANEL)
+  #if OPTION_ENABLED(NEWPANEL)
 
     // Beeper on AUX-4
     #define BEEPER_PIN     84

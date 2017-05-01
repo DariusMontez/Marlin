@@ -95,7 +95,7 @@
 //
 #define BEEPER_PIN         -1
 
-#if ENABLED(REPRAPWORLD_GRAPHICAL_LCD)
+#if OPTION_ENABLED(REPRAPWORLD_GRAPHICAL_LCD)
 
   #define LCD_PINS_RS      15 // CS chip select /SS chip slave select
   #define LCD_PINS_ENABLE  11 // SID (MOSI)

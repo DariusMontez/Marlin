@@ -73,7 +73,7 @@
 #define TEMP_BED_PIN       11   // Analog Input
 
 // SPI for Max6675 or Max31855 Thermocouple
-#if DISABLED(SDSUPPORT)
+#if OPTION_DISABLED(SDSUPPORT)
   #undef MAX6675_SS
   #define MAX6675_SS       67 // Do not use pin 53 if there is even the remote possibility of using Display/SD card
 #else
@@ -85,7 +85,7 @@
 // LCD / Controller
 //
 // Support for AZSMZ 12864 LCD with SD Card 3D printer smart controller control panel (not tested)
-#if ENABLED(VIKI2)
+#if OPTION_ENABLED(VIKI2)
   #undef BEEPER_PIN
   #define BEEPER_PIN       66
 

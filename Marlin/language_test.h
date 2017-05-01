@@ -120,7 +120,7 @@
 #define STRG_OKTAL_e "\340\341\342\343\344\345\346\347\350\351\352\353\354\355\356\357"
 #define STRG_OKTAL_f "\360\361\362\363\364\365\366\367\370\371\372\373\374\375\376\377"
 
-#if ENABLED(DISPLAYTEST)
+#if OPTION_ENABLED(DISPLAYTEST)
   #define WELCOME_MSG                         "Language TEST"
 
   #define MSG_WATCH                           "Display test"
@@ -128,7 +128,7 @@
   #define MSG_CONTROL                         STRG_OKTAL_c
 #endif
 
-#if ENABLED(WEST)
+#if OPTION_ENABLED(WEST)
   #define WELCOME_MSG                         "Language TEST"
 
   #define MSG_WATCH                           "\001\002\003\004\005\006\007\010\011"
@@ -163,7 +163,7 @@
 
 #endif
 
-#if ENABLED(CYRIL)
+#if OPTION_ENABLED(CYRIL)
   #define WELCOME_MSG                         "Language TEST"
 
   #define MSG_WATCH                           "\001\002\003\004\005\006\007\010\011"
@@ -198,7 +198,7 @@
 
 #endif
 
-#if ENABLED(KANA)
+#if OPTION_ENABLED(KANA)
   #define WELCOME_MSG                         "Language TEST"
 
   #define MSG_WATCH                           "\001\002\003\004\005\006\007\010\011"

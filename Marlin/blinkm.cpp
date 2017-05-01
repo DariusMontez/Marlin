@@ -27,7 +27,7 @@
 
 #include "Marlin.h"
 
-#if ENABLED(BLINKM)
+#if OPTION_ENABLED(BLINKM)
 
 #include "blinkm.h"
 

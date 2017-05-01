@@ -156,7 +156,7 @@ void Servo::move(int value) {
   if (this->attach(0) >= 0) {
     this->write(value);
     delay(SERVO_DELAY);
-    #if ENABLED(DEACTIVATE_SERVOS_AFTER_MOVE)
+    #if OPTION_ENABLED(DEACTIVATE_SERVOS_AFTER_MOVE)
       this->detach();
     #endif
   }

@@ -55,7 +55,7 @@ void spiBegin (void) {
   SET_INPUT(MISO_PIN);
   SET_OUTPUT(MOSI_PIN);
 
-  #if DISABLED(SOFTWARE_SPI)
+  #if OPTION_DISABLED(SOFTWARE_SPI)
     // SS must be in output mode even it is not chip select
     SET_OUTPUT(SS_PIN);
     // set SS high - may be chip select for another SPI device
@@ -69,7 +69,7 @@ void spiBegin (void) {
 
 
 //------------------------------------------------------------------------------
-#if DISABLED(SOFTWARE_SPI)
+#if OPTION_DISABLED(SOFTWARE_SPI)
   // functions for hardware SPI
   //------------------------------------------------------------------------------
   // make sure SPCR rate is in expected bits

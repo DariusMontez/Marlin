@@ -22,7 +22,7 @@
 
 #include "MarlinConfig.h"
 
-#if ENABLED(DIGIPOT_I2C)
+#if OPTION_ENABLED(DIGIPOT_I2C)
 
 #include "Stream.h"
 #include "utility/twi.h"

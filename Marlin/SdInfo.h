@@ -27,7 +27,7 @@
  * This file is part of the Arduino Sd2Card Library
  */
 #include "Marlin.h"
-#if ENABLED(SDSUPPORT)
+#if OPTION_ENABLED(SDSUPPORT)
 
 #ifndef SdInfo_h
 #define SdInfo_h

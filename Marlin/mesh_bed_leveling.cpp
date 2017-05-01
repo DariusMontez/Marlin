@@ -22,7 +22,7 @@
 
 #include "mesh_bed_leveling.h"
 
-#if ENABLED(MESH_BED_LEVELING)
+#if OPTION_ENABLED(MESH_BED_LEVELING)
 
   mesh_bed_leveling mbl;
 

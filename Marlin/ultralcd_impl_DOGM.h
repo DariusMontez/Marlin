@@ -50,17 +50,17 @@
 
 #include <U8glib.h>
 
-#if ENABLED(SHOW_BOOTSCREEN) && ENABLED(SHOW_CUSTOM_BOOTSCREEN)
+#if OPTION_ENABLED(SHOW_BOOTSCREEN) && OPTION_ENABLED(SHOW_CUSTOM_BOOTSCREEN)
   #include "_Bootscreen.h"
 #endif
 
 // Only Western languages support big / small fonts
-#if DISABLED(DISPLAY_CHARSET_ISO10646_1)
+#if OPTION_DISABLED(DISPLAY_CHARSET_ISO10646_1)
   #undef USE_BIG_EDIT_FONT
   #undef USE_SMALL_INFOFONT
 #endif
 
-#if ENABLED(USE_SMALL_INFOFONT)
+#if OPTION_ENABLED(USE_SMALL_INFOFONT)
   #include "dogm_font_data_6x9_marlin.h"
   #define FONT_STATUSMENU_NAME u8g_font_6x9
 #else
@@ -70,24 +70,24 @@
 #include "dogm_font_data_Marlin_symbols.h"   // The Marlin special symbols
 #define FONT_SPECIAL_NAME Marlin_symbols
 
-#if DISABLED(SIMULATE_ROMFONT)
-  #if ENABLED(DISPLAY_CHARSET_ISO10646_1)
+#if OPTION_DISABLED(SIMULATE_ROMFONT)
+  #if OPTION_ENABLED(DISPLAY_CHARSET_ISO10646_1)
     #include "dogm_font_data_ISO10646_1.h"
     #define FONT_MENU_NAME ISO10646_1_5x7
-  #elif ENABLED(DISPLAY_CHARSET_ISO10646_5)
+  #elif OPTION_ENABLED(DISPLAY_CHARSET_ISO10646_5)
     #include "dogm_font_data_ISO10646_5_Cyrillic.h"
     #define FONT_MENU_NAME ISO10646_5_Cyrillic_5x7
-  #elif ENABLED(DISPLAY_CHARSET_ISO10646_KANA)
+  #elif OPTION_ENABLED(DISPLAY_CHARSET_ISO10646_KANA)
     #include "dogm_font_data_ISO10646_Kana.h"
     #define FONT_MENU_NAME ISO10646_Kana_5x7
-  #elif ENABLED(DISPLAY_CHARSET_ISO10646_GREEK)
+  #elif OPTION_ENABLED(DISPLAY_CHARSET_ISO10646_GREEK)
     #include "dogm_font_data_ISO10646_Greek.h"
     #define FONT_MENU_NAME ISO10646_Greek_5x7
-  #elif ENABLED(DISPLAY_CHARSET_ISO10646_CN)
+  #elif OPTION_ENABLED(DISPLAY_CHARSET_ISO10646_CN)
     #include "dogm_font_data_ISO10646_CN.h"
     #define FONT_MENU_NAME ISO10646_CN
     #define TALL_FONT_CORRECTION 1
-  #elif ENABLED(DISPLAY_CHARSET_ISO10646_TR)
+  #elif OPTION_ENABLED(DISPLAY_CHARSET_ISO10646_TR)
     #include "dogm_font_data_ISO10646_1_tr.h"
     #define FONT_MENU_NAME ISO10646_TR
   #else // fall-back
@@ -120,7 +120,7 @@
 // DOGM parameters (size in pixels)
 #define DOG_CHAR_WIDTH         6
 #define DOG_CHAR_HEIGHT        12
-#if ENABLED(USE_BIG_EDIT_FONT)
+#if OPTION_ENABLED(USE_BIG_EDIT_FONT)
   #define FONT_MENU_EDIT_NAME u8g_font_9x18
   #define DOG_CHAR_WIDTH_EDIT  9
   #define DOG_CHAR_HEIGHT_EDIT 13
@@ -139,15 +139,15 @@
 #define START_COL              0
 
 // LCD selection
-#if ENABLED(REPRAPWORLD_GRAPHICAL_LCD)
+#if OPTION_ENABLED(REPRAPWORLD_GRAPHICAL_LCD)
   U8GLIB_ST7920_128X64_4X u8g(LCD_PINS_RS); // 2 stripes
   // U8GLIB_ST7920_128X64 u8g(LCD_PINS_RS); // 8 stripes
-#elif ENABLED(U8GLIB_ST7920)
+#elif OPTION_ENABLED(U8GLIB_ST7920)
   //U8GLIB_ST7920_128X64_4X u8g(LCD_PINS_D4, LCD_PINS_ENABLE, LCD_PINS_RS); // Original u8glib device. 2 stripes
                                                                             // No 4 stripe device available from u8glib.
   //U8GLIB_ST7920_128X64_1X u8g(LCD_PINS_D4, LCD_PINS_ENABLE, LCD_PINS_RS);    // Original u8glib device. 8 stripes
   U8GLIB_ST7920_128X64_RRD u8g(0); // Number of stripes can be adjusted in ultralcd_st7920_u8glib_rrd.h with PAGE_HEIGHT
-#elif ENABLED(CARTESIO_UI)
+#elif OPTION_ENABLED(CARTESIO_UI)
   // The CartesioUI display
   #if DOGLCD_MOSI != -1 && DOGLCD_SCK != -1
     // using SW-SPI
@@ -157,23 +157,23 @@
     //U8GLIB_DOGM128 u8g(DOGLCD_CS, DOGLCD_A0);  // 8 stripes
     U8GLIB_DOGM128_2X u8g(DOGLCD_CS, DOGLCD_A0); // 4 stripes
   #endif
-#elif ENABLED(U8GLIB_LM6059_AF)
+#elif OPTION_ENABLED(U8GLIB_LM6059_AF)
   // Based on the Adafruit ST7565 (http://www.adafruit.com/products/250)
   //U8GLIB_LM6059 u8g(DOGLCD_CS, DOGLCD_A0);  // 8 stripes
   U8GLIB_LM6059_2X u8g(DOGLCD_CS, DOGLCD_A0); // 4 stripes
-#elif ENABLED(MAKRPANEL) || ENABLED(VIKI2) || ENABLED(miniVIKI)
+#elif OPTION_ENABLED(MAKRPANEL) || OPTION_ENABLED(VIKI2) || OPTION_ENABLED(miniVIKI)
   // The MaKrPanel, Mini Viki, and Viki 2.0, ST7565 controller as well
   //U8GLIB_NHD_C12864 u8g(DOGLCD_CS, DOGLCD_A0);  // 8 stripes
   U8GLIB_NHD_C12864_2X u8g(DOGLCD_CS, DOGLCD_A0); // 4 stripes
-#elif ENABLED(U8GLIB_SSD1306)
+#elif OPTION_ENABLED(U8GLIB_SSD1306)
   // Generic support for SSD1306 OLED I2C LCDs
   //U8GLIB_SSD1306_128X64 u8g(U8G_I2C_OPT_NONE | U8G_I2C_OPT_FAST);  // 8 stripes
   U8GLIB_SSD1306_128X64_2X u8g(U8G_I2C_OPT_NONE | U8G_I2C_OPT_FAST); // 4 stripes
-#elif ENABLED(U8GLIB_SH1106)
+#elif OPTION_ENABLED(U8GLIB_SH1106)
   // Generic support for SH1106 OLED I2C LCDs
   //U8GLIB_SH1106_128X64 u8g(U8G_I2C_OPT_NONE | U8G_I2C_OPT_FAST);  // 8 stripes
   U8GLIB_SH1106_128X64_2X u8g(U8G_I2C_OPT_NONE | U8G_I2C_OPT_FAST); // 4 stripes
-#elif ENABLED(MINIPANEL)
+#elif OPTION_ENABLED(MINIPANEL)
   // The MINIPanel display
   //U8GLIB_MINI12864 u8g(DOGLCD_CS, DOGLCD_A0);  // 8 stripes
   U8GLIB_MINI12864_2X u8g(DOGLCD_CS, DOGLCD_A0); // 4 stripes
@@ -251,22 +251,22 @@ static void lcd_implementation_init() {
     OUT_WRITE(LCD_RESET_PIN, HIGH);
   #endif
 
-  #if DISABLED(MINIPANEL) // setContrast not working for Mini Panel
+  #if OPTION_DISABLED(MINIPANEL) // setContrast not working for Mini Panel
     u8g.setContrast(lcd_contrast);
   #endif
 
-  #if ENABLED(LCD_SCREEN_ROT_90)
+  #if OPTION_ENABLED(LCD_SCREEN_ROT_90)
     u8g.setRot90();   // Rotate screen by 90°
-  #elif ENABLED(LCD_SCREEN_ROT_180)
+  #elif OPTION_ENABLED(LCD_SCREEN_ROT_180)
     u8g.setRot180();  // Rotate screen by 180°
-  #elif ENABLED(LCD_SCREEN_ROT_270)
+  #elif OPTION_ENABLED(LCD_SCREEN_ROT_270)
     u8g.setRot270();  // Rotate screen by 270°
   #endif
 
-  #if ENABLED(SHOW_BOOTSCREEN)
+  #if OPTION_ENABLED(SHOW_BOOTSCREEN)
     static bool show_bootscreen = true;
 
-    #if ENABLED(SHOW_CUSTOM_BOOTSCREEN)
+    #if OPTION_ENABLED(SHOW_CUSTOM_BOOTSCREEN)
       if (show_bootscreen) {
         u8g.firstPage();
         do {
@@ -281,7 +281,7 @@ static void lcd_implementation_init() {
 
     const uint8_t offx = (u8g.getWidth() - (START_BMPWIDTH)) / 2;
 
-    #if ENABLED(START_BMPHIGH)
+    #if OPTION_ENABLED(START_BMPHIGH)
       constexpr uint8_t offy = 0;
     #else
       constexpr uint8_t offy = DOG_CHAR_HEIGHT;
@@ -367,7 +367,7 @@ FORCE_INLINE void _draw_axis_label(const AxisEnum axis, const char* const pstr, 
     if (!axis_homed[axis])
       u8g.print('?');
     else {
-      #if DISABLED(DISABLE_REDUCED_ACCURACY_WARNING)
+      #if OPTION_DISABLED(DISABLE_REDUCED_ACCURACY_WARNING)
         if (!axis_known_position[axis])
           u8g.print(' ');
         else
@@ -428,7 +428,7 @@ static void lcd_implementation_status_screen() {
     }
   }
 
-  #if ENABLED(SDSUPPORT)
+  #if OPTION_ENABLED(SDSUPPORT)
 
     //
     // SD Card Symbol
@@ -474,7 +474,7 @@ static void lcd_implementation_status_screen() {
       // SD Percent Complete
       //
 
-      #if ENABLED(DOGM_SD_PERCENT)
+      #if OPTION_ENABLED(DOGM_SD_PERCENT)
         if (PAGE_CONTAINS(41, 48)) {
           // Percent complete
           u8g.setPrintPos(55, 48);
@@ -488,7 +488,7 @@ static void lcd_implementation_status_screen() {
     // Elapsed Time
     //
 
-    #if DISABLED(DOGM_SD_PERCENT)
+    #if OPTION_DISABLED(DOGM_SD_PERCENT)
       #define SD_DURATION_X (PROGRESS_BAR_X + (PROGRESS_BAR_WIDTH / 2) - len * (DOG_CHAR_WIDTH / 2))
     #else
       #define SD_DURATION_X (LCD_PIXEL_WIDTH - len * DOG_CHAR_WIDTH)
@@ -510,7 +510,7 @@ static void lcd_implementation_status_screen() {
   // XYZ Coordinates
   //
 
-  #if ENABLED(USE_SMALL_INFOFONT)
+  #if OPTION_ENABLED(USE_SMALL_INFOFONT)
     #define INFO_FONT_HEIGHT 7
   #else
     #define INFO_FONT_HEIGHT 8
@@ -522,7 +522,7 @@ static void lcd_implementation_status_screen() {
   #define X_VALUE_POS 11
   #define XYZ_SPACING 40
 
-  #if ENABLED(XYZ_HOLLOW_FRAME)
+  #if OPTION_ENABLED(XYZ_HOLLOW_FRAME)
     #define XYZ_FRAME_TOP 29
     #define XYZ_FRAME_HEIGHT INFO_FONT_HEIGHT + 3
   #else
@@ -535,7 +535,7 @@ static void lcd_implementation_status_screen() {
   // When everything is ok you see a constant 'X'.
 
   static char xstring[5], ystring[5], zstring[7];
-  #if ENABLED(FILAMENT_LCD_DISPLAY) && DISABLED(SDSUPPORT)
+  #if OPTION_ENABLED(FILAMENT_LCD_DISPLAY) && OPTION_DISABLED(SDSUPPORT)
     static char wstring[5], mstring[4];
   #endif
 
@@ -544,7 +544,7 @@ static void lcd_implementation_status_screen() {
     strcpy(xstring, ftostr4sign(current_position[X_AXIS]));
     strcpy(ystring, ftostr4sign(current_position[Y_AXIS]));
     strcpy(zstring, ftostr52sp(FIXFLOAT(current_position[Z_AXIS])));
-    #if ENABLED(FILAMENT_LCD_DISPLAY) && DISABLED(SDSUPPORT)
+    #if OPTION_ENABLED(FILAMENT_LCD_DISPLAY) && OPTION_DISABLED(SDSUPPORT)
       strcpy(wstring, ftostr12ns(filament_width_meas));
       strcpy(mstring, itostr3(100.0 * volumetric_multiplier[FILAMENT_SENSOR_EXTRUDER_NUM]));
     #endif
@@ -552,7 +552,7 @@ static void lcd_implementation_status_screen() {
 
   if (PAGE_CONTAINS(XYZ_FRAME_TOP, XYZ_FRAME_TOP + XYZ_FRAME_HEIGHT - 1)) {
 
-    #if ENABLED(XYZ_HOLLOW_FRAME)
+    #if OPTION_ENABLED(XYZ_HOLLOW_FRAME)
       u8g.drawFrame(0, XYZ_FRAME_TOP, LCD_PIXEL_WIDTH, XYZ_FRAME_HEIGHT); // 8: 29-40  7: 29-39
     #else
       u8g.drawBox(0, XYZ_FRAME_TOP, LCD_PIXEL_WIDTH, XYZ_FRAME_HEIGHT);   // 8: 30-39  7: 30-37
@@ -560,7 +560,7 @@ static void lcd_implementation_status_screen() {
 
     if (PAGE_CONTAINS(XYZ_BASELINE - (INFO_FONT_HEIGHT - 1), XYZ_BASELINE)) {
 
-      #if DISABLED(XYZ_HOLLOW_FRAME)
+      #if OPTION_DISABLED(XYZ_HOLLOW_FRAME)
         u8g.setColorIndex(0); // white on black
       #endif
 
@@ -579,7 +579,7 @@ static void lcd_implementation_status_screen() {
       u8g.setPrintPos(2 * XYZ_SPACING + X_VALUE_POS, XYZ_BASELINE);
       lcd_print(zstring);
 
-      #if DISABLED(XYZ_HOLLOW_FRAME)
+      #if OPTION_DISABLED(XYZ_HOLLOW_FRAME)
         u8g.setColorIndex(1); // black on white
       #endif
     }
@@ -602,7 +602,7 @@ static void lcd_implementation_status_screen() {
     //
     // Filament sensor display if SD is disabled
     //
-    #if DISABLED(SDSUPPORT) && ENABLED(FILAMENT_LCD_DISPLAY)
+    #if OPTION_DISABLED(SDSUPPORT) && OPTION_ENABLED(FILAMENT_LCD_DISPLAY)
       u8g.setPrintPos(56, 50);
       lcd_print(wstring);
       u8g.setPrintPos(102, 50);
@@ -625,7 +625,7 @@ static void lcd_implementation_status_screen() {
   if (PAGE_CONTAINS(STATUS_BASELINE + 1 - INFO_FONT_HEIGHT, STATUS_BASELINE)) {
     u8g.setPrintPos(0, STATUS_BASELINE);
 
-    #if ENABLED(FILAMENT_LCD_DISPLAY) && ENABLED(SDSUPPORT)
+    #if OPTION_ENABLED(FILAMENT_LCD_DISPLAY) && OPTION_ENABLED(SDSUPPORT)
       if (PENDING(millis(), previous_lcd_status_ms + 5000UL)) {  //Display both Status message line and Filament display on the last line
         lcd_print(lcd_status_message);
       }
@@ -644,12 +644,12 @@ static void lcd_implementation_status_screen() {
   }
 }
 
-#if ENABLED(ULTIPANEL)
+#if OPTION_ENABLED(ULTIPANEL)
 
   uint8_t row_y1, row_y2;
   uint8_t constexpr row_height = DOG_CHAR_HEIGHT + 2 * (TALL_FONT_CORRECTION);
 
-  #if ENABLED(FILAMENT_CHANGE_FEATURE)
+  #if OPTION_ENABLED(FILAMENT_CHANGE_FEATURE)
 
     static void lcd_implementation_hotend_status(const uint8_t row) {
       row_y1 = row * row_height + 1;
@@ -676,7 +676,7 @@ static void lcd_implementation_status_screen() {
     if (!PAGE_CONTAINS(row_y1 + 1, row_y2 + 2)) return;
 
     if (isSelected) {
-      #if ENABLED(MENU_HOLLOW_FRAME)
+      #if OPTION_ENABLED(MENU_HOLLOW_FRAME)
         u8g.drawHLine(0, row_y1 + 1, LCD_PIXEL_WIDTH);
         u8g.drawHLine(0, row_y2 + 2, LCD_PIXEL_WIDTH);
       #else
@@ -685,7 +685,7 @@ static void lcd_implementation_status_screen() {
         u8g.setColorIndex(0); // white on black
       #endif
     }
-    #if DISABLED(MENU_HOLLOW_FRAME)
+    #if OPTION_DISABLED(MENU_HOLLOW_FRAME)
       else {
         u8g.setColorIndex(1); // unmarked text is black on white
       }
@@ -795,7 +795,7 @@ static void lcd_implementation_status_screen() {
 
     uint8_t rows = (labellen > LCD_WIDTH - 2 - vallen) ? 2 : 1;
 
-    #if ENABLED(USE_BIG_EDIT_FONT)
+    #if OPTION_ENABLED(USE_BIG_EDIT_FONT)
       uint8_t lcd_width, char_width;
       if (labellen <= LCD_WIDTH_EDIT - 1) {
         if (labellen >= LCD_WIDTH_EDIT - vallen) rows = 2;
@@ -832,7 +832,7 @@ static void lcd_implementation_status_screen() {
     }
   }
 
-  #if ENABLED(SDSUPPORT)
+  #if OPTION_ENABLED(SDSUPPORT)
 
     static void _drawmenu_sd(const bool isSelected, const uint8_t row, const char* const pstr, const char* filename, char* const longFilename, const bool isDir) {
       UNUSED(pstr);

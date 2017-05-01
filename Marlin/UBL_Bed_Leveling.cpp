@@ -23,7 +23,7 @@
 #include "Marlin.h"
 #include "math.h"
 
-#if ENABLED(AUTO_BED_LEVELING_UBL)
+#if OPTION_ENABLED(AUTO_BED_LEVELING_UBL)
 
   #include "UBL.h"
   #include "hex_print_routines.h"
@@ -91,7 +91,7 @@
     if (sanity_check())
       SERIAL_PROTOCOLLNPGM("?In load_state() sanity_check() failed.\n");
 
-    #if ENABLED(ENABLE_LEVELING_FADE_HEIGHT)
+    #if OPTION_ENABLED(ENABLE_LEVELING_FADE_HEIGHT)
       /**
        * These lines can go away in a few weeks.  They are just
        * to make sure people updating their firmware won't be using

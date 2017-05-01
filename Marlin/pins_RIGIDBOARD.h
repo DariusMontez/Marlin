@@ -73,7 +73,7 @@
 
 // SPI for Max6675 or Max31855 Thermocouple
 #undef MAX6675_SS
-#if DISABLED(SDSUPPORT)
+#if OPTION_DISABLED(SDSUPPORT)
   #define MAX6675_SS       53 // Don't use pin 53 if there is even the remote possibility of using Display/SD card
 #else
   #define MAX6675_SS       49 // Don't use pin 49 as this is tied to the switch inside the SD card socket to detect if there is an SD card present
@@ -98,7 +98,7 @@
 // LCD / Controller
 //
 // LCD Panel options for the RigidBoard
-#if ENABLED(RIGIDBOT_PANEL)
+#if OPTION_ENABLED(RIGIDBOT_PANEL)
 
   #undef BEEPER_PIN
   #define BEEPER_PIN -1
@@ -122,7 +122,7 @@
   #undef  SD_DETECT_PIN
   #define SD_DETECT_PIN 22
 
-#elif ENABLED(REPRAP_DISCOUNT_SMART_CONTROLLER)
+#elif OPTION_ENABLED(REPRAP_DISCOUNT_SMART_CONTROLLER)
 
   #undef  SD_DETECT_PIN
   #define SD_DETECT_PIN 22

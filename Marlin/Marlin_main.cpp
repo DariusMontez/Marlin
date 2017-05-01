@@ -235,22 +235,22 @@
 
 #if HAS_ABL
   #include "vector_3.h"
-  #if ENABLED(AUTO_BED_LEVELING_LINEAR)
+  #if OPTION_ENABLED(AUTO_BED_LEVELING_LINEAR)
     #include "qr_solve.h"
   #endif
-#elif ENABLED(MESH_BED_LEVELING)
+#elif OPTION_ENABLED(MESH_BED_LEVELING)
   #include "mesh_bed_leveling.h"
 #endif
 
-#if ENABLED(BEZIER_CURVE_SUPPORT)
+#if OPTION_ENABLED(BEZIER_CURVE_SUPPORT)
   #include "planner_bezier.h"
 #endif
 
-#if HAS_BUZZER && DISABLED(LCD_USE_I2C_BUZZER)
+#if HAS_BUZZER && OPTION_DISABLED(LCD_USE_I2C_BUZZER)
   #include "buzzer.h"
 #endif
 
-#if ENABLED(BLINKM)
+#if OPTION_ENABLED(BLINKM)
   #include "blinkm.h"
   #include "Wire.h"
 #endif
@@ -263,36 +263,36 @@
   #include <SPI.h>
 #endif
 
-#if ENABLED(DAC_STEPPER_CURRENT)
+#if OPTION_ENABLED(DAC_STEPPER_CURRENT)
   #include "stepper_dac.h"
 #endif
 
-#if ENABLED(EXPERIMENTAL_I2CBUS)
+#if OPTION_ENABLED(EXPERIMENTAL_I2CBUS)
   #include "twibus.h"
 #endif
 
-#if ENABLED(ENDSTOP_INTERRUPTS_FEATURE)
+#if OPTION_ENABLED(ENDSTOP_INTERRUPTS_FEATURE)
   #include "src/HAL/HAL_endstop_interrupts.h"
 #endif
 
-#if ENABLED(M100_FREE_MEMORY_WATCHER)
+#if OPTION_ENABLED(M100_FREE_MEMORY_WATCHER)
   void gcode_M100();
 #endif
 
-#if ENABLED(SDSUPPORT)
+#if OPTION_ENABLED(SDSUPPORT)
   CardReader card;
 #endif
 
-#if ENABLED(EXPERIMENTAL_I2CBUS)
+#if OPTION_ENABLED(EXPERIMENTAL_I2CBUS)
   TWIBus i2c;
 #endif
 
-#if ENABLED(G38_PROBE_TARGET)
+#if OPTION_ENABLED(G38_PROBE_TARGET)
   bool G38_move = false,
        G38_endstop_hit = false;
 #endif
 
-#if ENABLED(AUTO_BED_LEVELING_UBL)
+#if OPTION_ENABLED(AUTO_BED_LEVELING_UBL)
   #include "UBL.h"
   unified_bed_leveling ubl;
   #define UBL_MESH_VALID !( ( ubl.z_values[0][0] == ubl.z_values[0][1] && ubl.z_values[0][1] == ubl.z_values[0][2] \
@@ -369,11 +369,11 @@ static char *current_command,      // The command currently being executed
  */
 static const char *injected_commands_P = NULL;
 
-#if ENABLED(INCH_MODE_SUPPORT)
+#if OPTION_ENABLED(INCH_MODE_SUPPORT)
   float linear_unit_factor = 1.0, volumetric_unit_factor = 1.0;
 #endif
 
-#if ENABLED(TEMPERATURE_UNITS_SUPPORT)
+#if OPTION_ENABLED(TEMPERATURE_UNITS_SUPPORT)
   TempUnit input_temp_units = TEMPUNIT_C;
 #endif
 
@@ -382,7 +382,7 @@ static const char *injected_commands_P = NULL;
  * but the planner and stepper like mm/s units.
  */
 float constexpr homing_feedrate_mm_s[] = {
-  #if ENABLED(DELTA)
+  #if OPTION_ENABLED(DELTA)
     MMM_TO_MMS(HOMING_FEEDRATE_Z), MMM_TO_MMS(HOMING_FEEDRATE_Z),
   #else
     MMM_TO_MMS(HOMING_FEEDRATE_XY), MMM_TO_MMS(HOMING_FEEDRATE_XY),
@@ -395,7 +395,7 @@ int feedrate_percentage = 100, saved_feedrate_percentage,
 
 bool axis_relative_modes[] = AXIS_RELATIVE_MODES,
      volumetric_enabled =
-      #if ENABLED(VOLUMETRIC_DEFAULT_ON)
+      #if OPTION_ENABLED(VOLUMETRIC_DEFAULT_ON)
         true
       #else
         false
@@ -404,7 +404,7 @@ bool axis_relative_modes[] = AXIS_RELATIVE_MODES,
 float filament_size[EXTRUDERS] = ARRAY_BY_EXTRUDERS1(DEFAULT_NOMINAL_FILAMENT_DIA),
       volumetric_multiplier[EXTRUDERS] = ARRAY_BY_EXTRUDERS1(1.0);
 
-#if DISABLED(NO_WORKSPACE_OFFSETS)
+#if OPTION_DISABLED(NO_WORKSPACE_OFFSETS)
 
   // The distance that XYZ has been offset by G92. Reset by G28.
   float position_shift[XYZ] = { 0 };
@@ -439,7 +439,7 @@ static bool relative_mode = false;
 volatile bool wait_for_heatup = true;
 
 // For M0/M1, this flag may be cleared (by M108) to exit the wait-for-user loop
-#if ENABLED(EMERGENCY_PARSER) || ENABLED(ULTIPANEL)
+#if OPTION_ENABLED(EMERGENCY_PARSER) || OPTION_ENABLED(ULTIPANEL)
   volatile bool wait_for_user = false;
 #endif
 
@@ -454,14 +454,14 @@ static millis_t max_inactive_time = 0;
 static millis_t stepper_inactive_time = (DEFAULT_STEPPER_DEACTIVE_TIME) * 1000UL;
 
 // Print Job Timer
-#if ENABLED(PRINTCOUNTER)
+#if OPTION_ENABLED(PRINTCOUNTER)
   PrintCounter print_job_timer = PrintCounter();
 #else
   Stopwatch print_job_timer = Stopwatch();
 #endif
 
 // Buzzer - I2C on the LCD or a BEEPER_PIN
-#if ENABLED(LCD_USE_I2C_BUZZER)
+#if OPTION_ENABLED(LCD_USE_I2C_BUZZER)
   #define BUZZ(d,f) lcd_buzz(d, f)
 #elif PIN_EXISTS(BEEPER)
   Buzzer buzzer;
@@ -487,8 +487,8 @@ static uint8_t target_extruder;
   #define XY_PROBE_FEEDRATE_MM_S PLANNER_XY_FEEDRATE()
 #endif
 
-#if ENABLED(AUTO_BED_LEVELING_BILINEAR)
-  #if ENABLED(DELTA)
+#if OPTION_ENABLED(AUTO_BED_LEVELING_BILINEAR)
+  #if OPTION_ENABLED(DELTA)
     #define ADJUST_DELTA(V) \
       if (planner.abl_enabled) { \
         const float zadj = bilinear_z_offset(V); \
@@ -503,7 +503,7 @@ static uint8_t target_extruder;
   #define ADJUST_DELTA(V) NOOP
 #endif
 
-#if ENABLED(Z_DUAL_ENDSTOPS)
+#if OPTION_ENABLED(Z_DUAL_ENDSTOPS)
   float z_endstop_adj =
     #ifdef Z_DUAL_ENDSTOPS_ADJUSTMENT
       Z_DUAL_ENDSTOPS_ADJUSTMENT
@@ -522,12 +522,12 @@ static uint8_t target_extruder;
   const int z_servo_angle[2] = Z_SERVO_ANGLES;
 #endif
 
-#if ENABLED(BARICUDA)
+#if OPTION_ENABLED(BARICUDA)
   int baricuda_valve_pressure = 0;
   int baricuda_e_to_p_pressure = 0;
 #endif
 
-#if ENABLED(FWRETRACT)
+#if OPTION_ENABLED(FWRETRACT)
 
   bool autoretract_enabled = false;
   bool retracted[EXTRUDERS] = { false };
@@ -543,9 +543,9 @@ static uint8_t target_extruder;
 
 #endif // FWRETRACT
 
-#if ENABLED(ULTIPANEL) && HAS_POWER_SWITCH
+#if OPTION_ENABLED(ULTIPANEL) && HAS_POWER_SWITCH
   bool powersupply =
-    #if ENABLED(PS_DEFAULT_OFF)
+    #if OPTION_ENABLED(PS_DEFAULT_OFF)
       false
     #else
       true
@@ -555,7 +555,7 @@ static uint8_t target_extruder;
 
 #if HAS_CASE_LIGHT
   bool case_light_on =
-    #if ENABLED(CASE_LIGHT_DEFAULT_ON)
+    #if OPTION_ENABLED(CASE_LIGHT_DEFAULT_ON)
       true
     #else
       false
@@ -563,7 +563,7 @@ static uint8_t target_extruder;
   ;
 #endif
 
-#if ENABLED(DELTA)
+#if OPTION_ENABLED(DELTA)
 
   float delta[ABC],
         endstop_adj[ABC] = { 0 };
@@ -583,7 +583,7 @@ static uint8_t target_extruder;
 
 #endif
 
-#if ENABLED(AUTO_BED_LEVELING_BILINEAR)
+#if OPTION_ENABLED(AUTO_BED_LEVELING_BILINEAR)
   #define UNPROBED 9999.0f
   int bilinear_grid_spacing[2], bilinear_start[2];
   float bed_level_grid[ABL_GRID_MAX_POINTS_X][ABL_GRID_MAX_POINTS_Y];
@@ -601,7 +601,7 @@ static uint8_t target_extruder;
 
 float cartes[XYZ] = { 0 };
 
-#if ENABLED(FILAMENT_WIDTH_SENSOR)
+#if OPTION_ENABLED(FILAMENT_WIDTH_SENSOR)
   bool filament_sensor = false;  //M405 turns on filament_sensor control, M406 turns it off
   float filament_width_nominal = DEFAULT_NOMINAL_FILAMENT_DIA,  // Nominal filament width. Change with M404
         filament_width_meas = DEFAULT_MEASURED_FILAMENT_DIA;    // Measured filament diameter
@@ -610,15 +610,15 @@ float cartes[XYZ] = { 0 };
   int meas_delay_cm = MEASUREMENT_DELAY_CM;  //distance delay setting
 #endif
 
-#if ENABLED(FILAMENT_RUNOUT_SENSOR)
+#if OPTION_ENABLED(FILAMENT_RUNOUT_SENSOR)
   static bool filament_ran_out = false;
 #endif
 
-#if ENABLED(FILAMENT_CHANGE_FEATURE)
+#if OPTION_ENABLED(FILAMENT_CHANGE_FEATURE)
   FilamentChangeMenuResponse filament_change_menu_response;
 #endif
 
-#if ENABLED(MIXING_EXTRUDER)
+#if OPTION_ENABLED(MIXING_EXTRUDER)
   float mixing_factor[MIXING_STEPPERS]; // Reciprocal of mix proportion. 0.0 = off, otherwise >= 1.0.
   #if MIXING_VIRTUAL_TOOLS > 1
     float mixing_virtual_tool_mix[MIXING_VIRTUAL_TOOLS][MIXING_STEPPERS];
@@ -641,11 +641,11 @@ static bool send_ok[BUFSIZE];
   bool chdkActive = false;
 #endif
 
-#if ENABLED(PID_EXTRUSION_SCALING)
+#if OPTION_ENABLED(PID_EXTRUSION_SCALING)
   int lpq_len = 20;
 #endif
 
-#if ENABLED(HOST_KEEPALIVE_FEATURE)
+#if OPTION_ENABLED(HOST_KEEPALIVE_FEATURE)
   MarlinBusyState busy_state = NOT_BUSY;
   static millis_t next_busy_signal_ms = 0;
   uint8_t host_keepalive_interval = DEFAULT_KEEPALIVE_INTERVAL;
@@ -682,18 +682,18 @@ void prepare_move_to_destination();
 void get_cartesian_from_steppers();
 void set_current_from_steppers_for_axis(const AxisEnum axis);
 
-#if ENABLED(ARC_SUPPORT)
+#if OPTION_ENABLED(ARC_SUPPORT)
   void plan_arc(float target[XYZE], float* offset, uint8_t clockwise);
 #endif
 
-#if ENABLED(BEZIER_CURVE_SUPPORT)
+#if OPTION_ENABLED(BEZIER_CURVE_SUPPORT)
   void plan_cubic_move(const float offset[4]);
 #endif
 
 void tool_change(const uint8_t tmp_extruder, const float fr_mm_s=0.0, bool no_move=false);
 static void report_current_position();
 
-#if ENABLED(DEBUG_LEVELING_FEATURE)
+#if OPTION_ENABLED(DEBUG_LEVELING_FEATURE)
   void print_xyz(const char* prefix, const char* suffix, const float x, const float y, const float z) {
     serialprintPGM(prefix);
     SERIAL_ECHOPAIR("(", x);
@@ -726,7 +726,7 @@ static void report_current_position();
  * no kinematic translation. Used for homing axes and cartesian/core syncing.
  */
 inline void sync_plan_position() {
-  #if ENABLED(DEBUG_LEVELING_FEATURE)
+  #if OPTION_ENABLED(DEBUG_LEVELING_FEATURE)
     if (DEBUGGING(LEVELING)) DEBUG_POS("sync_plan_position", current_position);
   #endif
   planner.set_position_mm(current_position[X_AXIS], current_position[Y_AXIS], current_position[Z_AXIS], current_position[E_AXIS]);
@@ -736,7 +736,7 @@ inline void sync_plan_position_e() { planner.set_e_position_mm(current_position[
 #if IS_KINEMATIC
 
   inline void sync_plan_position_kinematic() {
-    #if ENABLED(DEBUG_LEVELING_FEATURE)
+    #if OPTION_ENABLED(DEBUG_LEVELING_FEATURE)
       if (DEBUGGING(LEVELING)) DEBUG_POS("sync_plan_position_kinematic", current_position);
     #endif
     planner.set_position_mm_kinematic(current_position);
@@ -749,7 +749,7 @@ inline void sync_plan_position_e() { planner.set_e_position_mm(current_position[
 
 #endif
 
-#if ENABLED(DIGIPOT_I2C)
+#if OPTION_ENABLED(DIGIPOT_I2C)
   extern void digipot_i2c_set_current(int channel, float current);
   extern void digipot_i2c_init();
 #endif
@@ -835,10 +835,10 @@ void setup_killpin() {
   #endif
 }
 
-#if ENABLED(FILAMENT_RUNOUT_SENSOR)
+#if OPTION_ENABLED(FILAMENT_RUNOUT_SENSOR)
 
   void setup_filrunoutpin() {
-    #if ENABLED(ENDSTOPPULLUP_FIL_RUNOUT)
+    #if OPTION_ENABLED(ENDSTOPPULLUP_FIL_RUNOUT)
       SET_INPUT_PULLUP(FIL_RUNOUT_PIN);
     #else
       SET_INPUT(FIL_RUNOUT_PIN);
@@ -858,7 +858,7 @@ void setup_powerhold() {
     OUT_WRITE(SUICIDE_PIN, HIGH);
   #endif
   #if HAS_POWER_SWITCH
-    #if ENABLED(PS_DEFAULT_OFF)
+    #if OPTION_ENABLED(PS_DEFAULT_OFF)
       OUT_WRITE(PS_ON_PIN, PS_ON_ASLEEP);
     #else
       OUT_WRITE(PS_ON_PIN, PS_ON_AWAKE);
@@ -914,7 +914,7 @@ void servo_init() {
   void enableStepperDrivers() { SET_INPUT(STEPPER_RESET_PIN); }  // set to input, which allows it to be pulled high by pullups
 #endif
 
-#if ENABLED(EXPERIMENTAL_I2CBUS) && I2C_SLAVE_ADDRESS > 0
+#if OPTION_ENABLED(EXPERIMENTAL_I2CBUS) && I2C_SLAVE_ADDRESS > 0
 
   void i2c_on_receive(int bytes) { // just echo all bytes received to serial
     i2c.receive(bytes);
@@ -1036,11 +1036,11 @@ inline void get_serial_commands() {
         }
       }
 
-      #if DISABLED(EMERGENCY_PARSER)
+      #if OPTION_DISABLED(EMERGENCY_PARSER)
         // If command was e-stop process now
         if (strcmp(command, "M108") == 0) {
           wait_for_heatup = false;
-          #if ENABLED(ULTIPANEL)
+          #if OPTION_ENABLED(ULTIPANEL)
             wait_for_user = false;
           #endif
         }
@@ -1075,7 +1075,7 @@ inline void get_serial_commands() {
   } // queue has space, serial has data
 }
 
-#if ENABLED(SDSUPPORT)
+#if OPTION_ENABLED(SDSUPPORT)
 
   /**
    * Get commands from the SD Card until the command buffer is full
@@ -1155,7 +1155,7 @@ void get_available_commands() {
 
   get_serial_commands();
 
-  #if ENABLED(SDSUPPORT)
+  #if OPTION_ENABLED(SDSUPPORT)
     get_sdcard_commands();
   #endif
 }
@@ -1190,7 +1190,7 @@ inline uint8_t code_value_byte() { return (uint8_t)(constrain(strtol(seen_pointe
 
 inline bool code_value_bool() { return !code_has_value() || code_value_byte() > 0; }
 
-#if ENABLED(INCH_MODE_SUPPORT)
+#if OPTION_ENABLED(INCH_MODE_SUPPORT)
   inline void set_input_linear_units(LinearUnit units) {
     switch (units) {
       case LINEARUNIT_INCH:
@@ -1220,7 +1220,7 @@ inline bool code_value_bool() { return !code_has_value() || code_value_byte() > 
 
 #endif
 
-#if ENABLED(TEMPERATURE_UNITS_SUPPORT)
+#if OPTION_ENABLED(TEMPERATURE_UNITS_SUPPORT)
   inline void set_input_temp_units(TempUnit units) { input_temp_units = units; }
 
   float code_value_temp_abs() {
@@ -1282,11 +1282,11 @@ bool get_target_extruder_from_command(int code) {
   return false;
 }
 
-#if ENABLED(DUAL_X_CARRIAGE) || ENABLED(DUAL_NOZZLE_DUPLICATION_MODE)
+#if OPTION_ENABLED(DUAL_X_CARRIAGE) || OPTION_ENABLED(DUAL_NOZZLE_DUPLICATION_MODE)
   bool extruder_duplication_enabled = false; // Used in Dual X mode 2
 #endif
 
-#if ENABLED(DUAL_X_CARRIAGE)
+#if OPTION_ENABLED(DUAL_X_CARRIAGE)
 
   static DualXMode dual_x_carriage_mode = DEFAULT_DUAL_X_CARRIAGE_MODE;
 
@@ -1314,7 +1314,7 @@ bool get_target_extruder_from_command(int code) {
 
 #endif // DUAL_X_CARRIAGE
 
-#if DISABLED(NO_WORKSPACE_OFFSETS) || ENABLED(DUAL_X_CARRIAGE) || ENABLED(DELTA)
+#if OPTION_DISABLED(NO_WORKSPACE_OFFSETS) || OPTION_ENABLED(DUAL_X_CARRIAGE) || OPTION_ENABLED(DELTA)
 
   /**
    * Software endstops can be used to monitor the open end of
@@ -1328,7 +1328,7 @@ bool get_target_extruder_from_command(int code) {
   void update_software_endstops(const AxisEnum axis) {
     const float offs = workspace_offset[axis] = LOGICAL_POSITION(0, axis);
 
-    #if ENABLED(DUAL_X_CARRIAGE)
+    #if OPTION_ENABLED(DUAL_X_CARRIAGE)
       if (axis == X_AXIS) {
 
         // In Dual X mode hotend_offset[X] is T1's home position
@@ -1356,10 +1356,10 @@ bool get_target_extruder_from_command(int code) {
       soft_endstop_max[axis] = base_max_pos(axis) + offs;
     #endif
 
-    #if ENABLED(DEBUG_LEVELING_FEATURE)
+    #if OPTION_ENABLED(DEBUG_LEVELING_FEATURE)
       if (DEBUGGING(LEVELING)) {
         SERIAL_ECHOPAIR("For ", axis_codes[axis]);
-        #if DISABLED(NO_WORKSPACE_OFFSETS)
+        #if OPTION_DISABLED(NO_WORKSPACE_OFFSETS)
           SERIAL_ECHOPAIR(" axis:\n home_offset = ", home_offset[axis]);
           SERIAL_ECHOPAIR("\n position_shift = ", position_shift[axis]);
         #endif
@@ -1368,7 +1368,7 @@ bool get_target_extruder_from_command(int code) {
       }
     #endif
 
-    #if ENABLED(DELTA)
+    #if OPTION_ENABLED(DELTA)
       if (axis == Z_AXIS)
         delta_clip_start_height = soft_endstop_max[axis] - delta_safe_distance_from_top();
     #endif
@@ -1376,7 +1376,7 @@ bool get_target_extruder_from_command(int code) {
 
 #endif // NO_WORKSPACE_OFFSETS
 
-#if DISABLED(NO_WORKSPACE_OFFSETS)
+#if OPTION_DISABLED(NO_WORKSPACE_OFFSETS)
   /**
    * Change the home offset for an axis, update the current
    * position and the software endstops to retain the same
@@ -1411,7 +1411,7 @@ bool get_target_extruder_from_command(int code) {
  * Callers must sync the planner position after calling this!
  */
 static void set_axis_is_at_home(AxisEnum axis) {
-  #if ENABLED(DEBUG_LEVELING_FEATURE)
+  #if OPTION_ENABLED(DEBUG_LEVELING_FEATURE)
     if (DEBUGGING(LEVELING)) {
       SERIAL_ECHOPAIR(">>> set_axis_is_at_home(", axis_codes[axis]);
       SERIAL_CHAR(')');
@@ -1421,19 +1421,19 @@ static void set_axis_is_at_home(AxisEnum axis) {
 
   axis_known_position[axis] = axis_homed[axis] = true;
 
-  #if DISABLED(NO_WORKSPACE_OFFSETS)
+  #if OPTION_DISABLED(NO_WORKSPACE_OFFSETS)
     position_shift[axis] = 0;
     update_software_endstops(axis);
   #endif
 
-  #if ENABLED(DUAL_X_CARRIAGE)
+  #if OPTION_ENABLED(DUAL_X_CARRIAGE)
     if (axis == X_AXIS && (active_extruder == 1 || dual_x_carriage_mode == DXC_DUPLICATION_MODE)) {
       current_position[X_AXIS] = x_home_pos(active_extruder);
       return;
     }
   #endif
 
-  #if ENABLED(MORGAN_SCARA)
+  #if OPTION_ENABLED(MORGAN_SCARA)
 
     /**
      * Morgan SCARA homes XY at the same time
@@ -1480,14 +1480,14 @@ static void set_axis_is_at_home(AxisEnum axis) {
 
         current_position[Z_AXIS] -= zprobe_zoffset;
 
-        #if ENABLED(DEBUG_LEVELING_FEATURE)
+        #if OPTION_ENABLED(DEBUG_LEVELING_FEATURE)
           if (DEBUGGING(LEVELING)) {
             SERIAL_ECHOLNPGM("*** Z HOMED WITH PROBE (Z_MIN_PROBE_USES_Z_MIN_ENDSTOP_PIN) ***");
             SERIAL_ECHOLNPAIR("> zprobe_zoffset = ", zprobe_zoffset);
           }
         #endif
 
-      #elif ENABLED(DEBUG_LEVELING_FEATURE)
+      #elif OPTION_ENABLED(DEBUG_LEVELING_FEATURE)
 
         if (DEBUGGING(LEVELING)) SERIAL_ECHOLNPGM("*** Z HOMED TO ENDSTOP (Z_MIN_PROBE_ENDSTOP) ***");
 
@@ -1495,9 +1495,9 @@ static void set_axis_is_at_home(AxisEnum axis) {
     }
   #endif
 
-  #if ENABLED(DEBUG_LEVELING_FEATURE)
+  #if OPTION_ENABLED(DEBUG_LEVELING_FEATURE)
     if (DEBUGGING(LEVELING)) {
-      #if DISABLED(NO_WORKSPACE_OFFSETS)
+      #if OPTION_DISABLED(NO_WORKSPACE_OFFSETS)
         SERIAL_ECHOPAIR("> home_offset[", axis_codes[axis]);
         SERIAL_ECHOLNPAIR("] = ", home_offset[axis]);
       #endif
@@ -1549,7 +1549,7 @@ inline void set_destination_to_current() { COPY(destination, current_position); 
    * Calculate delta, start a line, and set current_position to destination
    */
   void prepare_uninterpolated_move_to_destination(const float fr_mm_s=0.0) {
-    #if ENABLED(DEBUG_LEVELING_FEATURE)
+    #if OPTION_ENABLED(DEBUG_LEVELING_FEATURE)
       if (DEBUGGING(LEVELING)) DEBUG_POS("prepare_uninterpolated_move_to_destination", destination);
     #endif
 
@@ -1572,17 +1572,17 @@ inline void set_destination_to_current() { COPY(destination, current_position); 
 void do_blocking_move_to(const float &x, const float &y, const float &z, const float &fr_mm_s /*=0.0*/) {
   const float old_feedrate_mm_s = feedrate_mm_s;
 
-  #if ENABLED(DEBUG_LEVELING_FEATURE)
+  #if OPTION_ENABLED(DEBUG_LEVELING_FEATURE)
     if (DEBUGGING(LEVELING)) print_xyz(PSTR(">>> do_blocking_move_to"), NULL, x, y, z);
   #endif
 
-  #if ENABLED(DELTA)
+  #if OPTION_ENABLED(DELTA)
 
     feedrate_mm_s = fr_mm_s ? fr_mm_s : XY_PROBE_FEEDRATE_MM_S;
 
     set_destination_to_current();          // sync destination at the start
 
-    #if ENABLED(DEBUG_LEVELING_FEATURE)
+    #if OPTION_ENABLED(DEBUG_LEVELING_FEATURE)
       if (DEBUGGING(LEVELING)) DEBUG_POS("set_destination_to_current", destination);
     #endif
 
@@ -1593,7 +1593,7 @@ void do_blocking_move_to(const float &x, const float &y, const float &z, const f
         destination[Y_AXIS] = y;
         destination[Z_AXIS] = z;
         prepare_uninterpolated_move_to_destination(); // set_current_to_destination
-        #if ENABLED(DEBUG_LEVELING_FEATURE)
+        #if OPTION_ENABLED(DEBUG_LEVELING_FEATURE)
           if (DEBUGGING(LEVELING)) DEBUG_POS("danger zone move", current_position);
         #endif
         return;
@@ -1601,7 +1601,7 @@ void do_blocking_move_to(const float &x, const float &y, const float &z, const f
       else {
         destination[Z_AXIS] = delta_clip_start_height;
         prepare_uninterpolated_move_to_destination(); // set_current_to_destination
-        #if ENABLED(DEBUG_LEVELING_FEATURE)
+        #if OPTION_ENABLED(DEBUG_LEVELING_FEATURE)
           if (DEBUGGING(LEVELING)) DEBUG_POS("zone border move", current_position);
         #endif
       }
@@ -1610,7 +1610,7 @@ void do_blocking_move_to(const float &x, const float &y, const float &z, const f
     if (z > current_position[Z_AXIS]) {    // raising?
       destination[Z_AXIS] = z;
       prepare_uninterpolated_move_to_destination();   // set_current_to_destination
-      #if ENABLED(DEBUG_LEVELING_FEATURE)
+      #if OPTION_ENABLED(DEBUG_LEVELING_FEATURE)
         if (DEBUGGING(LEVELING)) DEBUG_POS("z raise move", current_position);
       #endif
     }
@@ -1618,14 +1618,14 @@ void do_blocking_move_to(const float &x, const float &y, const float &z, const f
     destination[X_AXIS] = x;
     destination[Y_AXIS] = y;
     prepare_move_to_destination();         // set_current_to_destination
-    #if ENABLED(DEBUG_LEVELING_FEATURE)
+    #if OPTION_ENABLED(DEBUG_LEVELING_FEATURE)
       if (DEBUGGING(LEVELING)) DEBUG_POS("xy move", current_position);
     #endif
 
     if (z < current_position[Z_AXIS]) {    // lowering?
       destination[Z_AXIS] = z;
       prepare_uninterpolated_move_to_destination();   // set_current_to_destination
-      #if ENABLED(DEBUG_LEVELING_FEATURE)
+      #if OPTION_ENABLED(DEBUG_LEVELING_FEATURE)
         if (DEBUGGING(LEVELING)) DEBUG_POS("z lower move", current_position);
       #endif
     }
@@ -1677,7 +1677,7 @@ void do_blocking_move_to(const float &x, const float &y, const float &z, const f
 
   feedrate_mm_s = old_feedrate_mm_s;
 
-  #if ENABLED(DEBUG_LEVELING_FEATURE)
+  #if OPTION_ENABLED(DEBUG_LEVELING_FEATURE)
     if (DEBUGGING(LEVELING)) SERIAL_ECHOLNPGM("<<< do_blocking_move_to");
   #endif
 }
@@ -1701,7 +1701,7 @@ void do_blocking_move_to_xy(const float &x, const float &y, const float &fr_mm_s
 //  - Enable the endstops (for endstop moves)
 //
 static void setup_for_endstop_or_probe_move() {
-  #if ENABLED(DEBUG_LEVELING_FEATURE)
+  #if OPTION_ENABLED(DEBUG_LEVELING_FEATURE)
     if (DEBUGGING(LEVELING)) DEBUG_POS("setup_for_endstop_or_probe_move", current_position);
   #endif
   saved_feedrate_mm_s = feedrate_mm_s;
@@ -1711,7 +1711,7 @@ static void setup_for_endstop_or_probe_move() {
 }
 
 static void clean_up_after_endstop_or_probe_move() {
-  #if ENABLED(DEBUG_LEVELING_FEATURE)
+  #if OPTION_ENABLED(DEBUG_LEVELING_FEATURE)
     if (DEBUGGING(LEVELING)) DEBUG_POS("clean_up_after_endstop_or_probe_move", current_position);
   #endif
   feedrate_mm_s = saved_feedrate_mm_s;
@@ -1724,7 +1724,7 @@ static void clean_up_after_endstop_or_probe_move() {
    * Raise Z to a minimum height to make room for a probe to move
    */
   inline void do_probe_raise(float z_raise) {
-    #if ENABLED(DEBUG_LEVELING_FEATURE)
+    #if OPTION_ENABLED(DEBUG_LEVELING_FEATURE)
       if (DEBUGGING(LEVELING)) {
         SERIAL_ECHOPAIR("do_probe_raise(", z_raise);
         SERIAL_CHAR(')');
@@ -1741,7 +1741,7 @@ static void clean_up_after_endstop_or_probe_move() {
 
 #endif //HAS_BED_PROBE
 
-#if ENABLED(Z_PROBE_ALLEN_KEY) || ENABLED(Z_PROBE_SLED) || HAS_PROBING_PROCEDURE || HOTENDS > 1 || ENABLED(NOZZLE_CLEAN_FEATURE) || ENABLED(NOZZLE_PARK_FEATURE)
+#if OPTION_ENABLED(Z_PROBE_ALLEN_KEY) || OPTION_ENABLED(Z_PROBE_SLED) || HAS_PROBING_PROCEDURE || HOTENDS > 1 || OPTION_ENABLED(NOZZLE_CLEAN_FEATURE) || OPTION_ENABLED(NOZZLE_PARK_FEATURE)
   bool axis_unhomed_error(const bool x, const bool y, const bool z) {
     const bool xx = x && !axis_homed[X_AXIS],
                yy = y && !axis_homed[Y_AXIS],
@@ -1754,7 +1754,7 @@ static void clean_up_after_endstop_or_probe_move() {
       if (zz) SERIAL_ECHOPGM(MSG_Z);
       SERIAL_ECHOLNPGM(" " MSG_FIRST);
 
-      #if ENABLED(ULTRA_LCD)
+      #if OPTION_ENABLED(ULTRA_LCD)
         lcd_status_printf_P(0, PSTR(MSG_HOME " %s%s%s " MSG_FIRST), xx ? MSG_X : "", yy ? MSG_Y : "", zz ? MSG_Z : "");
       #endif
       return true;
@@ -1764,7 +1764,7 @@ static void clean_up_after_endstop_or_probe_move() {
   }
 #endif
 
-#if ENABLED(Z_PROBE_SLED)
+#if OPTION_ENABLED(Z_PROBE_SLED)
 
   #ifndef SLED_DOCKING_OFFSET
     #define SLED_DOCKING_OFFSET 0
@@ -1777,7 +1777,7 @@ static void clean_up_after_endstop_or_probe_move() {
    *              If true, move to MAX_X and release the solenoid
    */
   static void dock_sled(bool stow) {
-    #if ENABLED(DEBUG_LEVELING_FEATURE)
+    #if OPTION_ENABLED(DEBUG_LEVELING_FEATURE)
       if (DEBUGGING(LEVELING)) {
         SERIAL_ECHOPAIR("dock_sled(", stow);
         SERIAL_CHAR(')');
@@ -1793,7 +1793,7 @@ static void clean_up_after_endstop_or_probe_move() {
     #endif
   }
 
-#elif ENABLED(Z_PROBE_ALLEN_KEY)
+#elif OPTION_ENABLED(Z_PROBE_ALLEN_KEY)
 
   void run_deploy_moves_script() {
     #if defined(Z_PROBE_ALLEN_KEY_DEPLOY_1_X) || defined(Z_PROBE_ALLEN_KEY_DEPLOY_1_Y) || defined(Z_PROBE_ALLEN_KEY_DEPLOY_1_Z)
@@ -1956,8 +1956,8 @@ static void clean_up_after_endstop_or_probe_move() {
 #if HAS_BED_PROBE
 
  // TRIGGERED_WHEN_STOWED_TEST can easily be extended to servo probes, ... if needed.
-  #if ENABLED(PROBE_IS_TRIGGERED_WHEN_STOWED_TEST)
-    #if ENABLED(Z_MIN_PROBE_ENDSTOP)
+  #if OPTION_ENABLED(PROBE_IS_TRIGGERED_WHEN_STOWED_TEST)
+    #if OPTION_ENABLED(Z_MIN_PROBE_ENDSTOP)
       #define _TRIGGERED_WHEN_STOWED_TEST (READ(Z_MIN_PROBE_PIN) != Z_MIN_PROBE_ENDSTOP_INVERTING)
     #else
       #define _TRIGGERED_WHEN_STOWED_TEST (READ(Z_MIN_PIN) != Z_MIN_ENDSTOP_INVERTING)
@@ -1967,7 +1967,7 @@ static void clean_up_after_endstop_or_probe_move() {
   #define DEPLOY_PROBE() set_probe_deployed(true)
   #define STOW_PROBE() set_probe_deployed(false)
 
-  #if ENABLED(BLTOUCH)
+  #if OPTION_ENABLED(BLTOUCH)
     void bltouch_command(int angle) {
       servo[Z_ENDSTOP_SERVO_NR].move(angle);  // Give the BL-Touch the command and wait
       safe_delay(375);
@@ -1975,7 +1975,7 @@ static void clean_up_after_endstop_or_probe_move() {
 
     void set_bltouch_deployed(const bool deploy) {
       bltouch_command(deploy ? BLTOUCH_DEPLOY : BLTOUCH_STOW);
-      #if ENABLED(DEBUG_LEVELING_FEATURE)
+      #if OPTION_ENABLED(DEBUG_LEVELING_FEATURE)
         if (DEBUGGING(LEVELING)) {
           SERIAL_ECHOPAIR("set_bltouch_deployed(", deploy);
           SERIAL_CHAR(')');
@@ -1988,7 +1988,7 @@ static void clean_up_after_endstop_or_probe_move() {
   // returns false for ok and true for failure
   bool set_probe_deployed(bool deploy) {
 
-    #if ENABLED(DEBUG_LEVELING_FEATURE)
+    #if OPTION_ENABLED(DEBUG_LEVELING_FEATURE)
       if (DEBUGGING(LEVELING)) {
         DEBUG_POS("set_probe_deployed", current_position);
         SERIAL_ECHOLNPAIR("deploy: ", deploy);
@@ -2001,7 +2001,7 @@ static void clean_up_after_endstop_or_probe_move() {
     do_probe_raise(_Z_CLEARANCE_DEPLOY_PROBE);
 
     // When deploying make sure BLTOUCH is not already triggered
-    #if ENABLED(BLTOUCH)
+    #if OPTION_ENABLED(BLTOUCH)
       if (deploy && TEST_BLTOUCH()) {      // If BL-Touch says it's triggered
         bltouch_command(BLTOUCH_RESET);    // try to reset it.
         set_bltouch_deployed(true);        // Also needs to deploy and stow to
@@ -2013,14 +2013,14 @@ static void clean_up_after_endstop_or_probe_move() {
           return true;
         }
       }
-    #elif ENABLED(Z_PROBE_SLED)
+    #elif OPTION_ENABLED(Z_PROBE_SLED)
       if (axis_unhomed_error(true, false, false)) {
         SERIAL_ERROR_START;
         SERIAL_ERRORLNPGM(MSG_STOP_UNHOMED);
         stop();
         return true;
       }
-    #elif ENABLED(Z_PROBE_ALLEN_KEY)
+    #elif OPTION_ENABLED(Z_PROBE_ALLEN_KEY)
       if (axis_unhomed_error(true, true,  true )) {
         SERIAL_ERROR_START;
         SERIAL_ERRORLNPGM(MSG_STOP_UNHOMED);
@@ -2044,15 +2044,15 @@ static void clean_up_after_endstop_or_probe_move() {
                                                      // otherwise an Allen-Key probe can't be stowed.
     #endif
 
-        #if ENABLED(Z_PROBE_SLED)
+        #if OPTION_ENABLED(Z_PROBE_SLED)
 
           dock_sled(!deploy);
 
-        #elif HAS_Z_SERVO_ENDSTOP && DISABLED(BLTOUCH)
+        #elif HAS_Z_SERVO_ENDSTOP && OPTION_DISABLED(BLTOUCH)
 
           servo[Z_ENDSTOP_SERVO_NR].move(z_servo_angle[deploy ? 0 : 1]);
 
-        #elif ENABLED(Z_PROBE_ALLEN_KEY)
+        #elif OPTION_ENABLED(Z_PROBE_ALLEN_KEY)
 
           deploy ? run_deploy_moves_script() : run_stow_moves_script();
 
@@ -2081,12 +2081,12 @@ static void clean_up_after_endstop_or_probe_move() {
   }
 
   static void do_probe_move(float z, float fr_mm_m) {
-    #if ENABLED(DEBUG_LEVELING_FEATURE)
+    #if OPTION_ENABLED(DEBUG_LEVELING_FEATURE)
       if (DEBUGGING(LEVELING)) DEBUG_POS(">>> do_probe_move", current_position);
     #endif
 
     // Deploy BLTouch at the start of any probe
-    #if ENABLED(BLTOUCH)
+    #if OPTION_ENABLED(BLTOUCH)
       set_bltouch_deployed(true);
     #endif
 
@@ -2094,7 +2094,7 @@ static void clean_up_after_endstop_or_probe_move() {
     do_blocking_move_to_z(LOGICAL_Z_POSITION(z), MMM_TO_MMS(fr_mm_m));
 
     // Retract BLTouch immediately after a probe
-    #if ENABLED(BLTOUCH)
+    #if OPTION_ENABLED(BLTOUCH)
       set_bltouch_deployed(false);
     #endif
 
@@ -2107,7 +2107,7 @@ static void clean_up_after_endstop_or_probe_move() {
     // Tell the planner where we actually are
     SYNC_PLAN_POSITION_KINEMATIC();
 
-    #if ENABLED(DEBUG_LEVELING_FEATURE)
+    #if OPTION_ENABLED(DEBUG_LEVELING_FEATURE)
       if (DEBUGGING(LEVELING)) DEBUG_POS("<<< do_probe_move", current_position);
     #endif
   }
@@ -2116,19 +2116,19 @@ static void clean_up_after_endstop_or_probe_move() {
   // at the height where the probe triggered.
   static float run_z_probe() {
 
-    #if ENABLED(DEBUG_LEVELING_FEATURE)
+    #if OPTION_ENABLED(DEBUG_LEVELING_FEATURE)
       if (DEBUGGING(LEVELING)) DEBUG_POS(">>> run_z_probe", current_position);
     #endif
 
     // Prevent stepper_inactive_time from running out and EXTRUDER_RUNOUT_PREVENT from extruding
     refresh_cmd_timeout();
 
-    #if ENABLED(PROBE_DOUBLE_TOUCH)
+    #if OPTION_ENABLED(PROBE_DOUBLE_TOUCH)
 
       // Do a first probe at the fast speed
       do_probe_move(-(Z_MAX_LENGTH) - 10, Z_PROBE_SPEED_FAST);
 
-      #if ENABLED(DEBUG_LEVELING_FEATURE)
+      #if OPTION_ENABLED(DEBUG_LEVELING_FEATURE)
         float first_probe_z = current_position[Z_AXIS];
         if (DEBUGGING(LEVELING)) SERIAL_ECHOLNPAIR("1st Probe Z:", first_probe_z);
       #endif
@@ -2150,12 +2150,12 @@ static void clean_up_after_endstop_or_probe_move() {
     // move down slowly to find bed
     do_probe_move(-(Z_MAX_LENGTH) - 10, Z_PROBE_SPEED_SLOW);
 
-    #if ENABLED(DEBUG_LEVELING_FEATURE)
+    #if OPTION_ENABLED(DEBUG_LEVELING_FEATURE)
       if (DEBUGGING(LEVELING)) DEBUG_POS("<<< run_z_probe", current_position);
     #endif
 
     // Debug: compare probe heights
-    #if ENABLED(PROBE_DOUBLE_TOUCH) && ENABLED(DEBUG_LEVELING_FEATURE)
+    #if OPTION_ENABLED(PROBE_DOUBLE_TOUCH) && OPTION_ENABLED(DEBUG_LEVELING_FEATURE)
       if (DEBUGGING(LEVELING)) {
         SERIAL_ECHOPAIR("2nd Probe Z:", current_position[Z_AXIS]);
         SERIAL_ECHOLNPAIR(" Discrepancy:", first_probe_z - current_position[Z_AXIS]);
@@ -2175,7 +2175,7 @@ static void clean_up_after_endstop_or_probe_move() {
   //
 //float probe_pt(const float &x, const float &y, const bool stow = true, const int verbose_level = 1) {
   float probe_pt(const float x, const float y, const bool stow, const int verbose_level) {
-    #if ENABLED(DEBUG_LEVELING_FEATURE)
+    #if OPTION_ENABLED(DEBUG_LEVELING_FEATURE)
       if (DEBUGGING(LEVELING)) {
         SERIAL_ECHOPAIR(">>> probe_pt(", x);
         SERIAL_ECHOPAIR(", ", y);
@@ -2187,7 +2187,7 @@ static void clean_up_after_endstop_or_probe_move() {
 
     const float old_feedrate_mm_s = feedrate_mm_s;
 
-    #if ENABLED(DELTA)
+    #if OPTION_ENABLED(DELTA)
       if (current_position[Z_AXIS] > delta_clip_start_height)
         do_blocking_move_to_z(delta_clip_start_height);
     #endif
@@ -2219,7 +2219,7 @@ static void clean_up_after_endstop_or_probe_move() {
       SERIAL_EOL;
     }
 
-    #if ENABLED(DEBUG_LEVELING_FEATURE)
+    #if OPTION_ENABLED(DEBUG_LEVELING_FEATURE)
       if (DEBUGGING(LEVELING)) SERIAL_ECHOLNPGM("<<< probe_pt");
     #endif
 
@@ -2239,7 +2239,7 @@ static void clean_up_after_endstop_or_probe_move() {
    *  Enable: Current position = "unleveled" physical position
    */
   void set_bed_leveling_enabled(bool enable/*=true*/) {
-    #if ENABLED(MESH_BED_LEVELING)
+    #if OPTION_ENABLED(MESH_BED_LEVELING)
 
       if (enable != mbl.active()) {
 
@@ -2253,7 +2253,7 @@ static void clean_up_after_endstop_or_probe_move() {
 
     #elif HAS_ABL && !ENABLED(AUTO_BED_LEVELING_UBL)
 
-      #if ENABLED(AUTO_BED_LEVELING_BILINEAR)
+      #if OPTION_ENABLED(AUTO_BED_LEVELING_BILINEAR)
         const bool can_change = (!enable || (bilinear_grid_spacing[0] && bilinear_grid_spacing[1]));
       #else
         constexpr bool can_change = true;
@@ -2272,20 +2272,20 @@ static void clean_up_after_endstop_or_probe_move() {
         else
           planner.unapply_leveling(current_position);
       }
-    #elif ENABLED(AUTO_BED_LEVELING_UBL)
+    #elif OPTION_ENABLED(AUTO_BED_LEVELING_UBL)
       ubl.state.active = enable;
       //set_current_from_steppers_for_axis(Z_AXIS);
     #endif
   }
 
-  #if ENABLED(ENABLE_LEVELING_FADE_HEIGHT)
+  #if OPTION_ENABLED(ENABLE_LEVELING_FADE_HEIGHT)
 
     void set_z_fade_height(const float zfh) {
       planner.z_fade_height = zfh;
       planner.inverse_z_fade_height = RECIPROCAL(zfh);
 
       if (
-        #if ENABLED(MESH_BED_LEVELING)
+        #if OPTION_ENABLED(MESH_BED_LEVELING)
           mbl.active()
         #else
           planner.abl_enabled
@@ -2308,24 +2308,24 @@ static void clean_up_after_endstop_or_probe_move() {
    */
   void reset_bed_level() {
     set_bed_leveling_enabled(false);
-    #if ENABLED(MESH_BED_LEVELING)
+    #if OPTION_ENABLED(MESH_BED_LEVELING)
       if (mbl.has_mesh()) {
         mbl.reset();
         mbl.set_has_mesh(false);
       }
     #else
-      #if ENABLED(DEBUG_LEVELING_FEATURE)
+      #if OPTION_ENABLED(DEBUG_LEVELING_FEATURE)
         if (DEBUGGING(LEVELING)) SERIAL_ECHOLNPGM("reset_bed_level");
       #endif
       #if ABL_PLANAR
         planner.bed_level_matrix.set_to_identity();
-      #elif ENABLED(AUTO_BED_LEVELING_BILINEAR)
+      #elif OPTION_ENABLED(AUTO_BED_LEVELING_BILINEAR)
         bilinear_start[X_AXIS] = bilinear_start[Y_AXIS] =
         bilinear_grid_spacing[X_AXIS] = bilinear_grid_spacing[Y_AXIS] = 0;
         for (uint8_t x = 0; x < ABL_GRID_MAX_POINTS_X; x++)
           for (uint8_t y = 0; y < ABL_GRID_MAX_POINTS_Y; y++)
             bed_level_grid[x][y] = UNPROBED;
-      #elif ENABLED(AUTO_BED_LEVELING_UBL)
+      #elif OPTION_ENABLED(AUTO_BED_LEVELING_UBL)
         ubl.reset();
       #endif
     #endif
@@ -2333,13 +2333,13 @@ static void clean_up_after_endstop_or_probe_move() {
 
 #endif // PLANNER_LEVELING
 
-#if ENABLED(AUTO_BED_LEVELING_BILINEAR)
+#if OPTION_ENABLED(AUTO_BED_LEVELING_BILINEAR)
 
   /**
    * Extrapolate a single point from its neighbors
    */
   static void extrapolate_one_point(uint8_t x, uint8_t y, int8_t xdir, int8_t ydir) {
-    #if ENABLED(DEBUG_LEVELING_FEATURE)
+    #if OPTION_ENABLED(DEBUG_LEVELING_FEATURE)
       if (DEBUGGING(LEVELING)) {
         SERIAL_ECHOPGM("Extrapolate [");
         if (x < 10) SERIAL_CHAR(' ');
@@ -2353,7 +2353,7 @@ static void clean_up_after_endstop_or_probe_move() {
       }
     #endif
     if (bed_level_grid[x][y] != UNPROBED) {
-      #if ENABLED(DEBUG_LEVELING_FEATURE)
+      #if OPTION_ENABLED(DEBUG_LEVELING_FEATURE)
         if (DEBUGGING(LEVELING)) SERIAL_ECHOLNPGM(" (done)");
       #endif
       return;  // Don't overwrite good values.
@@ -2383,7 +2383,7 @@ static void clean_up_after_endstop_or_probe_move() {
   //Enable this if your SCARA uses 180° of total area
   //#define EXTRAPOLATE_FROM_EDGE
 
-  #if ENABLED(EXTRAPOLATE_FROM_EDGE)
+  #if OPTION_ENABLED(EXTRAPOLATE_FROM_EDGE)
     #if ABL_GRID_MAX_POINTS_X < ABL_GRID_MAX_POINTS_Y
       #define HALF_IN_X
     #elif ABL_GRID_MAX_POINTS_Y < ABL_GRID_MAX_POINTS_X
@@ -2469,7 +2469,7 @@ static void clean_up_after_endstop_or_probe_move() {
     );
   }
 
-  #if ENABLED(ABL_BILINEAR_SUBDIVISION)
+  #if OPTION_ENABLED(ABL_BILINEAR_SUBDIVISION)
 
     #define ABL_GRID_POINTS_VIRT_X (ABL_GRID_MAX_POINTS_X - 1) * (BILINEAR_SUBDIVISIONS) + 1
     #define ABL_GRID_POINTS_VIRT_Y (ABL_GRID_MAX_POINTS_Y - 1) * (BILINEAR_SUBDIVISIONS) + 1
@@ -2567,7 +2567,7 @@ static void clean_up_after_endstop_or_probe_move() {
  */
 static void do_homing_move(const AxisEnum axis, float distance, float fr_mm_s=0.0) {
 
-  #if ENABLED(DEBUG_LEVELING_FEATURE)
+  #if OPTION_ENABLED(DEBUG_LEVELING_FEATURE)
     if (DEBUGGING(LEVELING)) {
       SERIAL_ECHOPAIR(">>> do_homing_move(", axis_codes[axis]);
       SERIAL_ECHOPAIR(", ", distance);
@@ -2577,7 +2577,7 @@ static void do_homing_move(const AxisEnum axis, float distance, float fr_mm_s=0.
     }
   #endif
 
-  #if HOMING_Z_WITH_PROBE && ENABLED(BLTOUCH)
+  #if HOMING_Z_WITH_PROBE && OPTION_ENABLED(BLTOUCH)
     const bool deploy_bltouch = (axis == Z_AXIS && distance < 0);
     if (deploy_bltouch) set_bltouch_deployed(true);
   #endif
@@ -2598,13 +2598,13 @@ static void do_homing_move(const AxisEnum axis, float distance, float fr_mm_s=0.
 
   stepper.synchronize();
 
-  #if HOMING_Z_WITH_PROBE && ENABLED(BLTOUCH)
+  #if HOMING_Z_WITH_PROBE && OPTION_ENABLED(BLTOUCH)
     if (deploy_bltouch) set_bltouch_deployed(false);
   #endif
 
   endstops.hit_on_purpose();
 
-  #if ENABLED(DEBUG_LEVELING_FEATURE)
+  #if OPTION_ENABLED(DEBUG_LEVELING_FEATURE)
     if (DEBUGGING(LEVELING)) {
       SERIAL_ECHOPAIR("<<< do_homing_move(", axis_codes[axis]);
       SERIAL_CHAR(')');
@@ -2637,7 +2637,7 @@ static void homeaxis(const AxisEnum axis) {
     if (!CAN_HOME(X) && !CAN_HOME(Y) && !CAN_HOME(Z)) return;
   #endif
 
-  #if ENABLED(DEBUG_LEVELING_FEATURE)
+  #if OPTION_ENABLED(DEBUG_LEVELING_FEATURE)
     if (DEBUGGING(LEVELING)) {
       SERIAL_ECHOPAIR(">>> homeaxis(", axis_codes[axis]);
       SERIAL_CHAR(')');
@@ -2646,7 +2646,7 @@ static void homeaxis(const AxisEnum axis) {
   #endif
 
   const int axis_home_dir =
-    #if ENABLED(DUAL_X_CARRIAGE)
+    #if OPTION_ENABLED(DUAL_X_CARRIAGE)
       (axis == X_AXIS) ? x_home_dir(active_extruder) :
     #endif
     home_dir(axis);
@@ -2657,12 +2657,12 @@ static void homeaxis(const AxisEnum axis) {
   #endif
 
   // Set a flag for Z motor locking
-  #if ENABLED(Z_DUAL_ENDSTOPS)
+  #if OPTION_ENABLED(Z_DUAL_ENDSTOPS)
     if (axis == Z_AXIS) stepper.set_homing_flag(true);
   #endif
 
   // Fast move towards endstop until triggered
-  #if ENABLED(DEBUG_LEVELING_FEATURE)
+  #if OPTION_ENABLED(DEBUG_LEVELING_FEATURE)
     if (DEBUGGING(LEVELING)) SERIAL_ECHOLNPGM("Home 1 Fast:");
   #endif
   do_homing_move(axis, 1.5 * max_length(axis) * axis_home_dir);
@@ -2678,19 +2678,19 @@ static void homeaxis(const AxisEnum axis) {
   // If a second homing move is configured...
   if (bump) {
     // Move away from the endstop by the axis HOME_BUMP_MM
-    #if ENABLED(DEBUG_LEVELING_FEATURE)
+    #if OPTION_ENABLED(DEBUG_LEVELING_FEATURE)
       if (DEBUGGING(LEVELING)) SERIAL_ECHOLNPGM("Move Away:");
     #endif
     do_homing_move(axis, -bump);
 
     // Slow move towards endstop until triggered
-    #if ENABLED(DEBUG_LEVELING_FEATURE)
+    #if OPTION_ENABLED(DEBUG_LEVELING_FEATURE)
       if (DEBUGGING(LEVELING)) SERIAL_ECHOLNPGM("Home 2 Slow:");
     #endif
     do_homing_move(axis, 2 * bump, get_homing_bump_feedrate(axis));
   }
 
-  #if ENABLED(Z_DUAL_ENDSTOPS)
+  #if OPTION_ENABLED(Z_DUAL_ENDSTOPS)
     if (axis == Z_AXIS) {
       float adj = FABS(z_endstop_adj);
       bool lockZ1;
@@ -2716,7 +2716,7 @@ static void homeaxis(const AxisEnum axis) {
     set_axis_is_at_home(axis);
     SYNC_PLAN_POSITION_KINEMATIC();
 
-  #elif ENABLED(DELTA)
+  #elif OPTION_ENABLED(DELTA)
 
     // Delta has already moved all three towers up in G28
     // so here it re-homes each tower in turn.
@@ -2724,7 +2724,7 @@ static void homeaxis(const AxisEnum axis) {
 
     // retrace by the amount specified in endstop_adj
     if (endstop_adj[axis] * Z_HOME_DIR < 0) {
-      #if ENABLED(DEBUG_LEVELING_FEATURE)
+      #if OPTION_ENABLED(DEBUG_LEVELING_FEATURE)
         if (DEBUGGING(LEVELING)) SERIAL_ECHOLNPGM("endstop_adj:");
       #endif
       do_homing_move(axis, endstop_adj[axis]);
@@ -2739,7 +2739,7 @@ static void homeaxis(const AxisEnum axis) {
 
     destination[axis] = current_position[axis];
 
-    #if ENABLED(DEBUG_LEVELING_FEATURE)
+    #if OPTION_ENABLED(DEBUG_LEVELING_FEATURE)
       if (DEBUGGING(LEVELING)) DEBUG_POS("> AFTER set_axis_is_at_home", current_position);
     #endif
 
@@ -2750,7 +2750,7 @@ static void homeaxis(const AxisEnum axis) {
     if (axis == Z_AXIS && STOW_PROBE()) return;
   #endif
 
-  #if ENABLED(DEBUG_LEVELING_FEATURE)
+  #if OPTION_ENABLED(DEBUG_LEVELING_FEATURE)
     if (DEBUGGING(LEVELING)) {
       SERIAL_ECHOPAIR("<<< homeaxis(", axis_codes[axis]);
       SERIAL_CHAR(')');
@@ -2759,7 +2759,7 @@ static void homeaxis(const AxisEnum axis) {
   #endif
 } // homeaxis()
 
-#if ENABLED(FWRETRACT)
+#if OPTION_ENABLED(FWRETRACT)
 
   void retract(const bool retracting, const bool swapping = false) {
 
@@ -2812,7 +2812,7 @@ static void homeaxis(const AxisEnum axis) {
 
 #endif // FWRETRACT
 
-#if ENABLED(MIXING_EXTRUDER)
+#if OPTION_ENABLED(MIXING_EXTRUDER)
 
   void normalize_mix() {
     float mix_total = 0.0;
@@ -2824,7 +2824,7 @@ static void homeaxis(const AxisEnum axis) {
     }
   }
 
-  #if ENABLED(DIRECT_MIXING_IN_G1)
+  #if OPTION_ENABLED(DIRECT_MIXING_IN_G1)
     // Get mixing parameters from the GCode
     // The total "must" be 1.0 (but it will be normalized)
     // If no mix factors are given, the old mix is preserved
@@ -2875,13 +2875,13 @@ void gcode_get_destination() {
   if (code_seen('F') && code_value_linear_units() > 0.0)
     feedrate_mm_s = MMM_TO_MMS(code_value_linear_units());
 
-  #if ENABLED(PRINTCOUNTER)
+  #if OPTION_ENABLED(PRINTCOUNTER)
     if (!DEBUGGING(DRYRUN))
       print_job_timer.incFilamentUsed(destination[E_AXIS] - current_position[E_AXIS]);
   #endif
 
   // Get ABCDHI mixing factors
-  #if ENABLED(MIXING_EXTRUDER) && ENABLED(DIRECT_MIXING_IN_G1)
+  #if OPTION_ENABLED(MIXING_EXTRUDER) && OPTION_ENABLED(DIRECT_MIXING_IN_G1)
     gcode_get_mix();
   #endif
 }
@@ -2893,7 +2893,7 @@ void unknown_command_error() {
   SERIAL_EOL;
 }
 
-#if ENABLED(HOST_KEEPALIVE_FEATURE)
+#if OPTION_ENABLED(HOST_KEEPALIVE_FEATURE)
 
   /**
    * Output a "busy" message at regular intervals
@@ -2948,7 +2948,7 @@ bool position_is_reachable(float target[XYZ]
     #else
       return HYPOT2(dx - SCARA_OFFSET_X, dy - SCARA_OFFSET_Y) <= sq(L1 + L2);
     #endif
-  #elif ENABLED(DELTA)
+  #elif OPTION_ENABLED(DELTA)
     return HYPOT2(dx, dy) <= sq((float)(DELTA_PRINTABLE_RADIUS));
   #else
     const float dz = RAW_Z_POSITION(target[Z_AXIS]);
@@ -2973,7 +2973,7 @@ inline void gcode_G0_G1(
   if (IsRunning()) {
     gcode_get_destination(); // For X Y Z E F
 
-    #if ENABLED(FWRETRACT)
+    #if OPTION_ENABLED(FWRETRACT)
 
       if (autoretract_enabled && !(code_seen('X') || code_seen('Y') || code_seen('Z')) && code_seen('E')) {
         const float echange = destination[E_AXIS] - current_position[E_AXIS];
@@ -3019,18 +3019,18 @@ inline void gcode_G0_G1(
  *    G2 I10           ; CW circle centered at X+10
  *    G3 X20 Y12 R14   ; CCW circle with r=14 ending at X20 Y12
  */
-#if ENABLED(ARC_SUPPORT)
+#if OPTION_ENABLED(ARC_SUPPORT)
   inline void gcode_G2_G3(bool clockwise) {
     if (IsRunning()) {
 
-      #if ENABLED(SF_ARC_FIX)
+      #if OPTION_ENABLED(SF_ARC_FIX)
         const bool relative_mode_backup = relative_mode;
         relative_mode = true;
       #endif
 
       gcode_get_destination();
 
-      #if ENABLED(SF_ARC_FIX)
+      #if OPTION_ENABLED(SF_ARC_FIX)
         relative_mode = relative_mode_backup;
       #endif
 
@@ -3088,7 +3088,7 @@ inline void gcode_G4() {
   while (PENDING(millis(), dwell_ms)) idle();
 }
 
-#if ENABLED(BEZIER_CURVE_SUPPORT)
+#if OPTION_ENABLED(BEZIER_CURVE_SUPPORT)
 
   /**
    * Parameters interpreted according to:
@@ -3118,7 +3118,7 @@ inline void gcode_G4() {
 
 #endif // BEZIER_CURVE_SUPPORT
 
-#if ENABLED(FWRETRACT)
+#if OPTION_ENABLED(FWRETRACT)
 
   /**
    * G10 - Retract filament according to settings of M207
@@ -3139,7 +3139,7 @@ inline void gcode_G4() {
 
 #endif //FWRETRACT
 
-#if ENABLED(NOZZLE_CLEAN_FEATURE)
+#if OPTION_ENABLED(NOZZLE_CLEAN_FEATURE)
   /**
    * G12: Clean the nozzle
    */
@@ -3156,7 +3156,7 @@ inline void gcode_G4() {
   }
 #endif
 
-#if ENABLED(INCH_MODE_SUPPORT)
+#if OPTION_ENABLED(INCH_MODE_SUPPORT)
   /**
    * G20: Set input mode to inches
    */
@@ -3168,7 +3168,7 @@ inline void gcode_G4() {
   inline void gcode_G21() { set_input_linear_units(LINEARUNIT_MM); }
 #endif
 
-#if ENABLED(NOZZLE_PARK_FEATURE)
+#if OPTION_ENABLED(NOZZLE_PARK_FEATURE)
   /**
    * G27: Park the nozzle
    */
@@ -3179,7 +3179,7 @@ inline void gcode_G4() {
   }
 #endif // NOZZLE_PARK_FEATURE
 
-#if ENABLED(QUICK_HOME)
+#if OPTION_ENABLED(QUICK_HOME)
 
   static void quick_home_xy() {
 
@@ -3188,7 +3188,7 @@ inline void gcode_G4() {
     sync_plan_position();
 
     const int x_axis_home_dir =
-      #if ENABLED(DUAL_X_CARRIAGE)
+      #if OPTION_ENABLED(DUAL_X_CARRIAGE)
         x_home_dir(active_extruder)
       #else
         home_dir(X_AXIS)
@@ -3207,11 +3207,11 @@ inline void gcode_G4() {
 
 #endif // QUICK_HOME
 
-#if ENABLED(DEBUG_LEVELING_FEATURE)
+#if OPTION_ENABLED(DEBUG_LEVELING_FEATURE)
 
   void log_machine_info() {
     SERIAL_ECHOPGM("Machine Type: ");
-    #if ENABLED(DELTA)
+    #if OPTION_ENABLED(DELTA)
       SERIAL_ECHOLNPGM("Delta");
     #elif IS_SCARA
       SERIAL_ECHOLNPGM("SCARA");
@@ -3222,17 +3222,17 @@ inline void gcode_G4() {
     #endif
 
     SERIAL_ECHOPGM("Probe: ");
-    #if ENABLED(PROBE_MANUALLY)
+    #if OPTION_ENABLED(PROBE_MANUALLY)
       SERIAL_ECHOLNPGM("PROBE_MANUALLY");
-    #elif ENABLED(FIX_MOUNTED_PROBE)
+    #elif OPTION_ENABLED(FIX_MOUNTED_PROBE)
       SERIAL_ECHOLNPGM("FIX_MOUNTED_PROBE");
-    #elif ENABLED(BLTOUCH)
+    #elif OPTION_ENABLED(BLTOUCH)
       SERIAL_ECHOLNPGM("BLTOUCH");
     #elif HAS_Z_SERVO_ENDSTOP
       SERIAL_ECHOLNPGM("SERVO PROBE");
-    #elif ENABLED(Z_PROBE_SLED)
+    #elif OPTION_ENABLED(Z_PROBE_SLED)
       SERIAL_ECHOLNPGM("Z_PROBE_SLED");
-    #elif ENABLED(Z_PROBE_ALLEN_KEY)
+    #elif OPTION_ENABLED(Z_PROBE_ALLEN_KEY)
       SERIAL_ECHOLNPGM("Z_PROBE_ALLEN_KEY");
     #else
       SERIAL_ECHOLNPGM("NONE");
@@ -3269,13 +3269,13 @@ inline void gcode_G4() {
 
     #if HAS_ABL
       SERIAL_ECHOPGM("Auto Bed Leveling: ");
-      #if ENABLED(AUTO_BED_LEVELING_LINEAR)
+      #if OPTION_ENABLED(AUTO_BED_LEVELING_LINEAR)
         SERIAL_ECHOPGM("LINEAR");
-      #elif ENABLED(AUTO_BED_LEVELING_BILINEAR)
+      #elif OPTION_ENABLED(AUTO_BED_LEVELING_BILINEAR)
         SERIAL_ECHOPGM("BILINEAR");
-      #elif ENABLED(AUTO_BED_LEVELING_3POINT)
+      #elif OPTION_ENABLED(AUTO_BED_LEVELING_3POINT)
         SERIAL_ECHOPGM("3POINT");
-      #elif ENABLED(AUTO_BED_LEVELING_UBL)
+      #elif OPTION_ENABLED(AUTO_BED_LEVELING_UBL)
         SERIAL_ECHOPGM("UBL");
       #endif
       if (planner.abl_enabled) {
@@ -3295,9 +3295,9 @@ inline void gcode_G4() {
           SERIAL_ECHOPGM(" Z");
           if (diff[Z_AXIS] > 0) SERIAL_CHAR('+');
           SERIAL_ECHO(diff[Z_AXIS]);
-        #elif ENABLED(AUTO_BED_LEVELING_UBL)
+        #elif OPTION_ENABLED(AUTO_BED_LEVELING_UBL)
           SERIAL_ECHOPAIR("UBL Adjustment Z", stepper.get_axis_position_mm(Z_AXIS) - current_position[Z_AXIS]);
-        #elif ENABLED(AUTO_BED_LEVELING_BILINEAR)
+        #elif OPTION_ENABLED(AUTO_BED_LEVELING_BILINEAR)
           SERIAL_ECHOPAIR("ABL Adjustment Z", bilinear_z_offset(current_position));
         #endif
       }
@@ -3306,7 +3306,7 @@ inline void gcode_G4() {
 
       SERIAL_EOL;
 
-    #elif ENABLED(MESH_BED_LEVELING)
+    #elif OPTION_ENABLED(MESH_BED_LEVELING)
 
       SERIAL_ECHOPGM("Mesh Bed Leveling");
       if (mbl.active()) {
@@ -3325,14 +3325,14 @@ inline void gcode_G4() {
 
 #endif // DEBUG_LEVELING_FEATURE
 
-#if ENABLED(DELTA)
+#if OPTION_ENABLED(DELTA)
 
   /**
    * A delta can only safely home all axes at the same time
    * This is like quick_home_xy() but for 3 towers.
    */
   inline void home_delta() {
-    #if ENABLED(DEBUG_LEVELING_FEATURE)
+    #if OPTION_ENABLED(DEBUG_LEVELING_FEATURE)
       if (DEBUGGING(LEVELING)) DEBUG_POS(">>> home_delta", current_position);
     #endif
     // Init the current position of all carriages to 0,0,0
@@ -3360,14 +3360,14 @@ inline void gcode_G4() {
 
     SYNC_PLAN_POSITION_KINEMATIC();
 
-    #if ENABLED(DEBUG_LEVELING_FEATURE)
+    #if OPTION_ENABLED(DEBUG_LEVELING_FEATURE)
       if (DEBUGGING(LEVELING)) DEBUG_POS("<<< home_delta", current_position);
     #endif
   }
 
 #endif // DELTA
 
-#if ENABLED(Z_SAFE_HOMING)
+#if OPTION_ENABLED(Z_SAFE_HOMING)
 
   inline void home_z_safely() {
 
@@ -3379,7 +3379,7 @@ inline void gcode_G4() {
       return;
     }
 
-    #if ENABLED(DEBUG_LEVELING_FEATURE)
+    #if OPTION_ENABLED(DEBUG_LEVELING_FEATURE)
       if (DEBUGGING(LEVELING)) SERIAL_ECHOLNPGM("Z_SAFE_HOMING >>>");
     #endif
 
@@ -3405,12 +3405,12 @@ inline void gcode_G4() {
         destination[Y_AXIS] -= Y_PROBE_OFFSET_FROM_EXTRUDER;
       #endif
 
-      #if ENABLED(DEBUG_LEVELING_FEATURE)
+      #if OPTION_ENABLED(DEBUG_LEVELING_FEATURE)
         if (DEBUGGING(LEVELING)) DEBUG_POS("Z_SAFE_HOMING", destination);
       #endif
 
       // This causes the carriage on Dual X to unpark
-      #if ENABLED(DUAL_X_CARRIAGE)
+      #if OPTION_ENABLED(DUAL_X_CARRIAGE)
         active_extruder_parked = false;
       #endif
 
@@ -3423,14 +3423,14 @@ inline void gcode_G4() {
       SERIAL_ECHOLNPGM(MSG_ZPROBE_OUT);
     }
 
-    #if ENABLED(DEBUG_LEVELING_FEATURE)
+    #if OPTION_ENABLED(DEBUG_LEVELING_FEATURE)
       if (DEBUGGING(LEVELING)) SERIAL_ECHOLNPGM("<<< Z_SAFE_HOMING");
     #endif
   }
 
 #endif // Z_SAFE_HOMING
 
-#if ENABLED(PROBE_MANUALLY)
+#if OPTION_ENABLED(PROBE_MANUALLY)
   bool g29_in_progress = false;
 #else
   constexpr bool g29_in_progress = false;
@@ -3453,7 +3453,7 @@ inline void gcode_G4() {
  */
 inline void gcode_G28() {
 
-  #if ENABLED(DEBUG_LEVELING_FEATURE)
+  #if OPTION_ENABLED(DEBUG_LEVELING_FEATURE)
     if (DEBUGGING(LEVELING)) {
       SERIAL_ECHOLNPGM(">>> gcode_G28");
       log_machine_info();
@@ -3464,13 +3464,13 @@ inline void gcode_G28() {
   stepper.synchronize();
 
   // Cancel the active G29 session
-  #if ENABLED(PROBE_MANUALLY)
+  #if OPTION_ENABLED(PROBE_MANUALLY)
     g29_in_progress = false;
   #endif
 
   // Disable the leveling matrix before homing
   #if PLANNER_LEVELING
-    #if ENABLED(AUTO_BED_LEVELING_UBL)
+    #if OPTION_ENABLED(AUTO_BED_LEVELING_UBL)
       const bool bed_leveling_state_at_entry = ubl.state.active;
     #endif
     set_bed_leveling_enabled(false);
@@ -3482,17 +3482,17 @@ inline void gcode_G28() {
     tool_change(0, 0, true);
   #endif
 
-  #if ENABLED(DUAL_X_CARRIAGE) || ENABLED(DUAL_NOZZLE_DUPLICATION_MODE)
+  #if OPTION_ENABLED(DUAL_X_CARRIAGE) || OPTION_ENABLED(DUAL_NOZZLE_DUPLICATION_MODE)
     extruder_duplication_enabled = false;
   #endif
 
   setup_for_endstop_or_probe_move();
-  #if ENABLED(DEBUG_LEVELING_FEATURE)
+  #if OPTION_ENABLED(DEBUG_LEVELING_FEATURE)
     if (DEBUGGING(LEVELING)) SERIAL_ECHOLNPGM("> endstops.enable(true)");
   #endif
   endstops.enable(true); // Enable endstops for next homing move
 
-  #if ENABLED(DELTA)
+  #if OPTION_ENABLED(DELTA)
 
     home_delta();
 
@@ -3507,7 +3507,7 @@ inline void gcode_G28() {
 
       if (home_all_axis || homeZ) {
         HOMEAXIS(Z);
-        #if ENABLED(DEBUG_LEVELING_FEATURE)
+        #if OPTION_ENABLED(DEBUG_LEVELING_FEATURE)
           if (DEBUGGING(LEVELING)) DEBUG_POS("> HOMEAXIS(Z)", current_position);
         #endif
       }
@@ -3519,7 +3519,7 @@ inline void gcode_G28() {
         destination[Z_AXIS] = LOGICAL_Z_POSITION(Z_HOMING_HEIGHT);
         if (destination[Z_AXIS] > current_position[Z_AXIS]) {
 
-          #if ENABLED(DEBUG_LEVELING_FEATURE)
+          #if OPTION_ENABLED(DEBUG_LEVELING_FEATURE)
             if (DEBUGGING(LEVELING))
               SERIAL_ECHOLNPAIR("Raise Z (before homing) to ", destination[Z_AXIS]);
           #endif
@@ -3530,18 +3530,18 @@ inline void gcode_G28() {
 
     #endif
 
-    #if ENABLED(QUICK_HOME)
+    #if OPTION_ENABLED(QUICK_HOME)
 
       if (home_all_axis || (homeX && homeY)) quick_home_xy();
 
     #endif
 
-    #if ENABLED(HOME_Y_BEFORE_X)
+    #if OPTION_ENABLED(HOME_Y_BEFORE_X)
 
       // Home Y
       if (home_all_axis || homeY) {
         HOMEAXIS(Y);
-        #if ENABLED(DEBUG_LEVELING_FEATURE)
+        #if OPTION_ENABLED(DEBUG_LEVELING_FEATURE)
           if (DEBUGGING(LEVELING)) DEBUG_POS("> homeY", current_position);
         #endif
       }
@@ -3551,7 +3551,7 @@ inline void gcode_G28() {
     // Home X
     if (home_all_axis || homeX) {
 
-      #if ENABLED(DUAL_X_CARRIAGE)
+      #if OPTION_ENABLED(DUAL_X_CARRIAGE)
 
         // Always home the 2nd (right) extruder first
         active_extruder = 1;
@@ -3575,16 +3575,16 @@ inline void gcode_G28() {
 
       #endif
 
-      #if ENABLED(DEBUG_LEVELING_FEATURE)
+      #if OPTION_ENABLED(DEBUG_LEVELING_FEATURE)
         if (DEBUGGING(LEVELING)) DEBUG_POS("> homeX", current_position);
       #endif
     }
 
-    #if DISABLED(HOME_Y_BEFORE_X)
+    #if OPTION_DISABLED(HOME_Y_BEFORE_X)
       // Home Y
       if (home_all_axis || homeY) {
         HOMEAXIS(Y);
-        #if ENABLED(DEBUG_LEVELING_FEATURE)
+        #if OPTION_ENABLED(DEBUG_LEVELING_FEATURE)
           if (DEBUGGING(LEVELING)) DEBUG_POS("> homeY", current_position);
         #endif
       }
@@ -3593,12 +3593,12 @@ inline void gcode_G28() {
     // Home Z last if homing towards the bed
     #if Z_HOME_DIR < 0
       if (home_all_axis || homeZ) {
-        #if ENABLED(Z_SAFE_HOMING)
+        #if OPTION_ENABLED(Z_SAFE_HOMING)
           home_z_safely();
         #else
           HOMEAXIS(Z);
         #endif
-        #if ENABLED(DEBUG_LEVELING_FEATURE)
+        #if OPTION_ENABLED(DEBUG_LEVELING_FEATURE)
           if (DEBUGGING(LEVELING)) DEBUG_POS("> (home_all_axis || homeZ) > final", current_position);
         #endif
       } // home_all_axis || homeZ
@@ -3610,21 +3610,21 @@ inline void gcode_G28() {
 
   endstops.not_homing();
 
-  #if ENABLED(DELTA) && ENABLED(DELTA_HOME_TO_SAFE_ZONE)
+  #if OPTION_ENABLED(DELTA) && OPTION_ENABLED(DELTA_HOME_TO_SAFE_ZONE)
     // move to a height where we can use the full xy-area
     do_blocking_move_to_z(delta_clip_start_height);
   #endif
 
   // Enable mesh leveling again
-  #if ENABLED(AUTO_BED_LEVELING_UBL)
+  #if OPTION_ENABLED(AUTO_BED_LEVELING_UBL)
       set_bed_leveling_enabled(bed_leveling_state_at_entry);
   #endif
 
-  #if ENABLED(MESH_BED_LEVELING)
+  #if OPTION_ENABLED(MESH_BED_LEVELING)
     if (mbl.reactivate()) {
       set_bed_leveling_enabled(true);
       if (home_all_axis || (axis_homed[X_AXIS] && axis_homed[Y_AXIS] && homeZ)) {
-        #if ENABLED(MESH_G28_REST_ORIGIN)
+        #if OPTION_ENABLED(MESH_G28_REST_ORIGIN)
           current_position[Z_AXIS] = LOGICAL_Z_POSITION(Z_MIN_POS);
           set_destination_to_current();
           line_to_destination(homing_feedrate_mm_s[Z_AXIS]);
@@ -3643,7 +3643,7 @@ inline void gcode_G28() {
 
   report_current_position();
 
-  #if ENABLED(DEBUG_LEVELING_FEATURE)
+  #if OPTION_ENABLED(DEBUG_LEVELING_FEATURE)
     if (DEBUGGING(LEVELING)) SERIAL_ECHOLNPGM("<<< gcode_G28");
   #endif
 }
@@ -3658,7 +3658,7 @@ inline void gcode_G28() {
 
 #endif
 
-#if ENABLED(MESH_BED_LEVELING) || ENABLED(PROBE_MANUALLY)
+#if OPTION_ENABLED(MESH_BED_LEVELING) || OPTION_ENABLED(PROBE_MANUALLY)
 
   inline void _manual_goto_xy(const float &x, const float &y) {
     const float old_feedrate_mm_s = feedrate_mm_s;
@@ -3686,7 +3686,7 @@ inline void gcode_G28() {
 
 #endif
 
-#if ENABLED(MESH_BED_LEVELING)
+#if OPTION_ENABLED(MESH_BED_LEVELING)
 
   // Save 130 bytes with non-duplication of PSTR
   void say_not_entered() { SERIAL_PROTOCOLLNPGM(" not entered."); }
@@ -3858,10 +3858,10 @@ inline void gcode_G28() {
     report_current_position();
   }
 
-#elif HAS_ABL && DISABLED(AUTO_BED_LEVELING_UBL)
+#elif HAS_ABL && OPTION_DISABLED(AUTO_BED_LEVELING_UBL)
 
   #if ABL_GRID
-    #if ENABLED(PROBE_Y_FIRST)
+    #if OPTION_ENABLED(PROBE_Y_FIRST)
       #define PR_OUTER_VAR xCount
       #define PR_OUTER_END abl_grid_points_x
       #define PR_INNER_VAR yCount
@@ -3940,7 +3940,7 @@ inline void gcode_G28() {
   inline void gcode_G29() {
 
     // G29 Q is also available if debugging
-    #if ENABLED(DEBUG_LEVELING_FEATURE)
+    #if OPTION_ENABLED(DEBUG_LEVELING_FEATURE)
       const bool query = code_seen('Q');
       const uint8_t old_debug_flags = marlin_debug_flags;
       if (query) marlin_debug_flags |= DEBUG_LEVELING;
@@ -3949,7 +3949,7 @@ inline void gcode_G28() {
         log_machine_info();
       }
       marlin_debug_flags = old_debug_flags;
-      #if DISABLED(PROBE_MANUALLY)
+      #if OPTION_DISABLED(PROBE_MANUALLY)
         if (query) return;
       #endif
     #endif
@@ -3958,7 +3958,7 @@ inline void gcode_G28() {
     if (axis_unhomed_error(true, true, true)) return;
 
     // Define local vars 'static' for manual probing, 'auto' otherwise
-    #if ENABLED(PROBE_MANUALLY)
+    #if OPTION_ENABLED(PROBE_MANUALLY)
       #define ABL_VAR static
     #else
       #define ABL_VAR
@@ -3992,11 +3992,11 @@ inline void gcode_G28() {
         int constexpr abl2 = ABL_GRID_MAX;
       #endif
 
-      #if ENABLED(AUTO_BED_LEVELING_BILINEAR)
+      #if OPTION_ENABLED(AUTO_BED_LEVELING_BILINEAR)
 
         ABL_VAR float zoffset;
 
-      #elif ENABLED(AUTO_BED_LEVELING_LINEAR)
+      #elif OPTION_ENABLED(AUTO_BED_LEVELING_LINEAR)
 
         ABL_VAR int indexIntoAB[ABL_GRID_MAX_POINTS_X][ABL_GRID_MAX_POINTS_Y];
 
@@ -4005,7 +4005,7 @@ inline void gcode_G28() {
                      mean;
       #endif
 
-    #elif ENABLED(AUTO_BED_LEVELING_3POINT)
+    #elif OPTION_ENABLED(AUTO_BED_LEVELING_3POINT)
 
       // Probe at 3 arbitrary points
       ABL_VAR vector_3 points[3] = {
@@ -4024,7 +4024,7 @@ inline void gcode_G28() {
       abl_probe_index = 0;
       abl_should_enable = planner.abl_enabled;
 
-      #if ENABLED(AUTO_BED_LEVELING_BILINEAR)
+      #if OPTION_ENABLED(AUTO_BED_LEVELING_BILINEAR)
 
         if (code_seen('W')) {
           if (!bilinear_grid_spacing[X_AXIS]) {
@@ -4055,7 +4055,7 @@ inline void gcode_G28() {
           if (WITHIN(i, 0, ABL_GRID_MAX_POINTS_X - 1) && WITHIN(j, 0, ABL_GRID_MAX_POINTS_Y)) {
             set_bed_leveling_enabled(false);
             bed_level_grid[i][j] = z;
-            #if ENABLED(ABL_BILINEAR_SUBDIVISION)
+            #if OPTION_ENABLED(ABL_BILINEAR_SUBDIVISION)
               bed_level_virt_interpolate();
             #endif
             set_bed_leveling_enabled(abl_should_enable);
@@ -4083,7 +4083,7 @@ inline void gcode_G28() {
 
       dryrun = code_seen('D') ? code_value_bool() : false;
 
-      #if ENABLED(AUTO_BED_LEVELING_LINEAR)
+      #if OPTION_ENABLED(AUTO_BED_LEVELING_LINEAR)
 
         do_topography_map = verbose_level > 2 || code_seen('T');
 
@@ -4100,7 +4100,7 @@ inline void gcode_G28() {
 
         abl2 = abl_grid_points_x * abl_grid_points_y;
 
-      #elif ENABLED(AUTO_BED_LEVELING_BILINEAR)
+      #elif OPTION_ENABLED(AUTO_BED_LEVELING_BILINEAR)
 
         zoffset = code_seen('Z') ? code_value_axis_units(Z_AXIS) : 0;
         #if HAS_BED_PROBE
@@ -4184,7 +4184,7 @@ inline void gcode_G28() {
         }
       #endif
 
-      #if ENABLED(AUTO_BED_LEVELING_BILINEAR)
+      #if OPTION_ENABLED(AUTO_BED_LEVELING_BILINEAR)
 
         if ( xGridSpacing != bilinear_grid_spacing[X_AXIS]
           || yGridSpacing != bilinear_grid_spacing[Y_AXIS]
@@ -4204,7 +4204,7 @@ inline void gcode_G28() {
           bilinear_start[X_AXIS] = RAW_X_POSITION(left_probe_bed_position);
           bilinear_start[Y_AXIS] = RAW_Y_POSITION(front_probe_bed_position);
 
-          #if ENABLED(ABL_BILINEAR_SUBDIVISION)
+          #if OPTION_ENABLED(ABL_BILINEAR_SUBDIVISION)
             bilinear_grid_spacing_virt[X_AXIS] = xGridSpacing / (BILINEAR_SUBDIVISIONS);
             bilinear_grid_spacing_virt[Y_AXIS] = yGridSpacing / (BILINEAR_SUBDIVISIONS);
           #endif
@@ -4213,15 +4213,15 @@ inline void gcode_G28() {
           abl_should_enable = false;
         }
 
-      #elif ENABLED(AUTO_BED_LEVELING_LINEAR)
+      #elif OPTION_ENABLED(AUTO_BED_LEVELING_LINEAR)
 
         mean = 0.0;
 
       #endif // AUTO_BED_LEVELING_LINEAR
 
-      #if ENABLED(AUTO_BED_LEVELING_3POINT)
+      #if OPTION_ENABLED(AUTO_BED_LEVELING_3POINT)
 
-        #if ENABLED(DEBUG_LEVELING_FEATURE)
+        #if OPTION_ENABLED(DEBUG_LEVELING_FEATURE)
           if (DEBUGGING(LEVELING)) SERIAL_ECHOLNPGM("> 3-point Leveling");
         #endif
 
@@ -4232,7 +4232,7 @@ inline void gcode_G28() {
 
     } // !g29_in_progress
 
-    #if ENABLED(PROBE_MANUALLY)
+    #if OPTION_ENABLED(PROBE_MANUALLY)
 
       // Abort current G29 procedure, go back to ABLStart
       if (code_seen('A') && g29_in_progress) {
@@ -4270,7 +4270,7 @@ inline void gcode_G28() {
         // Save the previous Z before going to the next point
         measured_z = current_position[Z_AXIS];
 
-        #if ENABLED(AUTO_BED_LEVELING_LINEAR)
+        #if OPTION_ENABLED(AUTO_BED_LEVELING_LINEAR)
 
           mean += measured_z;
           eqnBVector[abl_probe_index] = measured_z;
@@ -4278,11 +4278,11 @@ inline void gcode_G28() {
           eqnAMatrix[abl_probe_index + 1 * abl2] = yProbe;
           eqnAMatrix[abl_probe_index + 2 * abl2] = 1;
 
-        #elif ENABLED(AUTO_BED_LEVELING_BILINEAR)
+        #elif OPTION_ENABLED(AUTO_BED_LEVELING_BILINEAR)
 
           bed_level_grid[xCount][yCount] = measured_z + zoffset;
 
-        #elif ENABLED(AUTO_BED_LEVELING_3POINT)
+        #elif OPTION_ENABLED(AUTO_BED_LEVELING_3POINT)
 
           points[i].z = measured_z;
 
@@ -4313,7 +4313,7 @@ inline void gcode_G28() {
           xProbe = FLOOR(xBase + (xBase < 0 ? 0 : 0.5));
           yProbe = FLOOR(yBase + (yBase < 0 ? 0 : 0.5));
 
-          #if ENABLED(AUTO_BED_LEVELING_LINEAR)
+          #if OPTION_ENABLED(AUTO_BED_LEVELING_LINEAR)
             indexIntoAB[xCount][yCount] = abl_probe_index;
           #endif
 
@@ -4347,7 +4347,7 @@ inline void gcode_G28() {
           #endif
         }
 
-      #elif ENABLED(AUTO_BED_LEVELING_3POINT)
+      #elif OPTION_ENABLED(AUTO_BED_LEVELING_3POINT)
 
         // Probe at 3 arbitrary points
         if (abl_probe_index < 3) {
@@ -4425,7 +4425,7 @@ inline void gcode_G28() {
             xProbe = floor(xBase + (xBase < 0 ? 0 : 0.5));
             yProbe = floor(yBase + (yBase < 0 ? 0 : 0.5));
 
-            #if ENABLED(AUTO_BED_LEVELING_LINEAR)
+            #if OPTION_ENABLED(AUTO_BED_LEVELING_LINEAR)
               indexIntoAB[xCount][yCount] = ++abl_probe_index;
             #endif
 
@@ -4442,7 +4442,7 @@ inline void gcode_G28() {
               return;
             }
 
-            #if ENABLED(AUTO_BED_LEVELING_LINEAR)
+            #if OPTION_ENABLED(AUTO_BED_LEVELING_LINEAR)
 
               mean += measured_z;
               eqnBVector[abl_probe_index] = measured_z;
@@ -4450,7 +4450,7 @@ inline void gcode_G28() {
               eqnAMatrix[abl_probe_index + 1 * abl2] = yProbe;
               eqnAMatrix[abl_probe_index + 2 * abl2] = 1;
 
-            #elif ENABLED(AUTO_BED_LEVELING_BILINEAR)
+            #elif OPTION_ENABLED(AUTO_BED_LEVELING_BILINEAR)
 
               bed_level_grid[xCount][yCount] = measured_z + zoffset;
 
@@ -4462,7 +4462,7 @@ inline void gcode_G28() {
           } // inner
         } // outer
 
-      #elif ENABLED(AUTO_BED_LEVELING_3POINT)
+      #elif OPTION_ENABLED(AUTO_BED_LEVELING_3POINT)
 
         // Probe at 3 arbitrary points
 
@@ -4511,22 +4511,22 @@ inline void gcode_G28() {
     // Restore state after probing
     clean_up_after_endstop_or_probe_move();
 
-    #if ENABLED(DEBUG_LEVELING_FEATURE)
+    #if OPTION_ENABLED(DEBUG_LEVELING_FEATURE)
       if (DEBUGGING(LEVELING)) DEBUG_POS("> probing complete", current_position);
     #endif
 
     // Calculate leveling, print reports, correct the position
-    #if ENABLED(AUTO_BED_LEVELING_BILINEAR)
+    #if OPTION_ENABLED(AUTO_BED_LEVELING_BILINEAR)
 
       if (!dryrun) extrapolate_unprobed_bed_level();
       print_bilinear_leveling_grid();
 
-      #if ENABLED(ABL_BILINEAR_SUBDIVISION)
+      #if OPTION_ENABLED(ABL_BILINEAR_SUBDIVISION)
         bed_level_virt_interpolate();
         bed_level_virt_print();
       #endif
 
-    #elif ENABLED(AUTO_BED_LEVELING_LINEAR)
+    #elif OPTION_ENABLED(AUTO_BED_LEVELING_LINEAR)
 
       // For LINEAR leveling calculate matrix, print reports, correct the position
 
@@ -4644,7 +4644,7 @@ inline void gcode_G28() {
         // Correct the current XYZ position based on the tilted plane.
         //
 
-        #if ENABLED(DEBUG_LEVELING_FEATURE)
+        #if OPTION_ENABLED(DEBUG_LEVELING_FEATURE)
           if (DEBUGGING(LEVELING)) DEBUG_POS("G29 uncorrected XYZ", current_position);
         #endif
 
@@ -4660,7 +4660,7 @@ inline void gcode_G28() {
           && NEAR(current_position[Y_AXIS], yProbe - (Y_PROBE_OFFSET_FROM_EXTRUDER))
         ) {
           float simple_z = current_position[Z_AXIS] - measured_z;
-          #if ENABLED(DEBUG_LEVELING_FEATURE)
+          #if OPTION_ENABLED(DEBUG_LEVELING_FEATURE)
             if (DEBUGGING(LEVELING)) {
               SERIAL_ECHOPAIR("Z from Probe:", simple_z);
               SERIAL_ECHOPAIR("  Matrix:", converted[Z_AXIS]);
@@ -4673,15 +4673,15 @@ inline void gcode_G28() {
         // The rotated XY and corrected Z are now current_position
         COPY(current_position, converted);
 
-        #if ENABLED(DEBUG_LEVELING_FEATURE)
+        #if OPTION_ENABLED(DEBUG_LEVELING_FEATURE)
           if (DEBUGGING(LEVELING)) DEBUG_POS("G29 corrected XYZ", current_position);
         #endif
       }
 
-    #elif ENABLED(AUTO_BED_LEVELING_BILINEAR)
+    #elif OPTION_ENABLED(AUTO_BED_LEVELING_BILINEAR)
 
       if (!dryrun) {
-        #if ENABLED(DEBUG_LEVELING_FEATURE)
+        #if OPTION_ENABLED(DEBUG_LEVELING_FEATURE)
           if (DEBUGGING(LEVELING)) SERIAL_ECHOLNPAIR("G29 uncorrected Z:", current_position[Z_AXIS]);
         #endif
 
@@ -4689,7 +4689,7 @@ inline void gcode_G28() {
         // and cause compensation movement in Z
         current_position[Z_AXIS] -= bilinear_z_offset(current_position);
 
-        #if ENABLED(DEBUG_LEVELING_FEATURE)
+        #if OPTION_ENABLED(DEBUG_LEVELING_FEATURE)
           if (DEBUGGING(LEVELING)) SERIAL_ECHOLNPAIR(" corrected Z:", current_position[Z_AXIS]);
         #endif
       }
@@ -4697,14 +4697,14 @@ inline void gcode_G28() {
     #endif // ABL_PLANAR
 
     #ifdef Z_PROBE_END_SCRIPT
-      #if ENABLED(DEBUG_LEVELING_FEATURE)
+      #if OPTION_ENABLED(DEBUG_LEVELING_FEATURE)
         if (DEBUGGING(LEVELING)) SERIAL_ECHOLNPAIR("Z Probe End Script: ", Z_PROBE_END_SCRIPT);
       #endif
       enqueue_and_echo_commands_P(PSTR(Z_PROBE_END_SCRIPT));
       stepper.synchronize();
     #endif
 
-    #if ENABLED(DEBUG_LEVELING_FEATURE)
+    #if OPTION_ENABLED(DEBUG_LEVELING_FEATURE)
       if (DEBUGGING(LEVELING)) SERIAL_ECHOLNPGM("<<< gcode_G29");
     #endif
 
@@ -4719,7 +4719,7 @@ inline void gcode_G28() {
       SYNC_PLAN_POSITION_KINEMATIC();
   }
 
-#endif // HAS_ABL && DISABLED(AUTO_BED_LEVELING_UBL)
+#endif // HAS_ABL && OPTION_DISABLED(AUTO_BED_LEVELING_UBL)
 
 #if HAS_BED_PROBE
 
@@ -4761,7 +4761,7 @@ inline void gcode_G28() {
     report_current_position();
   }
 
-  #if ENABLED(Z_PROBE_SLED)
+  #if OPTION_ENABLED(Z_PROBE_SLED)
 
     /**
      * G31: Deploy the Z probe
@@ -4777,7 +4777,7 @@ inline void gcode_G28() {
 
 #endif // HAS_BED_PROBE
 
-#if ENABLED(G38_PROBE_TARGET)
+#if OPTION_ENABLED(G38_PROBE_TARGET)
 
   static bool G38_run_probe() {
 
@@ -4880,7 +4880,7 @@ inline void gcode_G92() {
         current_position[i] = code_value_axis_units(i);
         if (i != E_AXIS) didXYZ = true;
       #else
-        #if DISABLED(NO_WORKSPACE_OFFSETS)
+        #if OPTION_DISABLED(NO_WORKSPACE_OFFSETS)
           float p = current_position[i];
         #endif
         float v = code_value_axis_units(i);
@@ -4889,7 +4889,7 @@ inline void gcode_G92() {
 
         if (i != E_AXIS) {
           didXYZ = true;
-          #if DISABLED(NO_WORKSPACE_OFFSETS)
+          #if OPTION_DISABLED(NO_WORKSPACE_OFFSETS)
             position_shift[i] += v - p; // Offset the coordinate space
             update_software_endstops((AxisEnum)i);
           #endif
@@ -4905,7 +4905,7 @@ inline void gcode_G92() {
   report_current_position();
 }
 
-#if ENABLED(EMERGENCY_PARSER) || ENABLED(ULTIPANEL)
+#if OPTION_ENABLED(EMERGENCY_PARSER) || OPTION_ENABLED(ULTIPANEL)
 
   /**
    * M0: Unconditional stop - Wait for user button press on LCD
@@ -4925,13 +4925,13 @@ inline void gcode_G92() {
       hasS = codenum > 0;
     }
 
-    #if ENABLED(ULTIPANEL)
+    #if OPTION_ENABLED(ULTIPANEL)
 
       if (!hasP && !hasS && *args != '\0')
         lcd_setstatus(args, true);
       else {
         LCD_MESSAGEPGM(MSG_USERWAIT);
-        #if ENABLED(LCD_PROGRESS_BAR) && PROGRESS_MSG_EXPIRE > 0
+        #if OPTION_ENABLED(LCD_PROGRESS_BAR) && PROGRESS_MSG_EXPIRE > 0
           dontExpireStatus();
         #endif
       }
@@ -4956,7 +4956,7 @@ inline void gcode_G92() {
       while (PENDING(millis(), codenum) && wait_for_user) idle();
     }
     else {
-      #if ENABLED(ULTIPANEL)
+      #if OPTION_ENABLED(ULTIPANEL)
         if (lcd_detected()) {
           while (wait_for_user) idle();
           IS_SD_PRINTING ? LCD_MESSAGEPGM(MSG_RESUMING) : LCD_MESSAGEPGM(WELCOME_MSG);
@@ -4986,7 +4986,7 @@ inline void gcode_M17() {
   #define RUNPLAN(RATE_MM_S) line_to_destination(RATE_MM_S)
 #endif
 
-#if ENABLED(PARK_HEAD_ON_PAUSE)
+#if OPTION_ENABLED(PARK_HEAD_ON_PAUSE)
   float resume_position[XYZE];
   bool move_away_flag = false;
 
@@ -5011,7 +5011,7 @@ inline void gcode_M17() {
     #endif
     stepper.synchronize();
 
-    #if ENABLED(FILAMENT_RUNOUT_SENSOR)
+    #if OPTION_ENABLED(FILAMENT_RUNOUT_SENSOR)
       filament_ran_out = false;
     #endif
     set_current_to_destination();
@@ -5019,7 +5019,7 @@ inline void gcode_M17() {
 
 #endif // PARK_HEAD_ON_PAUSE
 
-#if ENABLED(SDSUPPORT)
+#if OPTION_ENABLED(SDSUPPORT)
 
   /**
    * M20: List SD card to serial output
@@ -5049,7 +5049,7 @@ inline void gcode_M17() {
    * M24: Start or Resume SD Print
    */
   inline void gcode_M24() {
-    #if ENABLED(PARK_HEAD_ON_PAUSE)
+    #if OPTION_ENABLED(PARK_HEAD_ON_PAUSE)
       move_back_on_resume();
     #endif
 
@@ -5064,7 +5064,7 @@ inline void gcode_M17() {
     card.pauseSDPrint();
     print_job_timer.pause();
 
-    #if ENABLED(PARK_HEAD_ON_PAUSE)
+    #if OPTION_ENABLED(PARK_HEAD_ON_PAUSE)
       enqueue_and_echo_commands_P(PSTR("M125")); // Must be enqueued with pauseSDPrint set to be last in the buffer
     #endif
   }
@@ -5119,12 +5119,12 @@ inline void gcode_M31() {
   SERIAL_ECHO_START;
   SERIAL_ECHOLNPAIR("Print time: ", buffer);
 
-  #if ENABLED(AUTOTEMP)
+  #if OPTION_ENABLED(AUTOTEMP)
     thermalManager.autotempShutdown();
   #endif
 }
 
-#if ENABLED(SDSUPPORT)
+#if OPTION_ENABLED(SDSUPPORT)
 
   /**
    * M32: Select file and start SD Print
@@ -5154,7 +5154,7 @@ inline void gcode_M31() {
     }
   }
 
-  #if ENABLED(LONG_FILENAME_HOST_SUPPORT)
+  #if OPTION_ENABLED(LONG_FILENAME_HOST_SUPPORT)
 
     /**
      * M33: Get the long full path of a file or folder
@@ -5174,7 +5174,7 @@ inline void gcode_M31() {
 
   #endif
 
-  #if ENABLED(SDCARD_SORT_ALPHA) && ENABLED(SDSORT_GCODE)
+  #if OPTION_ENABLED(SDCARD_SORT_ALPHA) && OPTION_ENABLED(SDSORT_GCODE)
     /**
      * M34: Set SD Card Sorting Options
      */
@@ -5230,7 +5230,7 @@ inline void gcode_M42() {
 
   pinMode(pin_number, OUTPUT);
   digitalWrite(pin_number, pin_status);
-  analogWrite(pin_number, pin_status);
+  // analogWrite(pin_number, pin_status);
 
   #if FAN_COUNT > 0
     switch (pin_number) {
@@ -5247,7 +5247,7 @@ inline void gcode_M42() {
   #endif
 }
 
-#if ENABLED(PINS_DEBUGGING)
+#if OPTION_ENABLED(PINS_DEBUGGING)
 
   #include "pinsDebug.h"
 
@@ -5298,7 +5298,7 @@ inline void gcode_M42() {
           pin_state[pin - first_pin] = digitalRead(pin);
       }
 
-      #if ENABLED(EMERGENCY_PARSER) || ENABLED(ULTIPANEL)
+      #if OPTION_ENABLED(EMERGENCY_PARSER) || OPTION_ENABLED(ULTIPANEL)
         wait_for_user = true;
       #endif
 
@@ -5316,7 +5316,7 @@ inline void gcode_M42() {
           }
         }
 
-        #if ENABLED(EMERGENCY_PARSER) || ENABLED(ULTIPANEL)
+        #if OPTION_ENABLED(EMERGENCY_PARSER) || OPTION_ENABLED(ULTIPANEL)
           if (!wait_for_user) break;
         #endif
 
@@ -5332,7 +5332,7 @@ inline void gcode_M42() {
 
 #endif // PINS_DEBUGGING
 
-#if ENABLED(Z_MIN_PROBE_REPEATABILITY_TEST)
+#if OPTION_ENABLED(Z_MIN_PROBE_REPEATABILITY_TEST)
 
   /**
    * M48: Z probe repeatability measurement function.
@@ -5353,7 +5353,7 @@ inline void gcode_M42() {
    * regenerated.
    */
   inline void gcode_M48() {
-  #if ENABLED(AUTO_BED_LEVELING_UBL)
+  #if OPTION_ENABLED(AUTO_BED_LEVELING_UBL)
   bool bed_leveling_state_at_entry=0;
     bed_leveling_state_at_entry = ubl.state.active;
   #endif
@@ -5381,7 +5381,7 @@ inline void gcode_M42() {
     bool stow_probe_after_each = code_seen('E');
 
     float X_probe_location = code_seen('X') ? code_value_axis_units(X_AXIS) : X_current + X_PROBE_OFFSET_FROM_EXTRUDER;
-    #if DISABLED(DELTA)
+    #if OPTION_DISABLED(DELTA)
       if (!WITHIN(X_probe_location, LOGICAL_X_POSITION(MIN_PROBE_X), LOGICAL_X_POSITION(MAX_PROBE_X))) {
         out_of_range_error(PSTR("X"));
         return;
@@ -5389,7 +5389,7 @@ inline void gcode_M42() {
     #endif
 
     float Y_probe_location = code_seen('Y') ? code_value_axis_units(Y_AXIS) : Y_current + Y_PROBE_OFFSET_FROM_EXTRUDER;
-    #if DISABLED(DELTA)
+    #if OPTION_DISABLED(DELTA)
       if (!WITHIN(Y_probe_location, LOGICAL_Y_POSITION(MIN_PROBE_Y), LOGICAL_Y_POSITION(MAX_PROBE_Y))) {
         out_of_range_error(PSTR("Y"));
         return;
@@ -5441,7 +5441,7 @@ inline void gcode_M42() {
         int dir = (random(0, 10) > 5.0) ? -1 : 1;  // clockwise or counter clockwise
         float angle = random(0.0, 360.0),
               radius = random(
-                #if ENABLED(DELTA)
+                #if OPTION_ENABLED(DELTA)
                   DELTA_PROBEABLE_RADIUS / 8, DELTA_PROBEABLE_RADIUS / 3
                 #else
                   5, X_MAX_LENGTH / 8
@@ -5479,7 +5479,7 @@ inline void gcode_M42() {
           X_current = X_probe_location - (X_PROBE_OFFSET_FROM_EXTRUDER) + cos(RADIANS(angle)) * radius;
           Y_current = Y_probe_location - (Y_PROBE_OFFSET_FROM_EXTRUDER) + sin(RADIANS(angle)) * radius;
 
-          #if DISABLED(DELTA)
+          #if OPTION_DISABLED(DELTA)
             X_current = constrain(X_current, X_MIN_POS, X_MAX_POS);
             Y_current = constrain(Y_current, Y_MIN_POS, Y_MAX_POS);
           #else
@@ -5580,7 +5580,7 @@ inline void gcode_M42() {
       set_bed_leveling_enabled(abl_was_enabled);
     #endif
 
-    #if ENABLED(AUTO_BED_LEVELING_UBL)
+    #if OPTION_ENABLED(AUTO_BED_LEVELING_UBL)
       set_bed_leveling_enabled(bed_leveling_state_at_entry);
       ubl.state.active = bed_leveling_state_at_entry;
     #endif
@@ -5590,7 +5590,7 @@ inline void gcode_M42() {
 
 #endif // Z_MIN_PROBE_REPEATABILITY_TEST
 
-#if ENABLED(AUTO_BED_LEVELING_UBL) && ENABLED(UBL_G26_MESH_EDITING)
+#if OPTION_ENABLED(AUTO_BED_LEVELING_UBL) && OPTION_ENABLED(UBL_G26_MESH_EDITING)
 
   inline void gcode_M49() {
     ubl.g26_debug_flag = !ubl.g26_debug_flag;
@@ -5615,7 +5615,7 @@ inline void gcode_M76() { print_job_timer.pause(); }
  */
 inline void gcode_M77() { print_job_timer.stop(); }
 
-#if ENABLED(PRINTCOUNTER)
+#if OPTION_ENABLED(PRINTCOUNTER)
   /**
    * M78: Show print statistics
    */
@@ -5635,18 +5635,18 @@ inline void gcode_M104() {
   if (get_target_extruder_from_command(104)) return;
   if (DEBUGGING(DRYRUN)) return;
 
-  #if ENABLED(SINGLENOZZLE)
+  #if OPTION_ENABLED(SINGLENOZZLE)
     if (target_extruder != active_extruder) return;
   #endif
 
   if (code_seen('S')) {
     thermalManager.setTargetHotend(code_value_temp_abs(), target_extruder);
-    #if ENABLED(DUAL_X_CARRIAGE)
+    #if OPTION_ENABLED(DUAL_X_CARRIAGE)
       if (dual_x_carriage_mode == DXC_DUPLICATION_MODE && target_extruder == 0)
         thermalManager.setTargetHotend(code_value_temp_abs() == 0.0 ? 0.0 : code_value_temp_abs() + duplicate_extruder_temp_offset, 1);
     #endif
 
-    #if ENABLED(PRINTJOB_TIMER_AUTOSTART)
+    #if OPTION_ENABLED(PRINTJOB_TIMER_AUTOSTART)
       /**
        * Stop the timer at the end of print, starting is managed by
        * 'heat and wait' M109.
@@ -5663,7 +5663,7 @@ inline void gcode_M104() {
     if (code_value_temp_abs() > thermalManager.degHotend(target_extruder)) lcd_status_printf_P(0, PSTR("E%i %s"), target_extruder + 1, MSG_HEATING);
   }
 
-  #if ENABLED(AUTOTEMP)
+  #if OPTION_ENABLED(AUTOTEMP)
     planner.autotemp_M104_M109();
   #endif
 }
@@ -5676,7 +5676,7 @@ inline void gcode_M104() {
       SERIAL_PROTOCOL_F(thermalManager.degHotend(target_extruder), 1);
       SERIAL_PROTOCOLPGM(" /");
       SERIAL_PROTOCOL_F(thermalManager.degTargetHotend(target_extruder), 1);
-      #if ENABLED(SHOW_TEMP_ADC_VALUES)
+      #if OPTION_ENABLED(SHOW_TEMP_ADC_VALUES)
         SERIAL_PROTOCOLPAIR(" (", thermalManager.current_temperature_raw[target_extruder] / OVERSAMPLENR);
         SERIAL_PROTOCOLCHAR(')');
       #endif
@@ -5686,7 +5686,7 @@ inline void gcode_M104() {
       SERIAL_PROTOCOL_F(thermalManager.degBed(), 1);
       SERIAL_PROTOCOLPGM(" /");
       SERIAL_PROTOCOL_F(thermalManager.degTargetBed(), 1);
-      #if ENABLED(SHOW_TEMP_ADC_VALUES)
+      #if OPTION_ENABLED(SHOW_TEMP_ADC_VALUES)
         SERIAL_PROTOCOLPAIR(" (", thermalManager.current_temperature_bed_raw / OVERSAMPLENR);
         SERIAL_PROTOCOLCHAR(')');
       #endif
@@ -5698,7 +5698,7 @@ inline void gcode_M104() {
         SERIAL_PROTOCOL_F(thermalManager.degHotend(e), 1);
         SERIAL_PROTOCOLPGM(" /");
         SERIAL_PROTOCOL_F(thermalManager.degTargetHotend(e), 1);
-        #if ENABLED(SHOW_TEMP_ADC_VALUES)
+        #if OPTION_ENABLED(SHOW_TEMP_ADC_VALUES)
           SERIAL_PROTOCOLPAIR(" (", thermalManager.current_temperature_raw[e] / OVERSAMPLENR);
           SERIAL_PROTOCOLCHAR(')');
         #endif
@@ -5737,7 +5737,7 @@ inline void gcode_M105() {
   SERIAL_EOL;
 }
 
-#if ENABLED(AUTO_REPORT_TEMPERATURES) && (HAS_TEMP_HOTEND || HAS_TEMP_BED)
+#if OPTION_ENABLED(AUTO_REPORT_TEMPERATURES) && (HAS_TEMP_HOTEND || HAS_TEMP_BED)
 
   static uint8_t auto_report_temp_interval;
   static millis_t next_temp_report_ms;
@@ -5788,7 +5788,7 @@ inline void gcode_M105() {
 
 #endif // FAN_COUNT > 0
 
-#if DISABLED(EMERGENCY_PARSER)
+#if OPTION_DISABLED(EMERGENCY_PARSER)
 
   /**
    * M108: Stop the waiting for heaters in M109, M190, M303. Does not affect the target temperature.
@@ -5828,19 +5828,19 @@ inline void gcode_M109() {
   if (get_target_extruder_from_command(109)) return;
   if (DEBUGGING(DRYRUN)) return;
 
-  #if ENABLED(SINGLENOZZLE)
+  #if OPTION_ENABLED(SINGLENOZZLE)
     if (target_extruder != active_extruder) return;
   #endif
 
   bool no_wait_for_cooling = code_seen('S');
   if (no_wait_for_cooling || code_seen('R')) {
     thermalManager.setTargetHotend(code_value_temp_abs(), target_extruder);
-    #if ENABLED(DUAL_X_CARRIAGE)
+    #if OPTION_ENABLED(DUAL_X_CARRIAGE)
       if (dual_x_carriage_mode == DXC_DUPLICATION_MODE && target_extruder == 0)
         thermalManager.setTargetHotend(code_value_temp_abs() == 0.0 ? 0.0 : code_value_temp_abs() + duplicate_extruder_temp_offset, 1);
     #endif
 
-    #if ENABLED(PRINTJOB_TIMER_AUTOSTART)
+    #if OPTION_ENABLED(PRINTJOB_TIMER_AUTOSTART)
       /**
        * We use half EXTRUDE_MINTEMP here to allow nozzles to be put into hot
        * stand by mode, for instance in a dual extruder setup, without affecting
@@ -5861,7 +5861,7 @@ inline void gcode_M109() {
     if (thermalManager.isHeatingHotend(target_extruder)) lcd_status_printf_P(0, PSTR("E%i %s"), target_extruder + 1, MSG_HEATING);
   }
 
-  #if ENABLED(AUTOTEMP)
+  #if OPTION_ENABLED(AUTOTEMP)
     planner.autotemp_M104_M109();
   #endif
 
@@ -5967,7 +5967,7 @@ inline void gcode_M109() {
     bool no_wait_for_cooling = code_seen('S');
     if (no_wait_for_cooling || code_seen('R')) {
       thermalManager.setTargetBed(code_value_temp_abs());
-      #if ENABLED(PRINTJOB_TIMER_AUTOSTART)
+      #if OPTION_ENABLED(PRINTJOB_TIMER_AUTOSTART)
         if (code_value_temp_abs() > BED_MINTEMP) {
           /**
           * We start the timer when 'heating and waiting' command arrives, LCD
@@ -6085,13 +6085,13 @@ inline void gcode_M111() {
   const static char str_debug_4[] PROGMEM = MSG_DEBUG_ERRORS;
   const static char str_debug_8[] PROGMEM = MSG_DEBUG_DRYRUN;
   const static char str_debug_16[] PROGMEM = MSG_DEBUG_COMMUNICATION;
-  #if ENABLED(DEBUG_LEVELING_FEATURE)
+  #if OPTION_ENABLED(DEBUG_LEVELING_FEATURE)
     const static char str_debug_32[] PROGMEM = MSG_DEBUG_LEVELING;
   #endif
 
   const static char* const debug_strings[] PROGMEM = {
     str_debug_1, str_debug_2, str_debug_4, str_debug_8, str_debug_16,
-    #if ENABLED(DEBUG_LEVELING_FEATURE)
+    #if OPTION_ENABLED(DEBUG_LEVELING_FEATURE)
       str_debug_32
     #endif
   };
@@ -6113,7 +6113,7 @@ inline void gcode_M111() {
   SERIAL_EOL;
 }
 
-#if ENABLED(HOST_KEEPALIVE_FEATURE)
+#if OPTION_ENABLED(HOST_KEEPALIVE_FEATURE)
 
   /**
    * M113: Get or set Host Keepalive interval (0 to disable)
@@ -6133,7 +6133,7 @@ inline void gcode_M111() {
 
 #endif
 
-#if ENABLED(BARICUDA)
+#if OPTION_ENABLED(BARICUDA)
 
   #if HAS_HEATER_1
     /**
@@ -6167,7 +6167,7 @@ inline void gcode_M140() {
   if (code_seen('S')) thermalManager.setTargetBed(code_value_temp_abs());
 }
 
-#if ENABLED(ULTIPANEL)
+#if OPTION_ENABLED(ULTIPANEL)
 
   /**
    * M145: Set the heatup state for a material in the LCD menu
@@ -6203,7 +6203,7 @@ inline void gcode_M140() {
 
 #endif // ULTIPANEL
 
-#if ENABLED(TEMPERATURE_UNITS_SUPPORT)
+#if OPTION_ENABLED(TEMPERATURE_UNITS_SUPPORT)
   /**
    * M149: Set temperature units
    */
@@ -6231,7 +6231,7 @@ inline void gcode_M140() {
       OUT_WRITE(SUICIDE_PIN, HIGH);
     #endif
 
-    #if ENABLED(ULTIPANEL)
+    #if OPTION_ENABLED(ULTIPANEL)
       powersupply = true;
       LCD_MESSAGEPGM(WELCOME_MSG);
       lcd_update();
@@ -6262,7 +6262,7 @@ inline void gcode_M81() {
   #elif HAS_POWER_SWITCH
     OUT_WRITE(PS_ON_PIN, PS_ON_ASLEEP);
   #endif
-  #if ENABLED(ULTIPANEL)
+  #if OPTION_ENABLED(ULTIPANEL)
     #if HAS_POWER_SWITCH
       powersupply = false;
     #endif
@@ -6315,7 +6315,7 @@ inline void gcode_M85() {
 /**
  * Multi-stepper support for M92, M201, M203
  */
-#if ENABLED(DISTINCT_E_FACTORS)
+#if OPTION_ENABLED(DISTINCT_E_FACTORS)
   #define GET_TARGET_EXTRUDER(CMD) if (get_target_extruder_from_command(CMD)) return
   #define TARGET_EXTRUDER target_extruder
 #else
@@ -6386,17 +6386,17 @@ inline void gcode_M114() { stepper.synchronize(); report_current_position(); }
 inline void gcode_M115() {
   SERIAL_PROTOCOLLNPGM(MSG_M115_REPORT);
 
-  #if ENABLED(EXTENDED_CAPABILITIES_REPORT)
+  #if OPTION_ENABLED(EXTENDED_CAPABILITIES_REPORT)
 
     // EEPROM (M500, M501)
-    #if ENABLED(EEPROM_SETTINGS)
+    #if OPTION_ENABLED(EEPROM_SETTINGS)
       SERIAL_PROTOCOLLNPGM("Cap:EEPROM:1");
     #else
       SERIAL_PROTOCOLLNPGM("Cap:EEPROM:0");
     #endif
 
     // AUTOREPORT_TEMP (M155)
-    #if ENABLED(AUTO_REPORT_TEMPERATURES)
+    #if OPTION_ENABLED(AUTO_REPORT_TEMPERATURES)
       SERIAL_PROTOCOLLNPGM("Cap:AUTOREPORT_TEMP:1");
     #else
       SERIAL_PROTOCOLLNPGM("Cap:AUTOREPORT_TEMP:0");
@@ -6434,7 +6434,7 @@ inline void gcode_M115() {
     #endif
 
     // EMERGENCY_PARSER (M108, M112, M410)
-    #if ENABLED(EMERGENCY_PARSER)
+    #if OPTION_ENABLED(EMERGENCY_PARSER)
       SERIAL_PROTOCOLLNPGM("Cap:EMERGENCY_PARSER:1");
     #else
       SERIAL_PROTOCOLLNPGM("Cap:EMERGENCY_PARSER:0");
@@ -6465,7 +6465,7 @@ inline void gcode_M120() { endstops.enable_globally(true); }
  */
 inline void gcode_M121() { endstops.enable_globally(false); }
 
-#if ENABLED(PARK_HEAD_ON_PAUSE)
+#if OPTION_ENABLED(PARK_HEAD_ON_PAUSE)
 
   /**
    * M125: Store current position and move to filament change position.
@@ -6489,7 +6489,7 @@ inline void gcode_M121() { endstops.enable_globally(false); }
 
     // there are blocks after this one, or sd printing
     move_away_flag = job_running || planner.blocks_queued()
-      #if ENABLED(SDSUPPORT)
+      #if OPTION_ENABLED(SDSUPPORT)
         || card.sdprinting
       #endif
     ;
@@ -6497,7 +6497,7 @@ inline void gcode_M121() { endstops.enable_globally(false); }
     if (!move_away_flag) return; // nothing to pause
 
     // M125 can be used to pause a print too
-    #if ENABLED(SDSUPPORT)
+    #if OPTION_ENABLED(SDSUPPORT)
       card.pauseSDPrint();
     #endif
     print_job_timer.pause();
@@ -6541,7 +6541,7 @@ inline void gcode_M121() { endstops.enable_globally(false); }
       #endif
     ;
 
-    #if HOTENDS > 1 && DISABLED(DUAL_X_CARRIAGE)
+    #if HOTENDS > 1 && OPTION_DISABLED(DUAL_X_CARRIAGE)
       if (active_extruder > 0) {
         if (!code_seen('X')) destination[X_AXIS] += hotend_offset[X_AXIS][active_extruder];
         if (!code_seen('Y')) destination[Y_AXIS] += hotend_offset[Y_AXIS][active_extruder];
@@ -6554,7 +6554,7 @@ inline void gcode_M121() { endstops.enable_globally(false); }
     stepper.synchronize();
     disable_e_steppers();
 
-    #if DISABLED(SDSUPPORT)
+    #if OPTION_DISABLED(SDSUPPORT)
       // Wait for lcd click or M108
       KEEPALIVE_STATE(PAUSED_FOR_USER);
       wait_for_user = true;
@@ -6570,11 +6570,11 @@ inline void gcode_M121() { endstops.enable_globally(false); }
 
 #endif // PARK_HEAD_ON_PAUSE
 
-#if ENABLED(BLINKM) || ENABLED(RGB_LED)
+#if OPTION_ENABLED(BLINKM) || OPTION_ENABLED(RGB_LED)
 
   void set_led_color(const uint8_t r, const uint8_t g, const uint8_t b) {
 
-    #if ENABLED(BLINKM)
+    #if OPTION_ENABLED(BLINKM)
 
       // This variant uses i2c to send the RGB components to the device.
       SendColors(r, g, b);
@@ -6738,7 +6738,7 @@ inline void gcode_M205() {
   if (code_seen('E')) planner.max_jerk[E_AXIS] = code_value_axis_units(E_AXIS);
 }
 
-#if DISABLED(NO_WORKSPACE_OFFSETS)
+#if OPTION_DISABLED(NO_WORKSPACE_OFFSETS)
 
   /**
    * M206: Set Additional Homing Offset (X Y Z). SCARA aliases T=X, P=Y
@@ -6748,7 +6748,7 @@ inline void gcode_M205() {
       if (code_seen(axis_codes[i]))
         set_home_offset((AxisEnum)i, code_value_axis_units(i));
 
-    #if ENABLED(MORGAN_SCARA)
+    #if OPTION_ENABLED(MORGAN_SCARA)
       if (code_seen('T')) set_home_offset(A_AXIS, code_value_axis_units(A_AXIS)); // Theta
       if (code_seen('P')) set_home_offset(B_AXIS, code_value_axis_units(B_AXIS)); // Psi
     #endif
@@ -6759,7 +6759,7 @@ inline void gcode_M205() {
 
 #endif // NO_WORKSPACE_OFFSETS
 
-#if ENABLED(DELTA)
+#if OPTION_ENABLED(DELTA)
   /**
    * M665: Set delta configurations
    *
@@ -6786,7 +6786,7 @@ inline void gcode_M205() {
    * M666: Set delta endstop adjustment
    */
   inline void gcode_M666() {
-    #if ENABLED(DEBUG_LEVELING_FEATURE)
+    #if OPTION_ENABLED(DEBUG_LEVELING_FEATURE)
       if (DEBUGGING(LEVELING)) {
         SERIAL_ECHOLNPGM(">>> gcode_M666");
       }
@@ -6794,7 +6794,7 @@ inline void gcode_M205() {
     LOOP_XYZ(i) {
       if (code_seen(axis_codes[i])) {
         endstop_adj[i] = code_value_axis_units(i);
-        #if ENABLED(DEBUG_LEVELING_FEATURE)
+        #if OPTION_ENABLED(DEBUG_LEVELING_FEATURE)
           if (DEBUGGING(LEVELING)) {
             SERIAL_ECHOPAIR("endstop_adj[", axis_codes[i]);
             SERIAL_ECHOLNPAIR("] = ", endstop_adj[i]);
@@ -6802,14 +6802,14 @@ inline void gcode_M205() {
         #endif
       }
     }
-    #if ENABLED(DEBUG_LEVELING_FEATURE)
+    #if OPTION_ENABLED(DEBUG_LEVELING_FEATURE)
       if (DEBUGGING(LEVELING)) {
         SERIAL_ECHOLNPGM("<<< gcode_M666");
       }
     #endif
   }
 
-#elif ENABLED(Z_DUAL_ENDSTOPS) // !DELTA && ENABLED(Z_DUAL_ENDSTOPS)
+#elif OPTION_ENABLED(Z_DUAL_ENDSTOPS) // !DELTA && OPTION_ENABLED(Z_DUAL_ENDSTOPS)
 
   /**
    * M666: For Z Dual Endstop setup, set z axis offset to the z2 axis.
@@ -6821,7 +6821,7 @@ inline void gcode_M205() {
 
 #endif // !DELTA && Z_DUAL_ENDSTOPS
 
-#if ENABLED(FWRETRACT)
+#if OPTION_ENABLED(FWRETRACT)
 
   /**
    * M207: Set firmware retraction values
@@ -6910,7 +6910,7 @@ inline void gcode_M211() {
     if (code_seen('X')) hotend_offset[X_AXIS][target_extruder] = code_value_axis_units(X_AXIS);
     if (code_seen('Y')) hotend_offset[Y_AXIS][target_extruder] = code_value_axis_units(Y_AXIS);
 
-    #if ENABLED(DUAL_X_CARRIAGE) || ENABLED(SWITCHING_EXTRUDER)
+    #if OPTION_ENABLED(DUAL_X_CARRIAGE) || OPTION_ENABLED(SWITCHING_EXTRUDER)
       if (code_seen('Z')) hotend_offset[Z_AXIS][target_extruder] = code_value_axis_units(Z_AXIS);
     #endif
 
@@ -6921,7 +6921,7 @@ inline void gcode_M211() {
       SERIAL_ECHO(hotend_offset[X_AXIS][e]);
       SERIAL_CHAR(',');
       SERIAL_ECHO(hotend_offset[Y_AXIS][e]);
-      #if ENABLED(DUAL_X_CARRIAGE) || ENABLED(SWITCHING_EXTRUDER)
+      #if OPTION_ENABLED(DUAL_X_CARRIAGE) || OPTION_ENABLED(SWITCHING_EXTRUDER)
         SERIAL_CHAR(',');
         SERIAL_ECHO(hotend_offset[Z_AXIS][e]);
       #endif
@@ -6980,7 +6980,7 @@ inline void gcode_M226() {
   } // code_seen('P')
 }
 
-#if ENABLED(EXPERIMENTAL_I2CBUS)
+#if OPTION_ENABLED(EXPERIMENTAL_I2CBUS)
 
   /**
    * M260: Send data to a I2C slave device
@@ -7076,7 +7076,7 @@ inline void gcode_M226() {
 
 #endif // HAS_BUZZER
 
-#if ENABLED(PIDTEMP)
+#if OPTION_ENABLED(PIDTEMP)
 
   /**
    * M301: Set PID parameters P I D (and optionally C, L)
@@ -7100,7 +7100,7 @@ inline void gcode_M226() {
       if (code_seen('P')) PID_PARAM(Kp, e) = code_value_float();
       if (code_seen('I')) PID_PARAM(Ki, e) = scalePID_i(code_value_float());
       if (code_seen('D')) PID_PARAM(Kd, e) = scalePID_d(code_value_float());
-      #if ENABLED(PID_EXTRUSION_SCALING)
+      #if OPTION_ENABLED(PID_EXTRUSION_SCALING)
         if (code_seen('C')) PID_PARAM(Kc, e) = code_value_float();
         if (code_seen('L')) lpq_len = code_value_float();
         NOMORE(lpq_len, LPQ_MAX_LEN);
@@ -7108,13 +7108,13 @@ inline void gcode_M226() {
 
       thermalManager.updatePID();
       SERIAL_ECHO_START;
-      #if ENABLED(PID_PARAMS_PER_HOTEND)
+      #if OPTION_ENABLED(PID_PARAMS_PER_HOTEND)
         SERIAL_ECHOPAIR(" e:", e); // specify extruder in serial output
       #endif // PID_PARAMS_PER_HOTEND
       SERIAL_ECHOPAIR(" p:", PID_PARAM(Kp, e));
       SERIAL_ECHOPAIR(" i:", unscalePID_i(PID_PARAM(Ki, e)));
       SERIAL_ECHOPAIR(" d:", unscalePID_d(PID_PARAM(Kd, e)));
-      #if ENABLED(PID_EXTRUSION_SCALING)
+      #if OPTION_ENABLED(PID_EXTRUSION_SCALING)
         //Kc does not have scaling applied above, or in resetting defaults
         SERIAL_ECHOPAIR(" c:", PID_PARAM(Kc, e));
       #endif
@@ -7128,7 +7128,7 @@ inline void gcode_M226() {
 
 #endif // PIDTEMP
 
-#if ENABLED(PIDTEMPBED)
+#if OPTION_ENABLED(PIDTEMPBED)
 
   inline void gcode_M304() {
     if (code_seen('P')) thermalManager.bedKp = code_value_float();
@@ -7195,7 +7195,7 @@ inline void gcode_M226() {
 
 #endif // HAS_LCD_CONTRAST
 
-#if ENABLED(PREVENT_COLD_EXTRUSION)
+#if OPTION_ENABLED(PREVENT_COLD_EXTRUSION)
 
   /**
    * M302: Allow cold extrudes, or set the minimum extrude temperature
@@ -7262,7 +7262,7 @@ inline void gcode_M303() {
   #endif
 }
 
-#if ENABLED(MORGAN_SCARA)
+#if OPTION_ENABLED(MORGAN_SCARA)
 
   bool SCARA_move_to_cal(uint8_t delta_a, uint8_t delta_b) {
     if (IsRunning()) {
@@ -7318,7 +7318,7 @@ inline void gcode_M303() {
 
 #endif // SCARA
 
-#if ENABLED(EXT_SOLENOID)
+#if OPTION_ENABLED(EXT_SOLENOID)
 
   void enable_solenoid(uint8_t num) {
     switch (num) {
@@ -7387,7 +7387,7 @@ inline void gcode_M400() { stepper.synchronize(); }
 
 #endif // HAS_BED_PROBE
 
-#if ENABLED(FILAMENT_WIDTH_SENSOR)
+#if OPTION_ENABLED(FILAMENT_WIDTH_SENSOR)
 
   /**
    * M404: Display or set (in current units) the nominal filament width (3mm, 1.75mm ) W<3.0>
@@ -7464,7 +7464,7 @@ void quickstop_stepper() {
    */
   inline void gcode_M420() {
 
-    #if ENABLED(AUTO_BED_LEVELING_UBL)
+    #if OPTION_ENABLED(AUTO_BED_LEVELING_UBL)
       // L to load a mesh from the EEPROM
       if (code_seen('L')) {
         const int8_t storage_slot = code_has_value() ? code_value_int() : ubl.state.eeprom_storage_slot;
@@ -7487,18 +7487,18 @@ void quickstop_stepper() {
     if (code_seen('V')) {
       #if ABL_PLANAR
         planner.bed_level_matrix.debug("Bed Level Correction Matrix:");
-      #elif ENABLED(AUTO_BED_LEVELING_BILINEAR)
+      #elif OPTION_ENABLED(AUTO_BED_LEVELING_BILINEAR)
         if (bilinear_grid_spacing[X_AXIS]) {
           print_bilinear_leveling_grid();
-          #if ENABLED(ABL_BILINEAR_SUBDIVISION)
+          #if OPTION_ENABLED(ABL_BILINEAR_SUBDIVISION)
             bed_level_virt_print();
           #endif
         }
-      #elif ENABLED(AUTO_BED_LEVELING_UBL)
+      #elif OPTION_ENABLED(AUTO_BED_LEVELING_UBL)
         ubl.display_map(0);  // Currently only supports one map type
         SERIAL_ECHOLNPAIR("UBL_MESH_VALID =  ", UBL_MESH_VALID);
         SERIAL_ECHOLNPAIR("eeprom_storage_slot = ", ubl.state.eeprom_storage_slot);
-      #elif ENABLED(MESH_BED_LEVELING)
+      #elif OPTION_ENABLED(MESH_BED_LEVELING)
         if (mbl.has_mesh()) {
           SERIAL_ECHOLNPGM("Mesh Bed Level data:");
           mbl_mesh_report();
@@ -7512,14 +7512,14 @@ void quickstop_stepper() {
       set_bed_leveling_enabled(to_enable);
     }
 
-    #if ENABLED(ENABLE_LEVELING_FADE_HEIGHT)
+    #if OPTION_ENABLED(ENABLE_LEVELING_FADE_HEIGHT)
       if (code_seen('Z')) set_z_fade_height(code_value_linear_units());
     #endif
 
     const bool new_status =
-      #if ENABLED(MESH_BED_LEVELING)
+      #if OPTION_ENABLED(MESH_BED_LEVELING)
         mbl.active()
-      #elif ENABLED(AUTO_BED_LEVELING_UBL)
+      #elif OPTION_ENABLED(AUTO_BED_LEVELING_UBL)
         ubl.state.active
       #else
         planner.abl_enabled
@@ -7536,7 +7536,7 @@ void quickstop_stepper() {
   }
 #endif
 
-#if ENABLED(MESH_BED_LEVELING)
+#if OPTION_ENABLED(MESH_BED_LEVELING)
 
   /**
    * M421: Set a single Mesh Bed Leveling Z coordinate
@@ -7575,7 +7575,7 @@ void quickstop_stepper() {
     }
   }
 
-#elif ENABLED(AUTO_BED_LEVELING_BILINEAR)
+#elif OPTION_ENABLED(AUTO_BED_LEVELING_BILINEAR)
 
   /**
    * M421: Set a single Mesh Bed Leveling Z coordinate
@@ -7593,7 +7593,7 @@ void quickstop_stepper() {
     if (hasI && hasJ && hasZ) {
       if (WITHIN(px, 0, ABL_GRID_MAX_POINTS_X - 1) && WITHIN(py, 0, ABL_GRID_MAX_POINTS_X - 1)) {
         bed_level_grid[px][py] = z;
-        #if ENABLED(ABL_BILINEAR_SUBDIVISION)
+        #if OPTION_ENABLED(ABL_BILINEAR_SUBDIVISION)
           bed_level_virt_interpolate();
         #endif
       }
@@ -7610,7 +7610,7 @@ void quickstop_stepper() {
 
 #endif
 
-#if DISABLED(NO_WORKSPACE_OFFSETS)
+#if OPTION_DISABLED(NO_WORKSPACE_OFFSETS)
 
   /**
    * M428: Set home_offset based on the distance between the
@@ -7682,7 +7682,7 @@ inline void gcode_M503() {
   (void)Config_PrintSettings(code_seen('S') && !code_value_bool());
 }
 
-#if ENABLED(ABORT_ON_ENDSTOP_HIT_FEATURE_ENABLED)
+#if OPTION_ENABLED(ABORT_ON_ENDSTOP_HIT_FEATURE_ENABLED)
 
   /**
    * M540: Set whether SD card print should abort on endstop hit (M540 S<0|1>)
@@ -7705,7 +7705,7 @@ inline void gcode_M503() {
       float value = code_value_axis_units(Z_AXIS);
       if (WITHIN(value, Z_PROBE_OFFSET_RANGE_MIN, Z_PROBE_OFFSET_RANGE_MAX)) {
 
-        #if ENABLED(AUTO_BED_LEVELING_BILINEAR)
+        #if OPTION_ENABLED(AUTO_BED_LEVELING_BILINEAR)
           // Correct bilinear grid for new probe offset
           const float diff = value - zprobe_zoffset;
           if (diff) {
@@ -7713,7 +7713,7 @@ inline void gcode_M503() {
               for (uint8_t y = 0; y < ABL_GRID_MAX_POINTS_Y; y++)
                 bed_level_grid[x][y] += diff;
           }
-          #if ENABLED(ABL_BILINEAR_SUBDIVISION)
+          #if OPTION_ENABLED(ABL_BILINEAR_SUBDIVISION)
             bed_level_virt_interpolate();
           #endif
         #endif
@@ -7736,7 +7736,7 @@ inline void gcode_M503() {
 
 #endif // HAS_BED_PROBE
 
-#if ENABLED(FILAMENT_CHANGE_FEATURE)
+#if OPTION_ENABLED(FILAMENT_CHANGE_FEATURE)
 
   void filament_change_beep(const bool init=false) {
     static millis_t next_buzz = 0;
@@ -7974,7 +7974,7 @@ inline void gcode_M503() {
     #endif
     stepper.synchronize();
 
-    #if ENABLED(FILAMENT_RUNOUT_SENSOR)
+    #if OPTION_ENABLED(FILAMENT_RUNOUT_SENSOR)
       filament_ran_out = false;
     #endif
 
@@ -7989,7 +7989,7 @@ inline void gcode_M503() {
 
 #endif // FILAMENT_CHANGE_FEATURE
 
-#if ENABLED(DUAL_X_CARRIAGE)
+#if OPTION_ENABLED(DUAL_X_CARRIAGE)
 
   /**
    * M605: Set dual x-carriage movement mode
@@ -8033,7 +8033,7 @@ inline void gcode_M503() {
     delayed_move_time = 0;
   }
 
-#elif ENABLED(DUAL_NOZZLE_DUPLICATION_MODE)
+#elif OPTION_ENABLED(DUAL_NOZZLE_DUPLICATION_MODE)
 
   inline void gcode_M605() {
     stepper.synchronize();
@@ -8044,7 +8044,7 @@ inline void gcode_M503() {
 
 #endif // DUAL_NOZZLE_DUPLICATION_MODE
 
-#if ENABLED(LIN_ADVANCE)
+#if OPTION_ENABLED(LIN_ADVANCE)
   /**
    * M905: Set advance factor
    */
@@ -8071,7 +8071,7 @@ inline void gcode_M503() {
   }
 #endif // LIN_ADVANCE
 
-#if ENABLED(HAVE_TMC2130)
+#if OPTION_ENABLED(HAVE_TMC2130)
 
   static void tmc2130_print_current(const int mA, const char name) {
     SERIAL_CHAR(name);
@@ -8106,19 +8106,19 @@ inline void gcode_M503() {
     LOOP_XYZE(i)
       values[i] = code_seen(axis_codes[i]) ? code_value_int() : 0;
 
-    #if ENABLED(X_IS_TMC2130)
+    #if OPTION_ENABLED(X_IS_TMC2130)
       if (values[X_AXIS]) tmc2130_set_current(values[X_AXIS], stepperX, 'X');
       else tmc2130_get_current(stepperX, 'X');
     #endif
-    #if ENABLED(Y_IS_TMC2130)
+    #if OPTION_ENABLED(Y_IS_TMC2130)
       if (values[Y_AXIS]) tmc2130_set_current(values[Y_AXIS], stepperY, 'Y');
       else tmc2130_get_current(stepperY, 'Y');
     #endif
-    #if ENABLED(Z_IS_TMC2130)
+    #if OPTION_ENABLED(Z_IS_TMC2130)
       if (values[Z_AXIS]) tmc2130_set_current(values[Z_AXIS], stepperZ, 'Z');
       else tmc2130_get_current(stepperZ, 'Z');
     #endif
-    #if ENABLED(E0_IS_TMC2130)
+    #if OPTION_ENABLED(E0_IS_TMC2130)
       if (values[E_AXIS]) tmc2130_set_current(values[E_AXIS], stepperE0, 'E');
       else tmc2130_get_current(stepperE0, 'E');
     #endif
@@ -8129,16 +8129,16 @@ inline void gcode_M503() {
    * The flag is held by the library and persist until manually cleared by M912
    */
   inline void gcode_M911() {
-    #if ENABLED(X_IS_TMC2130)
+    #if OPTION_ENABLED(X_IS_TMC2130)
       tmc2130_report_otpw(stepperX, 'X');
     #endif
-    #if ENABLED(Y_IS_TMC2130)
+    #if OPTION_ENABLED(Y_IS_TMC2130)
       tmc2130_report_otpw(stepperY, 'Y');
     #endif
-    #if ENABLED(Z_IS_TMC2130)
+    #if OPTION_ENABLED(Z_IS_TMC2130)
       tmc2130_report_otpw(stepperZ, 'Z');
     #endif
-    #if ENABLED(E0_IS_TMC2130)
+    #if OPTION_ENABLED(E0_IS_TMC2130)
       tmc2130_report_otpw(stepperE0, 'E');
     #endif
   }
@@ -8147,16 +8147,16 @@ inline void gcode_M503() {
    * M912: Clear TMC2130 stepper driver overtemperature pre-warn flag held by the library
    */
   inline void gcode_M912() {
-    #if ENABLED(X_IS_TMC2130)
+    #if OPTION_ENABLED(X_IS_TMC2130)
       if (code_seen('X')) tmc2130_clear_otpw(stepperX, 'X');
     #endif
-    #if ENABLED(Y_IS_TMC2130)
+    #if OPTION_ENABLED(Y_IS_TMC2130)
       if (code_seen('Y')) tmc2130_clear_otpw(stepperY, 'Y');
     #endif
-    #if ENABLED(Z_IS_TMC2130)
+    #if OPTION_ENABLED(Z_IS_TMC2130)
       if (code_seen('Z')) tmc2130_clear_otpw(stepperZ, 'Z');
     #endif
-    #if ENABLED(E0_IS_TMC2130)
+    #if OPTION_ENABLED(E0_IS_TMC2130)
       if (code_seen('E')) tmc2130_clear_otpw(stepperE0, 'E');
     #endif
   }
@@ -8183,13 +8183,13 @@ inline void gcode_M907() {
       if (code_seen('E')) stepper.digipot_current(2, code_value_int());
     #endif
   #endif
-  #if ENABLED(DIGIPOT_I2C)
+  #if OPTION_ENABLED(DIGIPOT_I2C)
     // this one uses actual amps in floating point
     LOOP_XYZE(i) if (code_seen(axis_codes[i])) digipot_i2c_set_current(i, code_value_float());
     // for each additional extruder (named B,C,D,E..., channels 4,5,6,7...)
     for (int i = NUM_AXIS; i < DIGIPOT_I2C_NUM_CHANNELS; i++) if (code_seen('B' + i - (NUM_AXIS))) digipot_i2c_set_current(i, code_value_float());
   #endif
-  #if ENABLED(DAC_STEPPER_CURRENT)
+  #if OPTION_ENABLED(DAC_STEPPER_CURRENT)
     if (code_seen('S')) {
       float dac_percent = code_value_float();
       for (uint8_t i = 0; i <= 4; i++) dac_current_percent(i, dac_percent);
@@ -8198,7 +8198,7 @@ inline void gcode_M907() {
   #endif
 }
 
-#if HAS_DIGIPOTSS || ENABLED(DAC_STEPPER_CURRENT)
+#if HAS_DIGIPOTSS || OPTION_ENABLED(DAC_STEPPER_CURRENT)
 
   /**
    * M908: Control digital trimpot directly (M908 P<pin> S<current>)
@@ -8218,7 +8218,7 @@ inline void gcode_M907() {
     #endif
   }
 
-  #if ENABLED(DAC_STEPPER_CURRENT) // As with Printrbot RevF
+  #if OPTION_ENABLED(DAC_STEPPER_CURRENT) // As with Printrbot RevF
 
     inline void gcode_M909() { dac_print_values(); }
 
@@ -8289,7 +8289,7 @@ inline void gcode_M355() {
   #endif // HAS_CASE_LIGHT
 }
 
-#if ENABLED(MIXING_EXTRUDER)
+#if OPTION_ENABLED(MIXING_EXTRUDER)
 
   /**
    * M163: Set a single mix factor for a mixing extruder
@@ -8327,7 +8327,7 @@ inline void gcode_M355() {
 
   #endif
 
-  #if ENABLED(DIRECT_MIXING_IN_G1)
+  #if OPTION_ENABLED(DIRECT_MIXING_IN_G1)
     /**
      * M165: Set multiple mix factors for a mixing extruder.
      *       Factors that are left out will be set to 0.
@@ -8366,7 +8366,7 @@ inline void gcode_M999() {
   FlushSerialRequestResend();
 }
 
-#if ENABLED(SWITCHING_EXTRUDER)
+#if OPTION_ENABLED(SWITCHING_EXTRUDER)
   inline void move_extruder_servo(uint8_t e) {
     const int angles[2] = SWITCHING_EXTRUDER_SERVO_ANGLES;
     MOVE_SERVO(SWITCHING_EXTRUDER_SERVO_NR, angles[e]);
@@ -8386,7 +8386,7 @@ inline void invalid_extruder_error(const uint8_t &e) {
  * previous tool out of the way and the new tool into place.
  */
 void tool_change(const uint8_t tmp_extruder, const float fr_mm_s/*=0.0*/, bool no_move/*=false*/) {
-  #if ENABLED(MIXING_EXTRUDER) && MIXING_VIRTUAL_TOOLS > 1
+  #if OPTION_ENABLED(MIXING_EXTRUDER) && MIXING_VIRTUAL_TOOLS > 1
 
     if (tmp_extruder >= MIXING_VIRTUAL_TOOLS)
       return invalid_extruder_error(tmp_extruder);
@@ -8415,9 +8415,9 @@ void tool_change(const uint8_t tmp_extruder, const float fr_mm_s/*=0.0*/, bool n
         // Save current position to destination, for use later
         set_destination_to_current();
 
-        #if ENABLED(DUAL_X_CARRIAGE)
+        #if OPTION_ENABLED(DUAL_X_CARRIAGE)
 
-          #if ENABLED(DEBUG_LEVELING_FEATURE)
+          #if OPTION_ENABLED(DEBUG_LEVELING_FEATURE)
             if (DEBUGGING(LEVELING)) {
               SERIAL_ECHOPGM("Dual X Carriage Mode ");
               switch (dual_x_carriage_mode) {
@@ -8434,10 +8434,10 @@ void tool_change(const uint8_t tmp_extruder, const float fr_mm_s/*=0.0*/, bool n
               && (delayed_move_time || current_position[X_AXIS] != xhome)
           ) {
             float raised_z = current_position[Z_AXIS] + TOOLCHANGE_PARK_ZLIFT;
-            #if ENABLED(MAX_SOFTWARE_ENDSTOPS)
+            #if OPTION_ENABLED(MAX_SOFTWARE_ENDSTOPS)
               NOMORE(raised_z, soft_endstop_max[Z_AXIS]);
             #endif
-            #if ENABLED(DEBUG_LEVELING_FEATURE)
+            #if OPTION_ENABLED(DEBUG_LEVELING_FEATURE)
               if (DEBUGGING(LEVELING)) {
                 SERIAL_ECHOLNPAIR("Raise to ", raised_z);
                 SERIAL_ECHOLNPAIR("MoveX to ", xhome);
@@ -8467,7 +8467,7 @@ void tool_change(const uint8_t tmp_extruder, const float fr_mm_s/*=0.0*/, bool n
           // This function resets the max/min values - the current position may be overwritten below.
           set_axis_is_at_home(X_AXIS);
 
-          #if ENABLED(DEBUG_LEVELING_FEATURE)
+          #if OPTION_ENABLED(DEBUG_LEVELING_FEATURE)
             if (DEBUGGING(LEVELING)) DEBUG_POS("New Extruder", current_position);
           #endif
 
@@ -8485,7 +8485,7 @@ void tool_change(const uint8_t tmp_extruder, const float fr_mm_s/*=0.0*/, bool n
               // record raised toolhead position for use by unpark
               COPY(raised_parked_position, current_position);
               raised_parked_position[Z_AXIS] += TOOLCHANGE_UNPARK_ZLIFT;
-              #if ENABLED(MAX_SOFTWARE_ENDSTOPS)
+              #if OPTION_ENABLED(MAX_SOFTWARE_ENDSTOPS)
                 NOMORE(raised_parked_position[Z_AXIS], soft_endstop_max[Z_AXIS]);
               #endif
               active_extruder_parked = true;
@@ -8505,7 +8505,7 @@ void tool_change(const uint8_t tmp_extruder, const float fr_mm_s/*=0.0*/, bool n
               break;
           }
 
-          #if ENABLED(DEBUG_LEVELING_FEATURE)
+          #if OPTION_ENABLED(DEBUG_LEVELING_FEATURE)
             if (DEBUGGING(LEVELING)) {
               SERIAL_ECHOLNPAIR("Active extruder parked: ", active_extruder_parked ? "yes" : "no");
               DEBUG_POS("New extruder (parked)", current_position);
@@ -8515,7 +8515,7 @@ void tool_change(const uint8_t tmp_extruder, const float fr_mm_s/*=0.0*/, bool n
           // No extra case for HAS_ABL in DUAL_X_CARRIAGE. Does that mean they don't work together?
         #else // !DUAL_X_CARRIAGE
 
-          #if ENABLED(SWITCHING_EXTRUDER)
+          #if OPTION_ENABLED(SWITCHING_EXTRUDER)
             // <0 if the new nozzle is higher, >0 if lower. A bigger raise when lower.
             const float z_diff = hotend_offset[Z_AXIS][active_extruder] - hotend_offset[Z_AXIS][tmp_extruder],
                         z_raise = 0.3 + (z_diff > 0.0 ? z_diff : 0.0);
@@ -8561,7 +8561,7 @@ void tool_change(const uint8_t tmp_extruder, const float fr_mm_s/*=0.0*/, bool n
                                                0),
                      offset_vec = tmp_offset_vec - act_offset_vec;
 
-            #if ENABLED(DEBUG_LEVELING_FEATURE)
+            #if OPTION_ENABLED(DEBUG_LEVELING_FEATURE)
               if (DEBUGGING(LEVELING)) {
                 tmp_offset_vec.debug("tmp_offset_vec");
                 act_offset_vec.debug("act_offset_vec");
@@ -8571,7 +8571,7 @@ void tool_change(const uint8_t tmp_extruder, const float fr_mm_s/*=0.0*/, bool n
 
             offset_vec.apply_rotation(planner.bed_level_matrix.transpose(planner.bed_level_matrix));
 
-            #if ENABLED(DEBUG_LEVELING_FEATURE)
+            #if OPTION_ENABLED(DEBUG_LEVELING_FEATURE)
               if (DEBUGGING(LEVELING)) offset_vec.debug("offset_vec (AFTER)");
             #endif
 
@@ -8586,10 +8586,10 @@ void tool_change(const uint8_t tmp_extruder, const float fr_mm_s/*=0.0*/, bool n
               hotend_offset[Y_AXIS][tmp_extruder] - hotend_offset[Y_AXIS][active_extruder]
             };
 
-            #if ENABLED(MESH_BED_LEVELING)
+            #if OPTION_ENABLED(MESH_BED_LEVELING)
 
               if (mbl.active()) {
-                #if ENABLED(DEBUG_LEVELING_FEATURE)
+                #if OPTION_ENABLED(DEBUG_LEVELING_FEATURE)
                   if (DEBUGGING(LEVELING)) SERIAL_ECHOPAIR("Z before MBL: ", current_position[Z_AXIS]);
                 #endif
                 float x2 = current_position[X_AXIS] + xydiff[X_AXIS],
@@ -8598,7 +8598,7 @@ void tool_change(const uint8_t tmp_extruder, const float fr_mm_s/*=0.0*/, bool n
                 planner.apply_leveling(current_position[X_AXIS], current_position[Y_AXIS], z1);
                 planner.apply_leveling(x2, y2, z2);
                 current_position[Z_AXIS] += z2 - z1;
-                #if ENABLED(DEBUG_LEVELING_FEATURE)
+                #if OPTION_ENABLED(DEBUG_LEVELING_FEATURE)
                   if (DEBUGGING(LEVELING))
                     SERIAL_ECHOLNPAIR(" after: ", current_position[Z_AXIS]);
                 #endif
@@ -8608,7 +8608,7 @@ void tool_change(const uint8_t tmp_extruder, const float fr_mm_s/*=0.0*/, bool n
 
           #endif // !HAS_ABL
 
-          #if ENABLED(DEBUG_LEVELING_FEATURE)
+          #if OPTION_ENABLED(DEBUG_LEVELING_FEATURE)
             if (DEBUGGING(LEVELING)) {
               SERIAL_ECHOPAIR("Offset Tool XY by { ", xydiff[X_AXIS]);
               SERIAL_ECHOPAIR(", ", xydiff[Y_AXIS]);
@@ -8619,9 +8619,9 @@ void tool_change(const uint8_t tmp_extruder, const float fr_mm_s/*=0.0*/, bool n
           // The newly-selected extruder XY is actually at...
           current_position[X_AXIS] += xydiff[X_AXIS];
           current_position[Y_AXIS] += xydiff[Y_AXIS];
-          #if DISABLED(NO_WORKSPACE_OFFSETS) || ENABLED(DUAL_X_CARRIAGE)
+          #if OPTION_DISABLED(NO_WORKSPACE_OFFSETS) || OPTION_ENABLED(DUAL_X_CARRIAGE)
             for (uint8_t i = X_AXIS; i <= Y_AXIS; i++) {
-              #if DISABLED(NO_WORKSPACE_OFFSETS)
+              #if OPTION_DISABLED(NO_WORKSPACE_OFFSETS)
                 position_shift[i] += xydiff[i];
               #endif
               update_software_endstops((AxisEnum)i);
@@ -8633,7 +8633,7 @@ void tool_change(const uint8_t tmp_extruder, const float fr_mm_s/*=0.0*/, bool n
 
         #endif // !DUAL_X_CARRIAGE
 
-        #if ENABLED(DEBUG_LEVELING_FEATURE)
+        #if OPTION_ENABLED(DEBUG_LEVELING_FEATURE)
           if (DEBUGGING(LEVELING)) DEBUG_POS("Sync After Toolchange", current_position);
         #endif
 
@@ -8642,13 +8642,13 @@ void tool_change(const uint8_t tmp_extruder, const float fr_mm_s/*=0.0*/, bool n
 
         // Move to the "old position" (move the extruder into place)
         if (!no_move && IsRunning()) {
-          #if ENABLED(DEBUG_LEVELING_FEATURE)
+          #if OPTION_ENABLED(DEBUG_LEVELING_FEATURE)
             if (DEBUGGING(LEVELING)) DEBUG_POS("Move back", destination);
           #endif
           prepare_move_to_destination();
         }
 
-        #if ENABLED(SWITCHING_EXTRUDER)
+        #if OPTION_ENABLED(SWITCHING_EXTRUDER)
           // Move back down, if needed. (Including when the new tool is higher.)
           if (z_raise != z_diff) {
             destination[Z_AXIS] += z_diff;
@@ -8661,7 +8661,7 @@ void tool_change(const uint8_t tmp_extruder, const float fr_mm_s/*=0.0*/, bool n
 
       stepper.synchronize();
 
-      #if ENABLED(EXT_SOLENOID)
+      #if OPTION_ENABLED(EXT_SOLENOID)
         disable_all_solenoids();
         enable_solenoid_on_active_extruder();
       #endif // EXT_SOLENOID
@@ -8692,7 +8692,7 @@ void tool_change(const uint8_t tmp_extruder, const float fr_mm_s/*=0.0*/, bool n
  */
 inline void gcode_T(uint8_t tmp_extruder) {
 
-  #if ENABLED(DEBUG_LEVELING_FEATURE)
+  #if OPTION_ENABLED(DEBUG_LEVELING_FEATURE)
     if (DEBUGGING(LEVELING)) {
       SERIAL_ECHOPAIR(">>> gcode_T(", tmp_extruder);
       SERIAL_CHAR(')');
@@ -8701,7 +8701,7 @@ inline void gcode_T(uint8_t tmp_extruder) {
     }
   #endif
 
-  #if HOTENDS == 1 || (ENABLED(MIXING_EXTRUDER) && MIXING_VIRTUAL_TOOLS > 1)
+  #if HOTENDS == 1 || (OPTION_ENABLED(MIXING_EXTRUDER) && MIXING_VIRTUAL_TOOLS > 1)
 
     tool_change(tmp_extruder);
 
@@ -8715,7 +8715,7 @@ inline void gcode_T(uint8_t tmp_extruder) {
 
   #endif
 
-  #if ENABLED(DEBUG_LEVELING_FEATURE)
+  #if OPTION_ENABLED(DEBUG_LEVELING_FEATURE)
     if (DEBUGGING(LEVELING)) {
       DEBUG_POS("AFTER", current_position);
       SERIAL_ECHOLNPGM("<<< gcode_T");
@@ -8757,7 +8757,7 @@ void process_next_command() {
   while (*cmd_ptr == ' ') cmd_ptr++;
 
   // Allow for decimal point in command
-  #if ENABLED(G38_PROBE_TARGET)
+  #if OPTION_ENABLED(G38_PROBE_TARGET)
     uint8_t subcode = 0;
   #endif
 
@@ -8774,7 +8774,7 @@ void process_next_command() {
   } while (NUMERIC(*cmd_ptr));
 
   // Allow for decimal point in command
-  #if ENABLED(G38_PROBE_TARGET)
+  #if OPTION_ENABLED(G38_PROBE_TARGET)
     if (*cmd_ptr == '.') {
       cmd_ptr++;
       while (NUMERIC(*cmd_ptr))
@@ -8805,7 +8805,7 @@ void process_next_command() {
         break;
 
       // G2, G3
-      #if ENABLED(ARC_SUPPORT) && DISABLED(SCARA)
+      #if OPTION_ENABLED(ARC_SUPPORT) && OPTION_DISABLED(SCARA)
         case 2: // G2  - CW ARC
         case 3: // G3  - CCW ARC
           gcode_G2_G3(codenum == 2);
@@ -8817,27 +8817,27 @@ void process_next_command() {
         gcode_G4();
         break;
 
-      #if ENABLED(BEZIER_CURVE_SUPPORT)
+      #if OPTION_ENABLED(BEZIER_CURVE_SUPPORT)
         // G5
         case 5: // G5  - Cubic B_spline
           gcode_G5();
           break;
       #endif // BEZIER_CURVE_SUPPORT
 
-      #if ENABLED(FWRETRACT)
+      #if OPTION_ENABLED(FWRETRACT)
         case 10: // G10: retract
         case 11: // G11: retract_recover
           gcode_G10_G11(codenum == 10);
           break;
       #endif // FWRETRACT
 
-      #if ENABLED(NOZZLE_CLEAN_FEATURE)
+      #if OPTION_ENABLED(NOZZLE_CLEAN_FEATURE)
         case 12:
           gcode_G12(); // G12: Nozzle Clean
           break;
       #endif // NOZZLE_CLEAN_FEATURE
 
-      #if ENABLED(INCH_MODE_SUPPORT)
+      #if OPTION_ENABLED(INCH_MODE_SUPPORT)
         case 20: //G20: Inch Mode
           gcode_G20();
           break;
@@ -8847,13 +8847,13 @@ void process_next_command() {
           break;
       #endif // INCH_MODE_SUPPORT
 
-      #if ENABLED(AUTO_BED_LEVELING_UBL) && ENABLED(UBL_G26_MESH_EDITING)
+      #if OPTION_ENABLED(AUTO_BED_LEVELING_UBL) && OPTION_ENABLED(UBL_G26_MESH_EDITING)
         case 26: // G26: Mesh Validation Pattern generation
           gcode_G26();
           break;
       #endif // AUTO_BED_LEVELING_UBL
 
-      #if ENABLED(NOZZLE_PARK_FEATURE)
+      #if OPTION_ENABLED(NOZZLE_PARK_FEATURE)
         case 27: // G27: Nozzle Park
           gcode_G27();
           break;
@@ -8863,7 +8863,7 @@ void process_next_command() {
         gcode_G28();
         break;
 
-      #if PLANNER_LEVELING || ENABLED(AUTO_BED_LEVELING_UBL)
+      #if PLANNER_LEVELING || OPTION_ENABLED(AUTO_BED_LEVELING_UBL)
         case 29: // G29 Detailed Z probe, probes the bed at 3 or more points,
                  // or provides access to the UBL System if enabled.
           gcode_G29();
@@ -8876,7 +8876,7 @@ void process_next_command() {
           gcode_G30();
           break;
 
-        #if ENABLED(Z_PROBE_SLED)
+        #if OPTION_ENABLED(Z_PROBE_SLED)
 
             case 31: // G31: dock the sled
               gcode_G31();
@@ -8889,7 +8889,7 @@ void process_next_command() {
         #endif // Z_PROBE_SLED
       #endif // HAS_BED_PROBE
 
-      #if ENABLED(G38_PROBE_TARGET)
+      #if OPTION_ENABLED(G38_PROBE_TARGET)
         case 38: // G38.2 & G38.3
           if (subcode == 2 || subcode == 3)
             gcode_G38(subcode == 2);
@@ -8910,7 +8910,7 @@ void process_next_command() {
     break;
 
     case 'M': switch (codenum) {
-      #if ENABLED(ULTIPANEL) || ENABLED(EMERGENCY_PARSER)
+      #if OPTION_ENABLED(ULTIPANEL) || OPTION_ENABLED(EMERGENCY_PARSER)
         case 0: // M0: Unconditional stop - Wait for user button press on LCD
         case 1: // M1: Conditional stop - Wait for user button press on LCD
           gcode_M0_M1();
@@ -8921,7 +8921,7 @@ void process_next_command() {
         gcode_M17();
         break;
 
-      #if ENABLED(SDSUPPORT)
+      #if OPTION_ENABLED(SDSUPPORT)
         case 20: // M20: list SD card
           gcode_M20(); break;
         case 21: // M21: init SD card
@@ -8947,12 +8947,12 @@ void process_next_command() {
         case 32: // M32: Select file and start SD print
           gcode_M32(); break;
 
-        #if ENABLED(LONG_FILENAME_HOST_SUPPORT)
+        #if OPTION_ENABLED(LONG_FILENAME_HOST_SUPPORT)
           case 33: // M33: Get the long full path to a file or folder
             gcode_M33(); break;
         #endif
 
-        #if ENABLED(SDCARD_SORT_ALPHA) && ENABLED(SDSORT_GCODE)
+        #if OPTION_ENABLED(SDCARD_SORT_ALPHA) && OPTION_ENABLED(SDSORT_GCODE)
           case 34: //M34 - Set SD card sorting options
             gcode_M34(); break;
         #endif // SDCARD_SORT_ALPHA && SDSORT_GCODE
@@ -8967,19 +8967,19 @@ void process_next_command() {
       case 42: // M42: Change pin state
         gcode_M42(); break;
 
-      #if ENABLED(PINS_DEBUGGING)
+      #if OPTION_ENABLED(PINS_DEBUGGING)
         case 43: // M43: Read pin state
           gcode_M43(); break;
       #endif
 
 
-      #if ENABLED(Z_MIN_PROBE_REPEATABILITY_TEST)
+      #if OPTION_ENABLED(Z_MIN_PROBE_REPEATABILITY_TEST)
         case 48: // M48: Z probe repeatability test
           gcode_M48();
           break;
       #endif // Z_MIN_PROBE_REPEATABILITY_TEST
 
-      #if ENABLED(AUTO_BED_LEVELING_UBL) && ENABLED(UBL_G26_MESH_EDITING)
+      #if OPTION_ENABLED(AUTO_BED_LEVELING_UBL) && OPTION_ENABLED(UBL_G26_MESH_EDITING)
         case 49: // M49: Turn on or off G26 debug flag for verbose output
           gcode_M49();
           break;
@@ -8992,12 +8992,12 @@ void process_next_command() {
       case 77: // M77: Stop print timer
         gcode_M77(); break;
 
-      #if ENABLED(PRINTCOUNTER)
+      #if OPTION_ENABLED(PRINTCOUNTER)
         case 78: // M78: Show print statistics
           gcode_M78(); break;
       #endif
 
-      #if ENABLED(M100_FREE_MEMORY_WATCHER)
+      #if OPTION_ENABLED(M100_FREE_MEMORY_WATCHER)
         case 100: // M100: Free Memory Report
           gcode_M100();
           break;
@@ -9015,7 +9015,7 @@ void process_next_command() {
         gcode_M111();
         break;
 
-      #if DISABLED(EMERGENCY_PARSER)
+      #if OPTION_DISABLED(EMERGENCY_PARSER)
 
         case 108: // M108: Cancel Waiting
           gcode_M108();
@@ -9031,7 +9031,7 @@ void process_next_command() {
 
       #endif
 
-      #if ENABLED(HOST_KEEPALIVE_FEATURE)
+      #if OPTION_ENABLED(HOST_KEEPALIVE_FEATURE)
         case 113: // M113: Set Host Keepalive interval
           gcode_M113();
           break;
@@ -9046,7 +9046,7 @@ void process_next_command() {
         KEEPALIVE_STATE(NOT_BUSY);
         return; // "ok" already printed
 
-      #if ENABLED(AUTO_REPORT_TEMPERATURES) && (HAS_TEMP_HOTEND || HAS_TEMP_BED)
+      #if OPTION_ENABLED(AUTO_REPORT_TEMPERATURES) && (HAS_TEMP_HOTEND || HAS_TEMP_BED)
         case 155: // M155: Set temperature auto-report interval
           gcode_M155();
           break;
@@ -9071,12 +9071,12 @@ void process_next_command() {
           break;
       #endif // FAN_COUNT > 0
 
-      #if ENABLED(PARK_HEAD_ON_PAUSE)
+      #if OPTION_ENABLED(PARK_HEAD_ON_PAUSE)
         case 125: // M125: Store current position and move to filament change position
           gcode_M125(); break;
       #endif
 
-      #if ENABLED(BARICUDA)
+      #if OPTION_ENABLED(BARICUDA)
         // PWM for HEATER_1_PIN
         #if HAS_HEATER_1
           case 126: // M126: valve open
@@ -9145,7 +9145,7 @@ void process_next_command() {
         gcode_M121();
         break;
 
-      #if ENABLED(ULTIPANEL)
+      #if OPTION_ENABLED(ULTIPANEL)
 
         case 145: // M145: Set material heatup parameters
           gcode_M145();
@@ -9153,13 +9153,13 @@ void process_next_command() {
 
       #endif
 
-      #if ENABLED(TEMPERATURE_UNITS_SUPPORT)
+      #if OPTION_ENABLED(TEMPERATURE_UNITS_SUPPORT)
         case 149: // M149: Set temperature units
           gcode_M149();
           break;
       #endif
 
-      #if ENABLED(BLINKM) || ENABLED(RGB_LED)
+      #if OPTION_ENABLED(BLINKM) || OPTION_ENABLED(RGB_LED)
 
         case 150: // M150: Set Status LED Color
           gcode_M150();
@@ -9167,7 +9167,7 @@ void process_next_command() {
 
       #endif // BLINKM
 
-      #if ENABLED(MIXING_EXTRUDER)
+      #if OPTION_ENABLED(MIXING_EXTRUDER)
         case 163: // M163: Set a component weight for mixing extruder
           gcode_M163();
           break;
@@ -9176,7 +9176,7 @@ void process_next_command() {
             gcode_M164();
             break;
         #endif
-        #if ENABLED(DIRECT_MIXING_IN_G1)
+        #if OPTION_ENABLED(DIRECT_MIXING_IN_G1)
           case 165: // M165: Set multiple mix weights
             gcode_M165();
             break;
@@ -9204,25 +9204,25 @@ void process_next_command() {
         gcode_M205();
         break;
 
-      #if DISABLED(NO_WORKSPACE_OFFSETS)
+      #if OPTION_DISABLED(NO_WORKSPACE_OFFSETS)
         case 206: // M206: Set home offsets
           gcode_M206();
           break;
       #endif
 
-      #if ENABLED(DELTA)
+      #if OPTION_ENABLED(DELTA)
         case 665: // M665: Set delta configurations
           gcode_M665();
           break;
       #endif
 
-      #if ENABLED(DELTA) || ENABLED(Z_DUAL_ENDSTOPS)
+      #if OPTION_ENABLED(DELTA) || OPTION_ENABLED(Z_DUAL_ENDSTOPS)
         case 666: // M666: Set delta or dual endstop adjustment
           gcode_M666();
           break;
       #endif
 
-      #if ENABLED(FWRETRACT)
+      #if OPTION_ENABLED(FWRETRACT)
         case 207: // M207: Set Retract Length, Feedrate, and Z lift
           gcode_M207();
           break;
@@ -9268,13 +9268,13 @@ void process_next_command() {
           break;
       #endif // HAS_BUZZER
 
-      #if ENABLED(PIDTEMP)
+      #if OPTION_ENABLED(PIDTEMP)
         case 301: // M301: Set hotend PID parameters
           gcode_M301();
           break;
       #endif // PIDTEMP
 
-      #if ENABLED(PIDTEMPBED)
+      #if OPTION_ENABLED(PIDTEMPBED)
         case 304: // M304: Set bed PID parameters
           gcode_M304();
           break;
@@ -9292,7 +9292,7 @@ void process_next_command() {
           break;
       #endif // HAS_LCD_CONTRAST
 
-      #if ENABLED(EXPERIMENTAL_I2CBUS)
+      #if OPTION_ENABLED(EXPERIMENTAL_I2CBUS)
 
         case 260: // M260: Send data to an i2c slave
           gcode_M260();
@@ -9304,7 +9304,7 @@ void process_next_command() {
 
       #endif // EXPERIMENTAL_I2CBUS
 
-      #if ENABLED(PREVENT_COLD_EXTRUSION)
+      #if OPTION_ENABLED(PREVENT_COLD_EXTRUSION)
         case 302: // M302: Allow cold extrudes (set the minimum extrude temperature)
           gcode_M302();
           break;
@@ -9314,7 +9314,7 @@ void process_next_command() {
         gcode_M303();
         break;
 
-      #if ENABLED(MORGAN_SCARA)
+      #if OPTION_ENABLED(MORGAN_SCARA)
         case 360:  // M360: SCARA Theta pos1
           if (gcode_M360()) return;
           break;
@@ -9345,7 +9345,7 @@ void process_next_command() {
           break;
       #endif // HAS_BED_PROBE
 
-      #if ENABLED(FILAMENT_WIDTH_SENSOR)
+      #if OPTION_ENABLED(FILAMENT_WIDTH_SENSOR)
         case 404:  // M404: Enter the nominal filament width (3mm, 1.75mm ) N<3.0> or display nominal filament width
           gcode_M404();
           break;
@@ -9358,7 +9358,7 @@ void process_next_command() {
         case 407:   // M407: Display measured filament diameter
           gcode_M407();
           break;
-      #endif // ENABLED(FILAMENT_WIDTH_SENSOR)
+      #endif // OPTION_ENABLED(FILAMENT_WIDTH_SENSOR)
 
       #if PLANNER_LEVELING
         case 420: // M420: Enable/Disable Bed Leveling
@@ -9366,13 +9366,13 @@ void process_next_command() {
           break;
       #endif
 
-      #if ENABLED(MESH_BED_LEVELING)
+      #if OPTION_ENABLED(MESH_BED_LEVELING)
         case 421: // M421: Set a Mesh Bed Leveling Z coordinate
           gcode_M421();
           break;
       #endif
 
-      #if DISABLED(NO_WORKSPACE_OFFSETS)
+      #if OPTION_DISABLED(NO_WORKSPACE_OFFSETS)
         case 428: // M428: Apply current_position to home_offset
           gcode_M428();
           break;
@@ -9391,7 +9391,7 @@ void process_next_command() {
         gcode_M503();
         break;
 
-      #if ENABLED(ABORT_ON_ENDSTOP_HIT_FEATURE_ENABLED)
+      #if OPTION_ENABLED(ABORT_ON_ENDSTOP_HIT_FEATURE_ENABLED)
         case 540: // M540: Set abort on endstop hit for SD printing
           gcode_M540();
           break;
@@ -9403,25 +9403,25 @@ void process_next_command() {
           break;
       #endif // HAS_BED_PROBE
 
-      #if ENABLED(FILAMENT_CHANGE_FEATURE)
+      #if OPTION_ENABLED(FILAMENT_CHANGE_FEATURE)
         case 600: // M600: Pause for filament change
           gcode_M600();
           break;
       #endif // FILAMENT_CHANGE_FEATURE
 
-      #if ENABLED(DUAL_X_CARRIAGE)
+      #if OPTION_ENABLED(DUAL_X_CARRIAGE)
         case 605: // M605: Set Dual X Carriage movement mode
           gcode_M605();
           break;
       #endif // DUAL_X_CARRIAGE
 
-      #if ENABLED(LIN_ADVANCE)
+      #if OPTION_ENABLED(LIN_ADVANCE)
         case 905: // M905: Set advance K factor.
           gcode_M905();
           break;
       #endif
 
-      #if ENABLED(HAVE_TMC2130)
+      #if OPTION_ENABLED(HAVE_TMC2130)
         case 906: // M906: Set motor current in milliamps using axis codes X, Y, Z, E
           gcode_M906();
           break;
@@ -9431,13 +9431,13 @@ void process_next_command() {
         gcode_M907();
         break;
 
-      #if HAS_DIGIPOTSS || ENABLED(DAC_STEPPER_CURRENT)
+      #if HAS_DIGIPOTSS || OPTION_ENABLED(DAC_STEPPER_CURRENT)
 
         case 908: // M908: Control digital trimpot directly.
           gcode_M908();
           break;
 
-        #if ENABLED(DAC_STEPPER_CURRENT) // As with Printrbot RevF
+        #if OPTION_ENABLED(DAC_STEPPER_CURRENT) // As with Printrbot RevF
 
           case 909: // M909: Print digipot/DAC current value
             gcode_M909();
@@ -9451,7 +9451,7 @@ void process_next_command() {
 
       #endif // HAS_DIGIPOTSS || DAC_STEPPER_CURRENT
 
-      #if ENABLED(HAVE_TMC2130)
+      #if OPTION_ENABLED(HAVE_TMC2130)
         case 911: // M911: Report TMC2130 prewarn triggered flags
           gcode_M911();
           break;
@@ -9525,7 +9525,7 @@ void ok_to_send() {
   refresh_cmd_timeout();
   if (!send_ok[cmd_queue_index_r]) return;
   SERIAL_PROTOCOLPGM(MSG_OK);
-  #if ENABLED(ADVANCED_OK)
+  #if OPTION_ENABLED(ADVANCED_OK)
     char* p = command_queue[cmd_queue_index_r];
     if (*p == 'N') {
       SERIAL_PROTOCOL(' ');
@@ -9546,12 +9546,12 @@ void ok_to_send() {
    */
   void clamp_to_software_endstops(float target[XYZ]) {
     if (!soft_endstops_enabled) return;
-    #if ENABLED(MIN_SOFTWARE_ENDSTOPS)
+    #if OPTION_ENABLED(MIN_SOFTWARE_ENDSTOPS)
       NOLESS(target[X_AXIS], soft_endstop_min[X_AXIS]);
       NOLESS(target[Y_AXIS], soft_endstop_min[Y_AXIS]);
       NOLESS(target[Z_AXIS], soft_endstop_min[Z_AXIS]);
     #endif
-    #if ENABLED(MAX_SOFTWARE_ENDSTOPS)
+    #if OPTION_ENABLED(MAX_SOFTWARE_ENDSTOPS)
       NOMORE(target[X_AXIS], soft_endstop_max[X_AXIS]);
       NOMORE(target[Y_AXIS], soft_endstop_max[Y_AXIS]);
       NOMORE(target[Z_AXIS], soft_endstop_max[Z_AXIS]);
@@ -9560,9 +9560,9 @@ void ok_to_send() {
 
 #endif
 
-#if ENABLED(AUTO_BED_LEVELING_BILINEAR)
+#if OPTION_ENABLED(AUTO_BED_LEVELING_BILINEAR)
 
-  #if ENABLED(ABL_BILINEAR_SUBDIVISION)
+  #if OPTION_ENABLED(ABL_BILINEAR_SUBDIVISION)
     #define ABL_BG_SPACING(A) bilinear_grid_spacing_virt[A]
     #define ABL_BG_POINTS_X   ABL_GRID_POINTS_VIRT_X
     #define ABL_BG_POINTS_Y   ABL_GRID_POINTS_VIRT_Y
@@ -9636,7 +9636,7 @@ void ok_to_send() {
 
 #endif // AUTO_BED_LEVELING_BILINEAR
 
-#if ENABLED(DELTA)
+#if OPTION_ENABLED(DELTA)
 
   /**
    * Recalculate factors used for delta kinematics whenever
@@ -9654,7 +9654,7 @@ void ok_to_send() {
     delta_diagonal_rod_2_tower[C_AXIS] = sq(diagonal_rod + delta_diagonal_rod_trim[C_AXIS]);
   }
 
-  #if ENABLED(DELTA_FAST_SQRT) && defined(ARDUINO_ARCH_AVR)
+  #if OPTION_ENABLED(DELTA_FAST_SQRT) && defined(ARDUINO_ARCH_AVR)
     /**
      * Fast inverse sqrt from Quake III Arena
      * See: https://en.wikipedia.org/wiki/Fast_inverse_square_root
@@ -9846,7 +9846,7 @@ void ok_to_send() {
  * suitable for current_position, etc.
  */
 void get_cartesian_from_steppers() {
-  #if ENABLED(DELTA)
+  #if OPTION_ENABLED(DELTA)
     forward_kinematics_DELTA(
       stepper.get_axis_position_mm(A_AXIS),
       stepper.get_axis_position_mm(B_AXIS),
@@ -9877,7 +9877,7 @@ void get_cartesian_from_steppers() {
  */
 void set_current_from_steppers_for_axis(const AxisEnum axis) {
   get_cartesian_from_steppers();
-  #if PLANNER_LEVELING && DISABLED(AUTO_BED_LEVELING_UBL)
+  #if PLANNER_LEVELING && OPTION_DISABLED(AUTO_BED_LEVELING_UBL)
     planner.unapply_leveling(cartes);
   #endif
   if (axis == ALL_AXES)
@@ -9886,7 +9886,7 @@ void set_current_from_steppers_for_axis(const AxisEnum axis) {
     current_position[axis] = cartes[axis];
 }
 
-#if ENABLED(MESH_BED_LEVELING)
+#if OPTION_ENABLED(MESH_BED_LEVELING)
 
   /**
    * Prepare a mesh-leveled linear move in a Cartesian setup,
@@ -9947,7 +9947,7 @@ void set_current_from_steppers_for_axis(const AxisEnum axis) {
     mesh_line_to_destination(fr_mm_s, x_splits, y_splits);
   }
 
-#elif ENABLED(AUTO_BED_LEVELING_BILINEAR) && !IS_KINEMATIC
+#elif OPTION_ENABLED(AUTO_BED_LEVELING_BILINEAR) && !IS_KINEMATIC
 
   #define CELL_INDEX(A,V) ((RAW_##A##_POSITION(V) - bilinear_start[A##_AXIS]) / ABL_BG_SPACING(A##_AXIS))
 
@@ -10091,7 +10091,7 @@ void set_current_from_steppers_for_axis(const AxisEnum axis) {
     // Calculate and execute the segments
     for (uint16_t s = segments + 1; --s;) {
       LOOP_XYZE(i) logical[i] += segment_distance[i];
-      #if ENABLED(DELTA)
+      #if OPTION_ENABLED(DELTA)
         DELTA_LOGICAL_IK(); // Delta can inline its kinematics
       #else
         inverse_kinematics(logical);
@@ -10144,19 +10144,19 @@ void set_current_from_steppers_for_axis(const AxisEnum axis) {
       line_to_destination();
     }
     else {
-      #if ENABLED(MESH_BED_LEVELING)
+      #if OPTION_ENABLED(MESH_BED_LEVELING)
         if (mbl.active()) {
           mesh_line_to_destination(MMS_SCALED(feedrate_mm_s));
           return false;
         }
         else
-      #elif ENABLED(AUTO_BED_LEVELING_UBL)
+      #elif OPTION_ENABLED(AUTO_BED_LEVELING_UBL)
         if (ubl.state.active) {
           ubl_line_to_destination(MMS_SCALED(feedrate_mm_s), active_extruder);
           return false;
         }
         else
-      #elif ENABLED(AUTO_BED_LEVELING_BILINEAR)
+      #elif OPTION_ENABLED(AUTO_BED_LEVELING_BILINEAR)
         if (planner.abl_enabled) {
           bilinear_line_to_destination(MMS_SCALED(feedrate_mm_s));
           return false;
@@ -10170,7 +10170,7 @@ void set_current_from_steppers_for_axis(const AxisEnum axis) {
 
 #endif // !IS_KINEMATIC
 
-#if ENABLED(DUAL_X_CARRIAGE)
+#if OPTION_ENABLED(DUAL_X_CARRIAGE)
 
   /**
    * Prepare a linear move in a dual X axis setup
@@ -10242,7 +10242,7 @@ void prepare_move_to_destination() {
   clamp_to_software_endstops(destination);
   refresh_cmd_timeout();
 
-  #if ENABLED(PREVENT_COLD_EXTRUSION)
+  #if OPTION_ENABLED(PREVENT_COLD_EXTRUSION)
 
     if (!DEBUGGING(DRYRUN)) {
       if (destination[E_AXIS] != current_position[E_AXIS]) {
@@ -10251,7 +10251,7 @@ void prepare_move_to_destination() {
           SERIAL_ECHO_START;
           SERIAL_ECHOLNPGM(MSG_ERR_COLD_EXTRUDE_STOP);
         }
-        #if ENABLED(PREVENT_LENGTHY_EXTRUDE)
+        #if OPTION_ENABLED(PREVENT_LENGTHY_EXTRUDE)
           if (labs(destination[E_AXIS] - current_position[E_AXIS]) > EXTRUDE_MAXLENGTH) {
             current_position[E_AXIS] = destination[E_AXIS]; // Behave as if the move really took place, but ignore E part
             SERIAL_ECHO_START;
@@ -10266,7 +10266,7 @@ void prepare_move_to_destination() {
   #if IS_KINEMATIC
     if (!prepare_kinematic_move_to(destination)) return;
   #else
-    #if ENABLED(DUAL_X_CARRIAGE)
+    #if OPTION_ENABLED(DUAL_X_CARRIAGE)
       if (!prepare_move_to_destination_dualx()) return;
     #endif
     if (!prepare_move_to_destination_cartesian()) return;
@@ -10275,7 +10275,7 @@ void prepare_move_to_destination() {
   set_current_to_destination();
 }
 
-#if ENABLED(ARC_SUPPORT)
+#if OPTION_ENABLED(ARC_SUPPORT)
   /**
    * Plan an arc in 2 dimensions
    *
@@ -10408,7 +10408,7 @@ void prepare_move_to_destination() {
   }
 #endif
 
-#if ENABLED(BEZIER_CURVE_SUPPORT)
+#if OPTION_ENABLED(BEZIER_CURVE_SUPPORT)
 
   void plan_cubic_move(const float offset[4]) {
     cubic_b_spline(current_position, destination, offset, MMS_SCALED(feedrate_mm_s), active_extruder);
@@ -10452,13 +10452,13 @@ void prepare_move_to_destination() {
 
       // allows digital or PWM fan output to be used (see M42 handling)
       digitalWrite(CONTROLLERFAN_PIN, speed);
-      analogWrite(CONTROLLERFAN_PIN, speed);
+      // analogWrite(CONTROLLERFAN_PIN, speed);
     }
   }
 
 #endif // HAS_CONTROLLERFAN
 
-#if ENABLED(MORGAN_SCARA)
+#if OPTION_ENABLED(MORGAN_SCARA)
 
   /**
    * Morgan SCARA Forward Kinematics. Results in cartes[].
@@ -10539,7 +10539,7 @@ void prepare_move_to_destination() {
 
 #endif // MORGAN_SCARA
 
-#if ENABLED(TEMP_STAT_LEDS)
+#if OPTION_ENABLED(TEMP_STAT_LEDS)
 
   static bool red_led = false;
   static millis_t next_status_led_update_ms = 0;
@@ -10571,7 +10571,7 @@ void prepare_move_to_destination() {
 
 #endif
 
-#if ENABLED(FILAMENT_RUNOUT_SENSOR)
+#if OPTION_ENABLED(FILAMENT_RUNOUT_SENSOR)
 
   void handle_filament_runout() {
     if (!filament_ran_out) {
@@ -10583,7 +10583,7 @@ void prepare_move_to_destination() {
 
 #endif // FILAMENT_RUNOUT_SENSOR
 
-#if ENABLED(FAST_PWM_FAN)
+#if OPTION_ENABLED(FAST_PWM_FAN)
 
   void setPwmFrequency(uint8_t pin, int val) {
     val &= 0x07;
@@ -10679,7 +10679,7 @@ void disable_all_steppers() {
   disable_e_steppers();
 }
 
-#if ENABLED(AUTOMATIC_CURRENT_CONTROL)
+#if OPTION_ENABLED(AUTOMATIC_CURRENT_CONTROL)
 
   void automatic_current_control(const TMC2130Stepper &st) {
     #if CURRENT_STEP > 0
@@ -10703,34 +10703,34 @@ void disable_all_steppers() {
     static millis_t next_cOT = 0;
     if (ELAPSED(millis(), next_cOT)) {
       next_cOT = millis() + 5000;
-      #if ENABLED(X_IS_TMC2130)
+      #if OPTION_ENABLED(X_IS_TMC2130)
         automatic_current_control(stepperX);
       #endif
-      #if ENABLED(Y_IS_TMC2130)
+      #if OPTION_ENABLED(Y_IS_TMC2130)
         automatic_current_control(stepperY);
       #endif
-      #if ENABLED(Z_IS_TMC2130)
+      #if OPTION_ENABLED(Z_IS_TMC2130)
         automatic_current_control(stepperZ);
       #endif
-      #if ENABLED(X2_IS_TMC2130)
+      #if OPTION_ENABLED(X2_IS_TMC2130)
         automatic_current_control(stepperX2);
       #endif
-      #if ENABLED(Y2_IS_TMC2130)
+      #if OPTION_ENABLED(Y2_IS_TMC2130)
         automatic_current_control(stepperY2);
       #endif
-      #if ENABLED(Z2_IS_TMC2130)
+      #if OPTION_ENABLED(Z2_IS_TMC2130)
         automatic_current_control(stepperZ2);
       #endif
-      #if ENABLED(E0_IS_TMC2130)
+      #if OPTION_ENABLED(E0_IS_TMC2130)
         automatic_current_control(stepperE0);
       #endif
-      #if ENABLED(E1_IS_TMC2130)
+      #if OPTION_ENABLED(E1_IS_TMC2130)
         automatic_current_control(stepperE1);
       #endif
-      #if ENABLED(E2_IS_TMC2130)
+      #if OPTION_ENABLED(E2_IS_TMC2130)
         automatic_current_control(stepperE2);
       #endif
-      #if ENABLED(E3_IS_TMC2130)
+      #if OPTION_ENABLED(E3_IS_TMC2130)
         automatic_current_control(stepperE3);
       #endif
     }
@@ -10752,7 +10752,7 @@ void disable_all_steppers() {
  */
 void manage_inactivity(bool ignore_stepper_queue/*=false*/) {
 
-  #if ENABLED(FILAMENT_RUNOUT_SENSOR)
+  #if OPTION_ENABLED(FILAMENT_RUNOUT_SENSOR)
     if ((IS_SD_PRINTING || print_job_timer.isRunning()) && (READ(FIL_RUNOUT_PIN) == FIL_RUNOUT_INVERTING))
       handle_filament_runout();
   #endif
@@ -10768,7 +10768,7 @@ void manage_inactivity(bool ignore_stepper_queue/*=false*/) {
   }
 
   // Prevent steppers timing-out in the middle of M600
-  #if ENABLED(FILAMENT_CHANGE_FEATURE) && ENABLED(FILAMENT_CHANGE_NO_STEPPER_TIMEOUT)
+  #if OPTION_ENABLED(FILAMENT_CHANGE_FEATURE) && OPTION_ENABLED(FILAMENT_CHANGE_NO_STEPPER_TIMEOUT)
     #define M600_TEST !busy_doing_M600
   #else
     #define M600_TEST true
@@ -10776,16 +10776,16 @@ void manage_inactivity(bool ignore_stepper_queue/*=false*/) {
 
   if (M600_TEST && stepper_inactive_time && ELAPSED(ms, previous_cmd_ms + stepper_inactive_time)
       && !ignore_stepper_queue && !planner.blocks_queued()) {
-    #if ENABLED(DISABLE_INACTIVE_X)
+    #if OPTION_ENABLED(DISABLE_INACTIVE_X)
       disable_x();
     #endif
-    #if ENABLED(DISABLE_INACTIVE_Y)
+    #if OPTION_ENABLED(DISABLE_INACTIVE_Y)
       disable_y();
     #endif
-    #if ENABLED(DISABLE_INACTIVE_Z)
+    #if OPTION_ENABLED(DISABLE_INACTIVE_Z)
       disable_z();
     #endif
-    #if ENABLED(DISABLE_INACTIVE_E)
+    #if OPTION_ENABLED(DISABLE_INACTIVE_E)
       disable_e_steppers();
     #endif
   }
@@ -10840,11 +10840,11 @@ void manage_inactivity(bool ignore_stepper_queue/*=false*/) {
     controllerFan(); // Check if fan should be turned on to cool stepper drivers down
   #endif
 
-  #if ENABLED(EXTRUDER_RUNOUT_PREVENT)
+  #if OPTION_ENABLED(EXTRUDER_RUNOUT_PREVENT)
     if (ELAPSED(ms, previous_cmd_ms + (EXTRUDER_RUNOUT_SECONDS) * 1000UL)
       && thermalManager.degHotend(active_extruder) > EXTRUDER_RUNOUT_MINTEMP) {
       bool oldstatus;
-      #if ENABLED(SWITCHING_EXTRUDER)
+      #if OPTION_ENABLED(SWITCHING_EXTRUDER)
         oldstatus = E0_ENABLE_READ;
         enable_e0();
       #else // !SWITCHING_EXTRUDER
@@ -10882,7 +10882,7 @@ void manage_inactivity(bool ignore_stepper_queue/*=false*/) {
       current_position[E_AXIS] = olde;
       planner.set_e_position_mm(olde);
       stepper.synchronize();
-      #if ENABLED(SWITCHING_EXTRUDER)
+      #if OPTION_ENABLED(SWITCHING_EXTRUDER)
         E0_ENABLE_WRITE(oldstatus);
       #else
         switch (active_extruder) {
@@ -10909,7 +10909,7 @@ void manage_inactivity(bool ignore_stepper_queue/*=false*/) {
     }
   #endif // EXTRUDER_RUNOUT_PREVENT
 
-  #if ENABLED(DUAL_X_CARRIAGE)
+  #if OPTION_ENABLED(DUAL_X_CARRIAGE)
     // handle delayed move timeout
     if (delayed_move_time && ELAPSED(ms, delayed_move_time + 1000UL) && IsRunning()) {
       // travel moves have been received so enact them
@@ -10919,11 +10919,11 @@ void manage_inactivity(bool ignore_stepper_queue/*=false*/) {
     }
   #endif
 
-  #if ENABLED(TEMP_STAT_LEDS)
+  #if OPTION_ENABLED(TEMP_STAT_LEDS)
     handle_status_leds();
   #endif
 
-  #if ENABLED(AUTOMATIC_CURRENT_CONTROL)
+  #if OPTION_ENABLED(AUTOMATIC_CURRENT_CONTROL)
     checkOverTemp();
   #endif
 
@@ -10934,7 +10934,7 @@ void manage_inactivity(bool ignore_stepper_queue/*=false*/) {
  * Standard idle routine keeps the machine alive
  */
 void idle(
-  #if ENABLED(FILAMENT_CHANGE_FEATURE)
+  #if OPTION_ENABLED(FILAMENT_CHANGE_FEATURE)
     bool no_stepper_sleep/*=false*/
   #endif
 ) {
@@ -10942,23 +10942,23 @@ void idle(
 
   host_keepalive();
 
-  #if ENABLED(AUTO_REPORT_TEMPERATURES) && (HAS_TEMP_HOTEND || HAS_TEMP_BED)
+  #if OPTION_ENABLED(AUTO_REPORT_TEMPERATURES) && (HAS_TEMP_HOTEND || HAS_TEMP_BED)
     auto_report_temperatures();
   #endif
 
   manage_inactivity(
-    #if ENABLED(FILAMENT_CHANGE_FEATURE)
+    #if OPTION_ENABLED(FILAMENT_CHANGE_FEATURE)
       no_stepper_sleep
     #endif
   );
 
   thermalManager.manage_heater();
 
-  #if ENABLED(PRINTCOUNTER)
+  #if OPTION_ENABLED(PRINTCOUNTER)
     print_job_timer.tick();
   #endif
 
-  #if HAS_BUZZER && DISABLED(LCD_USE_I2C_BUZZER)
+  #if HAS_BUZZER && OPTION_DISABLED(LCD_USE_I2C_BUZZER)
     buzzer.tick();
   #endif
 }
@@ -10974,7 +10974,7 @@ void kill(const char* lcd_msg) {
   thermalManager.disable_all_heaters();
   disable_all_steppers();
 
-  #if ENABLED(ULTRA_LCD)
+  #if OPTION_ENABLED(ULTRA_LCD)
     kill_screen(lcd_msg);
   #else
     UNUSED(lcd_msg);
@@ -10992,7 +10992,7 @@ void kill(const char* lcd_msg) {
 
   suicide();
   while (1) {
-    #if ENABLED(USE_WATCHDOG)
+    #if OPTION_ENABLED(USE_WATCHDOG)
       watchdog_reset();
     #endif
   } // Wait for reset
@@ -11039,7 +11039,7 @@ void setup() {
     MCUCR = 0x80;
   #endif
 
-  #if ENABLED(FILAMENT_RUNOUT_SENSOR)
+  #if OPTION_ENABLED(FILAMENT_RUNOUT_SENSOR)
     setup_filrunoutpin();
   #endif
 
@@ -11049,9 +11049,10 @@ void setup() {
 
   #if HAS_STEPPER_RESET
     disableStepperDrivers();
+
   #endif
 
-  #if ENABLED(USE_WATCHDOG)
+  #if OPTION_ENABLED(USE_WATCHDOG)
     watchdog_init();
   #endif
 
@@ -11092,7 +11093,7 @@ void setup() {
   // This also updates variables in the planner, elsewhere
   (void)Config_RetrieveSettings();
 
-  #if DISABLED(NO_WORKSPACE_OFFSETS)
+  #if OPTION_DISABLED(NO_WORKSPACE_OFFSETS)
     // Initialize current position based on home_offset
     COPY(current_position, home_offset);
   #else
@@ -11127,15 +11128,15 @@ void setup() {
     enableStepperDrivers();
   #endif
 
-  #if ENABLED(DIGIPOT_I2C)
+  #if OPTION_ENABLED(DIGIPOT_I2C)
     digipot_i2c_init();
   #endif
 
-  #if ENABLED(DAC_STEPPER_CURRENT)
+  #if OPTION_ENABLED(DAC_STEPPER_CURRENT)
     dac_init();
   #endif
 
-  #if ENABLED(Z_PROBE_SLED) && PIN_EXISTS(SLED)
+  #if OPTION_ENABLED(Z_PROBE_SLED) && PIN_EXISTS(SLED)
     OUT_WRITE(SLED_PIN, LOW); // turn it off
   #endif // Z_PROBE_SLED
 
@@ -11149,25 +11150,25 @@ void setup() {
     OUT_WRITE(STAT_LED_BLUE_PIN, LOW); // turn it off
   #endif
 
-  #if ENABLED(RGB_LED)
+  #if OPTION_ENABLED(RGB_LED)
     SET_OUTPUT(RGB_LED_R_PIN);
     SET_OUTPUT(RGB_LED_G_PIN);
     SET_OUTPUT(RGB_LED_B_PIN);
   #endif
 
   lcd_init();
-  #if ENABLED(SHOW_BOOTSCREEN)
-    #if ENABLED(DOGLCD)
+  #if OPTION_ENABLED(SHOW_BOOTSCREEN)
+    #if OPTION_ENABLED(DOGLCD)
       safe_delay(BOOTSCREEN_TIMEOUT);
-    #elif ENABLED(ULTRA_LCD)
+    #elif OPTION_ENABLED(ULTRA_LCD)
       bootscreen();
-      #if DISABLED(SDSUPPORT)
+      #if OPTION_DISABLED(SDSUPPORT)
         lcd_init();
       #endif
     #endif
   #endif
 
-  #if ENABLED(MIXING_EXTRUDER) && MIXING_VIRTUAL_TOOLS > 1
+  #if OPTION_ENABLED(MIXING_EXTRUDER) && MIXING_VIRTUAL_TOOLS > 1
     // Initialize mixing to 100% color 1
     for (uint8_t i = 0; i < MIXING_STEPPERS; i++)
       mixing_factor[i] = (i == 0) ? 1.0 : 0.0;
@@ -11176,18 +11177,18 @@ void setup() {
         mixing_virtual_tool_mix[t][i] = mixing_factor[i];
   #endif
 
-  #if ENABLED(BLTOUCH)
+  #if OPTION_ENABLED(BLTOUCH)
     bltouch_command(BLTOUCH_RESET);    // Just in case the BLTouch is in the error state, try to
     set_bltouch_deployed(true);        // reset it. Also needs to deploy and stow to clear the
     set_bltouch_deployed(false);       // error condition.
   #endif
 
-  #if ENABLED(EXPERIMENTAL_I2CBUS) && I2C_SLAVE_ADDRESS > 0
+  #if OPTION_ENABLED(EXPERIMENTAL_I2CBUS) && I2C_SLAVE_ADDRESS > 0
     i2c.onReceive(i2c_on_receive);
     i2c.onRequest(i2c_on_request);
   #endif
 
-  #if ENABLED(ENDSTOP_INTERRUPTS_FEATURE)
+  #if OPTION_ENABLED(ENDSTOP_INTERRUPTS_FEATURE)
     setup_endstop_interrupts();
   #endif
 }
@@ -11205,13 +11206,13 @@ void setup() {
 void loop() {
   if (commands_in_queue < BUFSIZE) get_available_commands();
 
-  #if ENABLED(SDSUPPORT)
+  #if OPTION_ENABLED(SDSUPPORT)
     card.checkautostart(false);
   #endif
 
   if (commands_in_queue) {
 
-    #if ENABLED(SDSUPPORT)
+    #if OPTION_ENABLED(SDSUPPORT)
 
       if (card.saving) {
         char* command = command_queue[cmd_queue_index_r];

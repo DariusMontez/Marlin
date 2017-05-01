@@ -25,7 +25,7 @@
 
 #include "MarlinConfig.h"
 
-#if ENABLED(AUTO_BED_LEVELING_UBL) || ENABLED(M100_FREE_MEMORY_WATCHER)
+#if OPTION_ENABLED(AUTO_BED_LEVELING_UBL) || OPTION_ENABLED(M100_FREE_MEMORY_WATCHER)
 
 //
 // Utility functions to create and print hex strings as nybble, byte, and word.

@@ -22,7 +22,7 @@
 
 #include "Marlin.h"
 
-#if ENABLED(EXPERIMENTAL_I2CBUS)
+#if OPTION_ENABLED(EXPERIMENTAL_I2CBUS)
 
 #include "twibus.h"
 #include <Wire.h>
@@ -49,7 +49,7 @@ void TWIBus::address(const uint8_t adr) {
 
   this->addr = adr;
 
-  #if ENABLED(DEBUG_TWIBUS)
+  #if OPTION_ENABLED(DEBUG_TWIBUS)
     debug(PSTR("address"), adr);
   #endif
 }
@@ -57,27 +57,27 @@ void TWIBus::address(const uint8_t adr) {
 void TWIBus::addbyte(const char c) {
   if (this->buffer_s >= COUNT(this->buffer)) return;
   this->buffer[this->buffer_s++] = c;
-  #if ENABLED(DEBUG_TWIBUS)
+  #if OPTION_ENABLED(DEBUG_TWIBUS)
     debug(PSTR("addbyte"), c);
   #endif
 }
 
 void TWIBus::addbytes(char src[], uint8_t bytes) {
-  #if ENABLED(DEBUG_TWIBUS)
+  #if OPTION_ENABLED(DEBUG_TWIBUS)
     debug(PSTR("addbytes"), bytes);
   #endif
   while (bytes--) this->addbyte(*src++);
 }
 
 void TWIBus::addstring(char str[]) {
-  #if ENABLED(DEBUG_TWIBUS)
+  #if OPTION_ENABLED(DEBUG_TWIBUS)
     debug(PSTR("addstring"), str);
   #endif
   while (char c = *str++) this->addbyte(c);
 }
 
 void TWIBus::send() {
-  #if ENABLED(DEBUG_TWIBUS)
+  #if OPTION_ENABLED(DEBUG_TWIBUS)
     debug(PSTR("send"), this->addr);
   #endif
 
@@ -113,13 +113,13 @@ void TWIBus::echobuffer(const char prefix[], uint8_t adr) {
 bool TWIBus::request(const uint8_t bytes) {
   if (!this->addr) return false;
 
-  #if ENABLED(DEBUG_TWIBUS)
+  #if OPTION_ENABLED(DEBUG_TWIBUS)
     debug(PSTR("request"), bytes);
   #endif
 
   // requestFrom() is a blocking function
   if (Wire.requestFrom(this->addr, bytes) == 0) {
-    #if ENABLED(DEBUG_TWIBUS)
+    #if OPTION_ENABLED(DEBUG_TWIBUS)
       debug("request fail", this->addr);
     #endif
     return false;
@@ -129,7 +129,7 @@ bool TWIBus::request(const uint8_t bytes) {
 }
 
 void TWIBus::relay(const uint8_t bytes) {
-  #if ENABLED(DEBUG_TWIBUS)
+  #if OPTION_ENABLED(DEBUG_TWIBUS)
     debug(PSTR("relay"), bytes);
   #endif
 
@@ -143,7 +143,7 @@ uint8_t TWIBus::capture(char *dst, const uint8_t bytes) {
   while (count < bytes && Wire.available())
     dst[count++] = Wire.read();
 
-  #if ENABLED(DEBUG_TWIBUS)
+  #if OPTION_ENABLED(DEBUG_TWIBUS)
     debug(PSTR("capture"), count);
   #endif
 
@@ -158,14 +158,14 @@ void TWIBus::flush() {
 #if I2C_SLAVE_ADDRESS > 0
 
   void TWIBus::receive(uint8_t bytes) {
-    #if ENABLED(DEBUG_TWIBUS)
+    #if OPTION_ENABLED(DEBUG_TWIBUS)
       debug(PSTR("receive"), bytes);
     #endif
     echodata(bytes, PSTR("i2c-receive"), 0);
   }
 
   void TWIBus::reply(char str[]/*=NULL*/) {
-    #if ENABLED(DEBUG_TWIBUS)
+    #if OPTION_ENABLED(DEBUG_TWIBUS)
       debug(PSTR("reply"), str);
     #endif
 
@@ -181,7 +181,7 @@ void TWIBus::flush() {
 
 #endif
 
-#if ENABLED(DEBUG_TWIBUS)
+#if OPTION_ENABLED(DEBUG_TWIBUS)
 
   // static
   void TWIBus::prefix(const char func[]) {

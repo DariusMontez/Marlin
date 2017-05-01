@@ -75,7 +75,7 @@
 #define MSG_MOVE_01MM                       _UxGT("Muovi di 0.1mm")
 #define MSG_MOVE_1MM                        _UxGT("Muovi di   1mm")
 #define MSG_MOVE_10MM                       _UxGT("Muovi di  10mm")
-#if ENABLED(DOGLCD)
+#if OPTION_ENABLED(DOGLCD)
   #define MSG_SPEED                         _UxGT("Velocità")
 #else
   #define MSG_SPEED                         _UxGT("Velocita")
@@ -83,7 +83,7 @@
 #define MSG_BED_Z                           _UxGT("piatto Z")
 #define MSG_NOZZLE                          _UxGT("Ugello")
 #define MSG_BED                             _UxGT("Piatto")
-#if ENABLED(DOGLCD)
+#if OPTION_ENABLED(DOGLCD)
   #define MSG_FAN_SPEED                     _UxGT("Velocità ventola")
 #else
   #define MSG_FAN_SPEED                     _UxGT("Velocita ventola")
@@ -202,7 +202,7 @@
   #define MSG_INFO_PRINT_COUNT              _UxGT("Contat. stampa")
   #define MSG_INFO_COMPLETED_PRINTS         _UxGT("Completati")
   #define MSG_INFO_PRINT_TIME               _UxGT("Tempo totale")
-  #if ENABLED(DOGLCD)
+  #if OPTION_ENABLED(DOGLCD)
     #define MSG_INFO_PRINT_LONGEST          _UxGT("Lavoro più lungo")
   #else
     #define MSG_INFO_PRINT_LONGEST          _UxGT("Lavoro piu lungo")
@@ -212,7 +212,7 @@
   #define MSG_INFO_PRINT_COUNT              _UxGT("Stampe")
   #define MSG_INFO_COMPLETED_PRINTS         _UxGT("Completati")
   #define MSG_INFO_PRINT_TIME               _UxGT("Durata")
-  #if ENABLED(DOGLCD)
+  #if OPTION_ENABLED(DOGLCD)
     #define MSG_INFO_PRINT_LONGEST          _UxGT("Più lungo")
   #else
     #define MSG_INFO_PRINT_LONGEST          _UxGT("Piu lungo")

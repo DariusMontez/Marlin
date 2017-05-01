@@ -31,7 +31,7 @@
   #error "Oops!  Make sure you have 'Teensy++ 2.0' selected from the 'Tools -> Boards' menu."
 #endif
 
-#if ENABLED(AT90USBxx_TEENSYPP_ASSIGNMENTS)  // use Teensyduino Teensy++2.0 pin assignments instead of Marlin traditional.
+#if OPTION_ENABLED(AT90USBxx_TEENSYPP_ASSIGNMENTS)  // use Teensyduino Teensy++2.0 pin assignments instead of Marlin traditional.
   #error "These Printrboard assignments depend on traditional Marlin assignments, not AT90USBxx_TEENSYPP_ASSIGNMENTS in fastio.h"
 #endif
 
@@ -47,7 +47,7 @@
 // Limit Switches
 //
 #define X_STOP_PIN         35
-#if ENABLED(SDSUPPORT)
+#if OPTION_ENABLED(SDSUPPORT)
   #define Y_STOP_PIN       37 // Move Ystop to Estop socket
 #else
   #define Y_STOP_PIN        8 // Ystop in Ystop socket
@@ -89,7 +89,7 @@
 
 // If soft or fast PWM is off then use Teensyduino pin numbering, Marlin
 // fastio pin numbering otherwise
-#if ENABLED(FAN_SOFT_PWM) || ENABLED(FAST_PWM_FAN)
+#if OPTION_ENABLED(FAN_SOFT_PWM) || OPTION_ENABLED(FAST_PWM_FAN)
   #define FAN_PIN          22
 #else
   #define FAN_PIN          16
@@ -104,12 +104,12 @@
 //
 // LCD / Controller
 //
-#if ENABLED(ULTRA_LCD) && ENABLED(NEWPANEL)
+#if OPTION_ENABLED(ULTRA_LCD) && OPTION_ENABLED(NEWPANEL)
   // we have no buzzer installed
   #define BEEPER_PIN -1
 
   // LCD Pins
-  #if ENABLED(LCD_I2C_PANELOLU2)
+  #if OPTION_ENABLED(LCD_I2C_PANELOLU2)
     #define BTN_EN1 27 // RX1 - fastio.h pin mapping 27
     #define BTN_EN2 26 // TX1 - fastio.h pin mapping 26
     #define BTN_ENC 43 // A3 - fastio.h pin mapping 43
@@ -132,7 +132,7 @@
 
 #endif // ULTRA_LCD && NEWPANEL
 
-#if ENABLED(VIKI2) || ENABLED(miniVIKI)
+#if OPTION_ENABLED(VIKI2) || OPTION_ENABLED(miniVIKI)
   // FastIO
   #define BEEPER_PIN 32
   // Pins for DOGM SPI LCD Support

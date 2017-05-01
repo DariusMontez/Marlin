@@ -99,7 +99,7 @@
 #define TEMP_BED_PIN        0   // Analog Input
 
 // SPI for Max6675 or Max31855 Thermocouple
-#if DISABLED(SDSUPPORT)
+#if OPTION_DISABLED(SDSUPPORT)
   #define MAX6675_SS            53
 #else
   #define MAX6675_SS            49
@@ -125,8 +125,8 @@
 //
 // LCD / Controller
 //
-#if ENABLED(ULTRA_LCD)
-  #if ENABLED(NEWPANEL)
+#if OPTION_ENABLED(ULTRA_LCD)
+  #if OPTION_ENABLED(NEWPANEL)
     // ramps-fd lcd adaptor
     #define LCD_PINS_RS         16
     #define LCD_PINS_ENABLE     17
@@ -135,7 +135,7 @@
     #define LCD_PINS_D6         27
     #define LCD_PINS_D7         29
 
-    #if ENABLED(REPRAP_DISCOUNT_SMART_CONTROLLER)
+    #if OPTION_ENABLED(REPRAP_DISCOUNT_SMART_CONTROLLER)
       #define BEEPER_PIN        37
 
       #define BTN_EN1           33

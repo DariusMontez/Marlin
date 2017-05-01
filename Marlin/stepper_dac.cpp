@@ -43,7 +43,7 @@
 
 #include "Marlin.h"
 
-#if ENABLED(DAC_STEPPER_CURRENT)
+#if OPTION_ENABLED(DAC_STEPPER_CURRENT)
 
   #include "stepper_dac.h"
 

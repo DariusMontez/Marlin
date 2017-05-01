@@ -158,19 +158,19 @@
 //
 #define HEATER_0_PIN     MOSFET_A_PIN
 
-#if ENABLED(IS_EFB)                            // Hotend, Fan, Bed
+#if OPTION_ENABLED(IS_EFB)                            // Hotend, Fan, Bed
   #define FAN_PIN        MOSFET_B_PIN
   #define HEATER_BED_PIN MOSFET_C_PIN
-#elif ENABLED(IS_EEF)                          // Hotend, Hotend, Fan
+#elif OPTION_ENABLED(IS_EEF)                          // Hotend, Hotend, Fan
   #define HEATER_1_PIN   MOSFET_B_PIN
   #define FAN_PIN        MOSFET_C_PIN
-#elif ENABLED(IS_EEB)                          // Hotend, Hotend, Bed
+#elif OPTION_ENABLED(IS_EEB)                          // Hotend, Hotend, Bed
   #define HEATER_1_PIN   MOSFET_B_PIN
   #define HEATER_BED_PIN MOSFET_C_PIN
-#elif ENABLED(IS_EFF)                          // Hotend, Fan, Fan
+#elif OPTION_ENABLED(IS_EFF)                          // Hotend, Fan, Fan
   #define FAN_PIN        MOSFET_B_PIN
   #define FAN1_PIN       MOSFET_C_PIN
-#elif ENABLED(IS_SF)                           // Spindle, Fan
+#elif OPTION_ENABLED(IS_SF)                           // Spindle, Fan
   #define FAN_PIN        MOSFET_C_PIN
 #endif
 

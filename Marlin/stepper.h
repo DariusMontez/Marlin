@@ -58,11 +58,11 @@ class Stepper {
 
     static block_t* current_block;  // A pointer to the block currently being traced
 
-    #if ENABLED(ABORT_ON_ENDSTOP_HIT_FEATURE_ENABLED)
+    #if OPTION_ENABLED(ABORT_ON_ENDSTOP_HIT_FEATURE_ENABLED)
       static bool abort_on_endstop_hit;
     #endif
 
-    #if ENABLED(Z_DUAL_ENDSTOPS)
+    #if OPTION_ENABLED(Z_DUAL_ENDSTOPS)
       static bool performing_homing;
     #endif
 
@@ -71,7 +71,7 @@ class Stepper {
     static unsigned char last_direction_bits;        // The next stepping-bits to be output
     static unsigned int cleaning_buffer_counter;
 
-    #if ENABLED(Z_DUAL_ENDSTOPS)
+    #if OPTION_ENABLED(Z_DUAL_ENDSTOPS)
       static bool locked_z_motor, locked_z2_motor;
     #endif
 
@@ -79,7 +79,7 @@ class Stepper {
     static long counter_X, counter_Y, counter_Z, counter_E;
     static volatile uint32_t step_events_completed; // The number of step events executed in the current block
 
-    #if ENABLED(ADVANCE) || ENABLED(LIN_ADVANCE)
+    #if OPTION_ENABLED(ADVANCE) || OPTION_ENABLED(LIN_ADVANCE)
     #ifdef CPU_32_BIT
       static uint32_t nextMainISR, nextAdvanceISR, eISR_Rate;
     #else
@@ -87,7 +87,7 @@ class Stepper {
     #endif
       #define _NEXT_ISR(T) nextMainISR = T
 
-      #if ENABLED(LIN_ADVANCE)
+      #if OPTION_ENABLED(LIN_ADVANCE)
         static volatile int e_steps[E_STEPPERS];
         static int final_estep_rate;
         static int current_estep_rate[E_STEPPERS]; // Actual extruder speed [steps/s]
@@ -132,7 +132,7 @@ class Stepper {
     //
     // Mixing extruder mix counters
     //
-    #if ENABLED(MIXING_EXTRUDER)
+    #if OPTION_ENABLED(MIXING_EXTRUDER)
       static long counter_m[MIXING_STEPPERS];
       #define MIXING_STEPPERS_LOOP(VAR) \
         for (uint8_t VAR = 0; VAR < MIXING_STEPPERS; VAR++) \
@@ -157,7 +157,7 @@ class Stepper {
 
     static void isr();
 
-    #if ENABLED(ADVANCE) || ENABLED(LIN_ADVANCE)
+    #if OPTION_ENABLED(ADVANCE) || OPTION_ENABLED(LIN_ADVANCE)
       static void advance_isr();
       static void advance_isr_scheduler();
     #endif
@@ -233,13 +233,13 @@ class Stepper {
       static void microstep_readings();
     #endif
 
-    #if ENABLED(Z_DUAL_ENDSTOPS)
+    #if OPTION_ENABLED(Z_DUAL_ENDSTOPS)
       static FORCE_INLINE void set_homing_flag(bool state) { performing_homing = state; }
       static FORCE_INLINE void set_z_lock(bool state) { locked_z_motor = state; }
       static FORCE_INLINE void set_z2_lock(bool state) { locked_z2_motor = state; }
     #endif
 
-    #if ENABLED(BABYSTEPPING)
+    #if OPTION_ENABLED(BABYSTEPPING)
       static void babystep(const AxisEnum axis, const bool direction); // perform a short step with a single stepper motor, outside of any convention
     #endif
 
@@ -268,7 +268,7 @@ class Stepper {
 
       // TODO: tidy this up, use condtionals_post.h
       #ifdef CPU_32_BIT
-        #if ENABLED(DISABLE_MULTI_STEPPING)
+        #if OPTION_ENABLED(DISABLE_MULTI_STEPPING)
           step_loops = 1;
         #else
           if (step_rate > STEP_DOUBLER_FREQUENCY * 2) { // If steprate > (STEP_DOUBLER_FREQUENCY * 2) kHz >> step 4 times
@@ -341,13 +341,13 @@ class Stepper {
         set_directions();
       }
 
-      #if ENABLED(ADVANCE)
+      #if OPTION_ENABLED(ADVANCE)
 
         advance = current_block->initial_advance;
         final_advance = current_block->final_advance;
 
         // Do E steps + advance steps
-        #if ENABLED(MIXING_EXTRUDER)
+        #if OPTION_ENABLED(MIXING_EXTRUDER)
           long advance_factor = (advance >> 8) - old_advance;
           // ...for mixing steppers proportionally
           MIXING_STEPPERS_LOOP(j)
@@ -370,7 +370,7 @@ class Stepper {
       acceleration_time = calc_timer(acc_step_rate);
       _NEXT_ISR(acceleration_time);
 
-      #if ENABLED(LIN_ADVANCE)
+      #if OPTION_ENABLED(LIN_ADVANCE)
         if (current_block->use_advance_lead) {
           current_estep_rate[current_block->active_extruder] = ((unsigned long)acc_step_rate * current_block->abs_adv_steps_multiplier8) >> 17;
           final_estep_rate = (current_block->nominal_rate * current_block->abs_adv_steps_multiplier8) >> 17;

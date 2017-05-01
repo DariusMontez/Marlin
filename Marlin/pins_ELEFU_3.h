@@ -104,7 +104,7 @@
 //
 #define BEEPER_PIN         36
 
-#if ENABLED(RA_CONTROL_PANEL)
+#if OPTION_ENABLED(RA_CONTROL_PANEL)
 
   #define SDSS             53
   #define SD_DETECT_PIN    28
@@ -115,7 +115,7 @@
 
 #endif // RA_CONTROL_PANEL
 
-#if ENABLED(RA_DISCO)
+#if OPTION_ENABLED(RA_DISCO)
   // variables for which pins the TLC5947 is using
   #define TLC_CLOCK_PIN    25
   #define TLC_BLANK_PIN    23

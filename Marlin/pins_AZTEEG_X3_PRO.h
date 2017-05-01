@@ -43,7 +43,7 @@
 // Swap the MIN and MAX endstop pins because the X3 Pro comes with only
 // MIN endstop pin headers soldered onto the board.
 //
-#if ENABLED(DELTA)
+#if OPTION_ENABLED(DELTA)
   #undef X_MIN_PIN
   #undef X_MAX_PIN
   #undef Y_MIN_PIN
@@ -117,7 +117,7 @@
 #undef BEEPER_PIN
 #define BEEPER_PIN         33
 
-#if ENABLED(VIKI2) || ENABLED(miniVIKI)
+#if OPTION_ENABLED(VIKI2) || OPTION_ENABLED(miniVIKI)
   #undef SD_DETECT_PIN
   #define SD_DETECT_PIN    49 // For easy adapter board
 #else

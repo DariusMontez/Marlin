@@ -66,8 +66,8 @@
 #define SWITCH_ENABLED_0     0
 #define SWITCH_ENABLED_1     1
 #define SWITCH_ENABLED_      1
-#define ENABLED(b) _CAT(SWITCH_ENABLED_, b)
-#define DISABLED(b) (!_CAT(SWITCH_ENABLED_, b))
+#define OPTION_ENABLED(b) _CAT(SWITCH_ENABLED_, b)
+#define OPTION_DISABLED(b) (!_CAT(SWITCH_ENABLED_, b))
 
 #define WITHIN(V,L,H) ((V) >= (L) && (V) <= (H))
 #define NUMERIC(a) WITHIN(a, '0', '9')

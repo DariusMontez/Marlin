@@ -74,16 +74,16 @@
 #endif
 
 typedef enum {
-  #if ENABLED(_useTimer1)
+  #if OPTION_ENABLED(_useTimer1)
     _timer1,
   #endif
-  #if ENABLED(_useTimer3)
+  #if OPTION_ENABLED(_useTimer3)
     _timer3,
   #endif
-  #if ENABLED(_useTimer4)
+  #if OPTION_ENABLED(_useTimer4)
     _timer4,
   #endif
-  #if ENABLED(_useTimer5)
+  #if OPTION_ENABLED(_useTimer5)
     _timer5,
   #endif
   _Nbr_16timers

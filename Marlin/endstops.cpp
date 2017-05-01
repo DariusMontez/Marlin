@@ -40,7 +40,7 @@ Endstops endstops;
 
 bool  Endstops::enabled = true,
       Endstops::enabled_globally =
-        #if ENABLED(ENDSTOPS_ALWAYS_ON_DEFAULT)
+        #if OPTION_ENABLED(ENDSTOPS_ALWAYS_ON_DEFAULT)
           (true)
         #else
           (false)
@@ -48,7 +48,7 @@ bool  Endstops::enabled = true,
       ;
 volatile char Endstops::endstop_hit_bits; // use X_MIN, Y_MIN, Z_MIN and Z_MIN_PROBE as BIT value
 
-#if ENABLED(Z_DUAL_ENDSTOPS)
+#if OPTION_ENABLED(Z_DUAL_ENDSTOPS)
   uint16_t
 #else
   byte
@@ -67,7 +67,7 @@ volatile char Endstops::endstop_hit_bits; // use X_MIN, Y_MIN, Z_MIN and Z_MIN_P
 void Endstops::init() {
 
   #if HAS_X_MIN
-    #if ENABLED(ENDSTOPPULLUP_XMIN)
+    #if OPTION_ENABLED(ENDSTOPPULLUP_XMIN)
       SET_INPUT_PULLUP(X_MIN_PIN);
     #else
       SET_INPUT(X_MIN_PIN);
@@ -75,7 +75,7 @@ void Endstops::init() {
   #endif
 
   #if HAS_Y_MIN
-    #if ENABLED(ENDSTOPPULLUP_YMIN)
+    #if OPTION_ENABLED(ENDSTOPPULLUP_YMIN)
       SET_INPUT_PULLUP(Y_MIN_PIN);
     #else
       SET_INPUT(Y_MIN_PIN);
@@ -83,7 +83,7 @@ void Endstops::init() {
   #endif
 
   #if HAS_Z_MIN
-    #if ENABLED(ENDSTOPPULLUP_ZMIN)
+    #if OPTION_ENABLED(ENDSTOPPULLUP_ZMIN)
       SET_INPUT_PULLUP(Z_MIN_PIN);
     #else
       SET_INPUT(Z_MIN_PIN);
@@ -91,7 +91,7 @@ void Endstops::init() {
   #endif
 
   #if HAS_Z2_MIN
-    #if ENABLED(ENDSTOPPULLUP_ZMIN)
+    #if OPTION_ENABLED(ENDSTOPPULLUP_ZMIN)
       SET_INPUT_PULLUP(Z2_MIN_PIN);
     #else
       SET_INPUT(Z2_MIN_PIN);
@@ -99,7 +99,7 @@ void Endstops::init() {
   #endif
 
   #if HAS_X_MAX
-    #if ENABLED(ENDSTOPPULLUP_XMAX)
+    #if OPTION_ENABLED(ENDSTOPPULLUP_XMAX)
       SET_INPUT_PULLUP(X_MAX_PIN);
     #else
       SET_INPUT(X_MAX_PIN);
@@ -107,7 +107,7 @@ void Endstops::init() {
   #endif
 
   #if HAS_Y_MAX
-    #if ENABLED(ENDSTOPPULLUP_YMAX)
+    #if OPTION_ENABLED(ENDSTOPPULLUP_YMAX)
       SET_INPUT_PULLUP(Y_MAX_PIN);
     #else
       SET_INPUT(Y_MAX_PIN);
@@ -115,7 +115,7 @@ void Endstops::init() {
   #endif
 
   #if HAS_Z_MAX
-    #if ENABLED(ENDSTOPPULLUP_ZMAX)
+    #if OPTION_ENABLED(ENDSTOPPULLUP_ZMAX)
       SET_INPUT_PULLUP(Z_MAX_PIN);
     #else
       SET_INPUT(Z_MAX_PIN);
@@ -123,15 +123,15 @@ void Endstops::init() {
   #endif
 
   #if HAS_Z2_MAX
-    #if ENABLED(ENDSTOPPULLUP_ZMAX)
+    #if OPTION_ENABLED(ENDSTOPPULLUP_ZMAX)
       SET_INPUT_PULLUP(Z2_MAX_PIN);
     #else
       SET_INPUT(Z2_MAX_PIN);
     #endif
   #endif
 
-  #if ENABLED(Z_MIN_PROBE_ENDSTOP)
-    #if ENABLED(ENDSTOPPULLUP_ZMIN_PROBE)
+  #if OPTION_ENABLED(Z_MIN_PROBE_ENDSTOP)
+    #if OPTION_ENABLED(ENDSTOPPULLUP_ZMIN_PROBE)
       SET_INPUT_PULLUP(Z_MIN_PROBE_PIN);
     #else
       SET_INPUT(Z_MIN_PROBE_PIN);
@@ -142,7 +142,7 @@ void Endstops::init() {
 
 void Endstops::report_state() {
   if (endstop_hit_bits) {
-    #if ENABLED(ULTRA_LCD)
+    #if OPTION_ENABLED(ULTRA_LCD)
       char chrX = ' ', chrY = ' ', chrZ = ' ', chrP = ' ';
       #define _SET_STOP_CHAR(A,C) (chr## A = C)
     #else
@@ -163,19 +163,19 @@ void Endstops::report_state() {
     _ENDSTOP_HIT_TEST(Y, 'Y');
     _ENDSTOP_HIT_TEST(Z, 'Z');
 
-    #if ENABLED(Z_MIN_PROBE_ENDSTOP)
+    #if OPTION_ENABLED(Z_MIN_PROBE_ENDSTOP)
       #define P_AXIS Z_AXIS
       if (TEST(endstop_hit_bits, Z_MIN_PROBE)) _ENDSTOP_HIT_ECHO(P, 'P');
     #endif
     SERIAL_EOL;
 
-    #if ENABLED(ULTRA_LCD)
+    #if OPTION_ENABLED(ULTRA_LCD)
       lcd_status_printf_P(0, PSTR(MSG_LCD_ENDSTOPS " %c %c %c %c"), chrX, chrY, chrZ, chrP);
     #endif
 
     hit_on_purpose();
 
-    #if ENABLED(ABORT_ON_ENDSTOP_HIT_FEATURE_ENABLED) && ENABLED(SDSUPPORT)
+    #if OPTION_ENABLED(ABORT_ON_ENDSTOP_HIT_FEATURE_ENABLED) && OPTION_ENABLED(SDSUPPORT)
       if (stepper.abort_on_endstop_hit) {
         card.sdprinting = false;
         card.closefile();
@@ -220,17 +220,17 @@ void Endstops::M119() {
     SERIAL_PROTOCOLPGM(MSG_Z2_MAX);
     SERIAL_PROTOCOLLN(((READ(Z2_MAX_PIN)^Z2_MAX_ENDSTOP_INVERTING) ? MSG_ENDSTOP_HIT : MSG_ENDSTOP_OPEN));
   #endif
-  #if ENABLED(Z_MIN_PROBE_ENDSTOP)
+  #if OPTION_ENABLED(Z_MIN_PROBE_ENDSTOP)
     SERIAL_PROTOCOLPGM(MSG_Z_PROBE);
     SERIAL_PROTOCOLLN(((READ(Z_MIN_PROBE_PIN)^Z_MIN_PROBE_ENDSTOP_INVERTING) ? MSG_ENDSTOP_HIT : MSG_ENDSTOP_OPEN));
   #endif
-  #if ENABLED(FILAMENT_RUNOUT_SENSOR)
+  #if OPTION_ENABLED(FILAMENT_RUNOUT_SENSOR)
     SERIAL_PROTOCOLPGM(MSG_FILAMENT_RUNOUT_SENSOR);
     SERIAL_PROTOCOLLN(((READ(FIL_RUNOUT_PIN)^FIL_RUNOUT_INVERTING) ? MSG_ENDSTOP_HIT : MSG_ENDSTOP_OPEN));
   #endif
 } // Endstops::M119
 
-#if ENABLED(Z_DUAL_ENDSTOPS)
+#if OPTION_ENABLED(Z_DUAL_ENDSTOPS)
 
   // Pass the result of the endstop test
   void Endstops::test_dual_z_endstops(const EndstopEnum es1, const EndstopEnum es2) {
@@ -266,7 +266,7 @@ void Endstops::update() {
       } \
     } while(0)
 
-  #if ENABLED(G38_PROBE_TARGET) && PIN_EXISTS(Z_MIN)  // If G38 command then check Z_MIN for every axis and every direction
+  #if OPTION_ENABLED(G38_PROBE_TARGET) && PIN_EXISTS(Z_MIN)  // If G38 command then check Z_MIN for every axis and every direction
 
     #define UPDATE_ENDSTOP(AXIS,MINMAX) do { \
         _UPDATE_ENDSTOP(AXIS,MINMAX,NOOP); \
@@ -280,7 +280,7 @@ void Endstops::update() {
   #endif
 
   #if CORE_IS_XY || CORE_IS_XZ
-    #if ENABLED(COREYX) || ENABLED(COREZX)
+    #if OPTION_ENABLED(COREYX) || OPTION_ENABLED(COREZX)
       #define CORE_X_CMP !=
       #define CORE_X_NOT !
     #else
@@ -297,7 +297,7 @@ void Endstops::update() {
       if (stepper.motor_direction(X_AXIS))   // stepping along -X axis (regular Cartesian bot)
   #endif
       { // -direction
-        #if ENABLED(DUAL_X_CARRIAGE)
+        #if OPTION_ENABLED(DUAL_X_CARRIAGE)
           // with 2 x-carriages, endstops are only checked in the homing direction for the active extruder
           if ((stepper.current_block->active_extruder == 0 && X_HOME_DIR < 0) || (stepper.current_block->active_extruder != 0 && X2_HOME_DIR < 0))
         #endif
@@ -308,7 +308,7 @@ void Endstops::update() {
           }
       }
       else { // +direction
-        #if ENABLED(DUAL_X_CARRIAGE)
+        #if OPTION_ENABLED(DUAL_X_CARRIAGE)
           // with 2 x-carriages, endstops are only checked in the homing direction for the active extruder
           if ((stepper.current_block->active_extruder == 0 && X_HOME_DIR > 0) || (stepper.current_block->active_extruder != 0 && X2_HOME_DIR > 0))
         #endif
@@ -323,7 +323,7 @@ void Endstops::update() {
   #endif
 
   // Handle swapped vs. typical Core axis order
-  #if ENABLED(COREYX) || ENABLED(COREZY) || ENABLED(COREZX)
+  #if OPTION_ENABLED(COREYX) || OPTION_ENABLED(COREZY) || OPTION_ENABLED(COREZX)
     #define CORE_YZ_CMP ==
     #define CORE_YZ_NOT !
   #elif CORE_IS_XY || CORE_IS_YZ || CORE_IS_XZ
@@ -368,7 +368,7 @@ void Endstops::update() {
       { // Z -direction. Gantry down, bed up.
         #if HAS_Z_MIN
 
-          #if ENABLED(Z_DUAL_ENDSTOPS)
+          #if OPTION_ENABLED(Z_DUAL_ENDSTOPS)
 
             UPDATE_ENDSTOP_BIT(Z, MIN);
             #if HAS_Z2_MIN
@@ -381,7 +381,7 @@ void Endstops::update() {
 
           #else // !Z_DUAL_ENDSTOPS
 
-            #if ENABLED(Z_MIN_PROBE_USES_Z_MIN_ENDSTOP_PIN)
+            #if OPTION_ENABLED(Z_MIN_PROBE_USES_Z_MIN_ENDSTOP_PIN)
               if (z_probe_enabled) UPDATE_ENDSTOP(Z, MIN);
             #else
               UPDATE_ENDSTOP(Z, MIN);
@@ -392,7 +392,7 @@ void Endstops::update() {
         #endif // HAS_Z_MIN
 
         // When closing the gap check the enabled probe
-        #if ENABLED(Z_MIN_PROBE_ENDSTOP)
+        #if OPTION_ENABLED(Z_MIN_PROBE_ENDSTOP)
           if (z_probe_enabled) {
             UPDATE_ENDSTOP(Z, MIN_PROBE);
             if (TEST_ENDSTOP(Z_MIN_PROBE)) SBI(endstop_hit_bits, Z_MIN_PROBE);
@@ -403,7 +403,7 @@ void Endstops::update() {
         #if HAS_Z_MAX
 
           // Check both Z dual endstops
-          #if ENABLED(Z_DUAL_ENDSTOPS)
+          #if OPTION_ENABLED(Z_DUAL_ENDSTOPS)
 
             UPDATE_ENDSTOP_BIT(Z, MAX);
             #if HAS_Z2_MAX
@@ -416,7 +416,7 @@ void Endstops::update() {
 
           // If this pin is not hijacked for the bed probe
           // then it belongs to the Z endstop
-          #elif DISABLED(Z_MIN_PROBE_ENDSTOP) || Z_MAX_PIN != Z_MIN_PROBE_PIN
+          #elif OPTION_DISABLED(Z_MIN_PROBE_ENDSTOP) || Z_MAX_PIN != Z_MIN_PROBE_PIN
 
             UPDATE_ENDSTOP(Z, MAX);
 

@@ -28,7 +28,7 @@
   #error "Oops!  Make sure you have 'Arduino Mega' selected from the 'Tools -> Boards' menu."
 #endif
 
-#if ENABLED(MEGATRONICS_31)
+#if OPTION_ENABLED(MEGATRONICS_31)
   #define BOARD_NAME       "Megatronics v3.1"
 #else
   #define BOARD_NAME       "Megatronics v3.0"
@@ -141,7 +141,7 @@
 #define BTN_EN2            45
 #define BTN_ENC            33
 
-#if ENABLED(REPRAPWORLD_GRAPHICAL_LCD)
+#if OPTION_ENABLED(REPRAPWORLD_GRAPHICAL_LCD)
   #define LCD_PINS_RS      56 // CS chip select / SS chip slave select
   #define LCD_PINS_ENABLE  51 // SID (MOSI)
   #define LCD_PINS_D4      52 // SCK (CLK) clock
@@ -159,7 +159,7 @@
   #define SHIFT_OUT        34
   #define SHIFT_EN         44
 
-  #if ENABLED(MEGATRONICS_31)
+  #if OPTION_ENABLED(MEGATRONICS_31)
     #define SD_DETECT_PIN  56
   #else
     #define SD_DETECT_PIN  -1

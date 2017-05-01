@@ -28,7 +28,7 @@ Stopwatch::Stopwatch() {
 }
 
 bool Stopwatch::stop() {
-  #if ENABLED(DEBUG_STOPWATCH)
+  #if OPTION_ENABLED(DEBUG_STOPWATCH)
     Stopwatch::debug(PSTR("stop"));
   #endif
 
@@ -41,7 +41,7 @@ bool Stopwatch::stop() {
 }
 
 bool Stopwatch::pause() {
-  #if ENABLED(DEBUG_STOPWATCH)
+  #if OPTION_ENABLED(DEBUG_STOPWATCH)
     Stopwatch::debug(PSTR("pause"));
   #endif
 
@@ -54,7 +54,7 @@ bool Stopwatch::pause() {
 }
 
 bool Stopwatch::start() {
-  #if ENABLED(DEBUG_STOPWATCH)
+  #if OPTION_ENABLED(DEBUG_STOPWATCH)
     Stopwatch::debug(PSTR("start"));
   #endif
 
@@ -70,7 +70,7 @@ bool Stopwatch::start() {
 }
 
 void Stopwatch::reset() {
-  #if ENABLED(DEBUG_STOPWATCH)
+  #if OPTION_ENABLED(DEBUG_STOPWATCH)
     Stopwatch::debug(PSTR("reset"));
   #endif
 
@@ -93,7 +93,7 @@ millis_t Stopwatch::duration() {
           - this->startTimestamp) / 1000UL + this->accumulator;
 }
 
-#if ENABLED(DEBUG_STOPWATCH)
+#if OPTION_ENABLED(DEBUG_STOPWATCH)
 
   void Stopwatch::debug(const char func[]) {
     if (DEBUGGING(INFO)) {

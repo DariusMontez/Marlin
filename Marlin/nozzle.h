@@ -26,7 +26,7 @@
 #include "Marlin.h"
 #include "point_t.h"
 
-#if ENABLED(NOZZLE_CLEAN_FEATURE)
+#if OPTION_ENABLED(NOZZLE_CLEAN_FEATURE)
   constexpr float nozzle_clean_start_point[4] = NOZZLE_CLEAN_START_POINT,
                   nozzle_clean_end_point[4] = NOZZLE_CLEAN_END_POINT,
                   nozzle_clean_length = FABS(nozzle_clean_start_point[X_AXIS] - nozzle_clean_end_point[X_AXIS]), //abs x size of wipe pad

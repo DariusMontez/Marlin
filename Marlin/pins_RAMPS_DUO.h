@@ -67,7 +67,7 @@
 
 // SPI for Max6675 or Max31855 Thermocouple
 #undef MAX6675_SS
-#if DISABLED(SDSUPPORT)
+#if OPTION_DISABLED(SDSUPPORT)
   #define MAX6675_SS       69 // Do not use pin 53 if there is even the remote possibility of using Display/SD card
 #else
   #define MAX6675_SS       69 // Do not use pin 49 as this is tied to the switch inside the SD card socket to detect if there is an SD card present
@@ -76,8 +76,8 @@
 //
 // LCD / Controller
 //
-#if ENABLED(ULTRA_LCD)
-  #if ENABLED(NEWPANEL) && ENABLED(PANEL_ONE)
+#if OPTION_ENABLED(ULTRA_LCD)
+  #if OPTION_ENABLED(NEWPANEL) && OPTION_ENABLED(PANEL_ONE)
     #undef LCD_PINS_D4
     #define LCD_PINS_D4  68
 
@@ -88,14 +88,14 @@
     #define LCD_PINS_D7  67
   #endif
 
-  #if ENABLED(NEWPANEL)
-    #if ENABLED(REPRAPWORLD_GRAPHICAL_LCD)
+  #if OPTION_ENABLED(NEWPANEL)
+    #if OPTION_ENABLED(REPRAPWORLD_GRAPHICAL_LCD)
       #undef BTN_EN1
       #define BTN_EN1 67
 
       #undef BTN_ENC
       #define BTN_ENC 66
-    #elif ENABLED(MINIPANEL)
+    #elif OPTION_ENABLED(MINIPANEL)
       #undef DOGLCD_CS
       #define DOGLCD_CS    69
 
@@ -108,13 +108,13 @@
       #undef BTN_EN2
       #define BTN_EN2      66
     #else
-      #if ENABLED(REPRAPWORLD_KEYPAD)
+      #if OPTION_ENABLED(REPRAPWORLD_KEYPAD)
         #undef BTN_EN1
         #define BTN_EN1    67 // encoder
 
         #undef BTN_ENC
         #define BTN_ENC    66 // enter button
-      #elif ENABLED(PANEL_ONE)
+      #elif OPTION_ENABLED(PANEL_ONE)
         #undef BTN_EN2
         #define BTN_EN2    66 // AUX2 PIN 4
       #endif

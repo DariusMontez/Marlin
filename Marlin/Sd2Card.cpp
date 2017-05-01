@@ -28,7 +28,7 @@
  */
 #include "Marlin.h"
 
-#if ENABLED(SDSUPPORT)
+#if OPTION_ENABLED(SDSUPPORT)
 #include "Sd2Card.h"
 
 //------------------------------------------------------------------------------
@@ -93,7 +93,7 @@ void Sd2Card::chipSelectHigh() {
 }
 //------------------------------------------------------------------------------
 void Sd2Card::chipSelectLow() {
-  #if DISABLED(SOFTWARE_SPI)
+  #if OPTION_DISABLED(SOFTWARE_SPI)
     spiInit(spiRate_);
   #endif  // SOFTWARE_SPI
   digitalWrite(chipSelectPin_, LOW);
@@ -175,7 +175,7 @@ bool Sd2Card::init(uint8_t sckRateID, uint8_t chipSelectPin) {
 
   // If init takes more than 4s it could trigger
   // watchdog leading to a reboot loop.
-  #if ENABLED(USE_WATCHDOG)
+  #if OPTION_ENABLED(USE_WATCHDOG)
     watchdog_reset();
   #endif
 
@@ -232,7 +232,7 @@ bool Sd2Card::init(uint8_t sckRateID, uint8_t chipSelectPin) {
   }
   chipSelectHigh();
 
-  #if DISABLED(SOFTWARE_SPI)
+  #if OPTION_DISABLED(SOFTWARE_SPI)
     return setSckRate(sckRateID);
   #else  // SOFTWARE_SPI
     UNUSED(sckRateID);
@@ -256,7 +256,7 @@ bool Sd2Card::readBlock(uint32_t blockNumber, uint8_t* dst) {
   // use address if not SDHC card
   if (type() != SD_CARD_TYPE_SDHC) blockNumber <<= 9;
 
-  #if ENABLED(SD_CHECK_AND_RETRY)
+  #if OPTION_ENABLED(SD_CHECK_AND_RETRY)
     uint8_t retryCnt = 3;
     do {
       if (!cardCommand(CMD17, blockNumber)) {
@@ -294,7 +294,7 @@ bool Sd2Card::readData(uint8_t* dst) {
   return readData(dst, 512);
 }
 
-#if ENABLED(SD_CHECK_AND_RETRY)
+#if OPTION_ENABLED(SD_CHECK_AND_RETRY)
 static const uint16_t crctab[] PROGMEM = {
   0x0000, 0x1021, 0x2042, 0x3063, 0x4084, 0x50A5, 0x60C6, 0x70E7,
   0x8108, 0x9129, 0xA14A, 0xB16B, 0xC18C, 0xD1AD, 0xE1CE, 0xF1EF,
@@ -355,7 +355,7 @@ bool Sd2Card::readData(uint8_t* dst, uint16_t count) {
   // transfer data
   spiRead(dst, count);
 
-#if ENABLED(SD_CHECK_AND_RETRY)
+#if OPTION_ENABLED(SD_CHECK_AND_RETRY)
   {
     uint16_t calcCrc = CRC_CCITT(dst, count);
     uint16_t recvCrc = spiRec() << 8;

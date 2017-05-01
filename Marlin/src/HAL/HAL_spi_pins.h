@@ -22,17 +22,13 @@
 #define HAL_SPI_PINS_H_
 
 #ifdef ARDUINO_ARCH_SAM
-
   #include "HAL_DUE/spi_pins.h"
-
 #elif defined(ARDUINO_ARCH_AVR)
-
   #include "HAL_AVR/spi_pins.h"
-
+#elif defined(ARDUINO_ARCH_ESP32)
+  #include "HAL_ESP/spi_pins.h"
 #else
-
   #error Unsupported Platform!
-
 #endif
 
 #endif /* HAL_SPI_PINS_H_ */

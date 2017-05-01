@@ -29,7 +29,7 @@
 
 #include "Marlin.h"
 
-#if ENABLED(BEZIER_CURVE_SUPPORT)
+#if OPTION_ENABLED(BEZIER_CURVE_SUPPORT)
 
 #include "planner.h"
 #include "language.h"

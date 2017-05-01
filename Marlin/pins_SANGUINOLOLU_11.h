@@ -44,7 +44,7 @@
 //
 // Z Probe (when not Z_MIN_PIN)
 //
-#if ENABLED(Z_PROBE_SLED)
+#if OPTION_ENABLED(Z_PROBE_SLED)
   #define SLED_PIN         -1
 #endif
 
@@ -74,7 +74,7 @@
 //
 #define HEATER_0_PIN       13 // (extruder)
 
-#if ENABLED(SANGUINOLOLU_V_1_2)
+#if OPTION_ENABLED(SANGUINOLOLU_V_1_2)
 
   #define HEATER_BED_PIN   12 // (bed)
   #define X_ENABLE_PIN     14
@@ -82,7 +82,7 @@
   #define Z_ENABLE_PIN     26
   #define E0_ENABLE_PIN    14
 
-  #if ENABLED(LCD_I2C_PANELOLU2)
+  #if OPTION_ENABLED(LCD_I2C_PANELOLU2)
     #define FAN_PIN         4 // Uses Transistor1 (PWM) on Panelolu2's Sanguino Adapter Board to drive the fan
   #endif
 
@@ -119,11 +119,11 @@
 //
 // LCD / Controller
 //
-#if ENABLED(ULTRA_LCD) && ENABLED(NEWPANEL)
+#if OPTION_ENABLED(ULTRA_LCD) && OPTION_ENABLED(NEWPANEL)
 
-  #if ENABLED(DOGLCD)
+  #if OPTION_ENABLED(DOGLCD)
 
-    #if ENABLED(U8GLIB_ST7920) // SPI GLCD 12864 ST7920 ( like [www.digole.com] ) For Melzi V2.0
+    #if OPTION_ENABLED(U8GLIB_ST7920) // SPI GLCD 12864 ST7920 ( like [www.digole.com] ) For Melzi V2.0
 
       #if IS_MELZI // Melzi board
         #define LCD_PINS_RS     30 // CS chip select /SS chip slave select
@@ -147,7 +147,7 @@
       #define DOGLCD_A0         30
       #define LCD_CONTRAST       1
 
-      #if ENABLED(MAKRPANEL)
+      #if OPTION_ENABLED(MAKRPANEL)
 
         #define BEEPER_PIN      29
         #define DOGLCD_CS       17
@@ -181,14 +181,14 @@
   #define BTN_EN1               11
   #define BTN_EN2               10
 
-  #if ENABLED(LCD_I2C_PANELOLU2)
+  #if OPTION_ENABLED(LCD_I2C_PANELOLU2)
     #if IS_MELZI
       #define BTN_ENC           29
       #define LCD_SDSS          30 // Panelolu2 SD card reader rather than the Melzi
     #else
       #define BTN_ENC           30
     #endif
-  #elif ENABLED(OLED_PANEL_TINYBOY2)
+  #elif OPTION_ENABLED(OLED_PANEL_TINYBOY2)
     #define BTN_ENC             28
     #define LCD_SDSS            -1
   #else  // !Panelolu2, !TinyBoy2

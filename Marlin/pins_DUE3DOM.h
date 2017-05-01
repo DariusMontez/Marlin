@@ -84,7 +84,7 @@
 #define TEMP_BED_PIN        1   // Analog Input (BED thermistor)
 
 // SPI for Max6675 or Max31855 Thermocouple
-#if DISABLED(SDSUPPORT)
+#if OPTION_DISABLED(SDSUPPORT)
   #define MAX6675_SS        -1
 #else
   #define MAX6675_SS        -1
@@ -110,7 +110,7 @@
 //
 // LCD / Controller
 //
-#if ENABLED(ULTRA_LCD)
+#if OPTION_ENABLED(ULTRA_LCD)
   #define LCD_PINS_RS       42
   #define LCD_PINS_ENABLE   43
   #define LCD_PINS_D4       44
@@ -118,7 +118,7 @@
   #define LCD_PINS_D6       46
   #define LCD_PINS_D7       47
 
-  #if ENABLED(REPRAP_DISCOUNT_SMART_CONTROLLER)
+  #if OPTION_ENABLED(REPRAP_DISCOUNT_SMART_CONTROLLER)
     #define BEEPER_PIN      41
 
     #define BTN_EN1         50
@@ -129,7 +129,7 @@
     #define SD_DETECT_PIN   14
 
   // RADDS LCD panel
-  #elif ENABLED(RADDS_DISPLAY)
+  #elif OPTION_ENABLED(RADDS_DISPLAY)
     #define BEEPER_PIN      41
 
     #define BTN_EN1         50
@@ -142,7 +142,7 @@
     #define SDSS             4
     #define SD_DETECT_PIN   14
 
-  #elif ENABLED(SSD1306_OLED_I2C_CONTROLLER)
+  #elif OPTION_ENABLED(SSD1306_OLED_I2C_CONTROLLER)
     #define BTN_EN1         50
     #define BTN_EN2         52
     #define BTN_ENC         48
@@ -150,7 +150,7 @@
     #define LCD_SDSS         4
     #define SD_DETECT_PIN   14
 
-  #elif ENABLED(SPARK_FULL_GRAPHICS)
+  #elif OPTION_ENABLED(SPARK_FULL_GRAPHICS)
     #define LCD_PINS_D4     29
     #define LCD_PINS_ENABLE 27
     #define LCD_PINS_RS     25

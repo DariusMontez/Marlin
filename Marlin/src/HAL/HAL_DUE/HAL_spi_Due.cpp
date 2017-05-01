@@ -48,7 +48,7 @@
 // Public functions
 // --------------------------------------------------------------------------
 
-#if ENABLED(SOFTWARE_SPI)
+#if OPTION_ENABLED(SOFTWARE_SPI)
   // --------------------------------------------------------------------------
   // software SPI
   // --------------------------------------------------------------------------
@@ -331,6 +331,6 @@
     }
     spiSend(buf[511]);
   }
-#endif // ENABLED(SOFTWARE_SPI)
+#endif // OPTION_ENABLED(SOFTWARE_SPI)
 
 #endif // ARDUINO_ARCH_SAM

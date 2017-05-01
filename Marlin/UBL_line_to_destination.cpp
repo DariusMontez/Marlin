@@ -21,7 +21,7 @@
  */
 #include "MarlinConfig.h"
 
-#if ENABLED(AUTO_BED_LEVELING_UBL)
+#if OPTION_ENABLED(AUTO_BED_LEVELING_UBL)
 
   #include "Marlin.h"
   #include "UBL.h"

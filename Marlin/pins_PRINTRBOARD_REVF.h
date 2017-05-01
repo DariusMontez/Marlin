@@ -31,7 +31,7 @@
   #error "Oops!  Make sure you have 'Teensy++ 2.0' selected from the 'Tools -> Boards' menu."
 #endif
 
-#if ENABLED(AT90USBxx_TEENSYPP_ASSIGNMENTS)  // use Teensyduino Teensy++2.0 pin assignments instead of Marlin traditional.
+#if OPTION_ENABLED(AT90USBxx_TEENSYPP_ASSIGNMENTS)  // use Teensyduino Teensy++2.0 pin assignments instead of Marlin traditional.
   #error "These Printrboard assignments depend on traditional Marlin assignments, not AT90USBxx_TEENSYPP_ASSIGNMENTS in fastio.h"
 #endif
 
@@ -92,7 +92,7 @@
 
 // If soft or fast PWM is off then use Teensyduino pin numbering, Marlin
 // fastio pin numbering otherwise
-#if ENABLED(FAN_SOFT_PWM) || ENABLED(FAST_PWM_FAN)
+#if OPTION_ENABLED(FAN_SOFT_PWM) || OPTION_ENABLED(FAST_PWM_FAN)
   #define FAN_PIN          22
 #else
   #define FAN_PIN          16
@@ -107,7 +107,7 @@
 //
 // LCD / Controller
 //
-#if ENABLED(ULTRA_LCD)
+#if OPTION_ENABLED(ULTRA_LCD)
   #define BEEPER_PIN -1
 
   #define LCD_PINS_RS 9
@@ -130,7 +130,7 @@
   #define encrot3 1
 #endif
 
-#if ENABLED(VIKI2) || ENABLED(miniVIKI)
+#if OPTION_ENABLED(VIKI2) || OPTION_ENABLED(miniVIKI)
   #define BEEPER_PIN 32 // FastIO
   #define DOGLCD_A0  42 // Non-FastIO
   #define DOGLCD_CS  43 // Non-FastIO
