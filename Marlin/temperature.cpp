@@ -1743,6 +1743,7 @@ void Temperature::isr() {
   #endif // SLOW_PWM_HEATERS
 
   // Prepare or measure a sensor, each one every 12th frame
+  // Serial.printf("has temp bed %d %d\n", TEMP_BED_PIN, TEMP_SENSOR_BED);
   switch (temp_state) {
     case PrepareTemp_0:
       #if HAS_TEMP_0
@@ -1844,7 +1845,6 @@ void Temperature::isr() {
   } // switch(temp_state)
 
   if (temp_count >= OVERSAMPLENR) { // 10 * 16 * 1/(16000000/64/256)  = 164ms.
-
     temp_count = 0;
 
     // Update the raw values if they've been read. Else we could be updating them during reading.
@@ -1891,8 +1891,8 @@ void Temperature::isr() {
 
     for (uint8_t e = 0; e < COUNT(temp_dir); e++) {
       const int tdir = temp_dir[e], rawtemp = current_temperature_raw[e] * tdir;
-      if (rawtemp > maxttemp_raw[e] * tdir && target_temperature[e] > 0.0f) max_temp_error(e);
-      if (rawtemp < minttemp_raw[e] * tdir && !is_preheating(e) && target_temperature[e] > 0.0f) {
+      if (rawtemp > maxttemp_raw[e] * tdir && target_temperature[e] > 0) max_temp_error(e);
+      if (rawtemp < minttemp_raw[e] * tdir && !is_preheating(e) && target_temperature[e] > 0) {
         #ifdef MAX_CONSECUTIVE_LOW_TEMPERATURE_ERROR_ALLOWED
           if (++consecutive_low_temperature_error[e] >= MAX_CONSECUTIVE_LOW_TEMPERATURE_ERROR_ALLOWED)
         #endif
@@ -1910,10 +1910,9 @@ void Temperature::isr() {
       #else
         #define GEBED >=
       #endif
-      if (current_temperature_bed_raw GEBED bed_maxttemp_raw && target_temperature_bed > 0.0f) max_temp_error(-1);
-      if (bed_minttemp_raw GEBED current_temperature_bed_raw && target_temperature_bed > 0.0f) min_temp_error(-1);
+      if (current_temperature_bed_raw GEBED bed_maxttemp_raw && target_temperature_bed > 0) max_temp_error(-1);
+      if (bed_minttemp_raw GEBED current_temperature_bed_raw && target_temperature_bed > 0) min_temp_error(-1);
     #endif
-
   } // temp_count >= OVERSAMPLENR
 
   #if OPTION_ENABLED(BABYSTEPPING)
