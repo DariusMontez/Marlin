@@ -55,7 +55,7 @@
 // Public Variables
 // --------------------------------------------------------------------------
 
-uint16_t HAL_adc_result;
+int HAL_adc_result;
 
 // --------------------------------------------------------------------------
 // Private Variables
@@ -115,13 +115,12 @@ int freeMemory() {
 // --------------------------------------------------------------------------
 
 void HAL_adc_start_conversion (uint8_t adc_pin) {
-	HAL_adc_result = analogRead(adc_pin);
-  // Serial.printf("ADC result %d", HAL_adc_result);
+	HAL_adc_result = analogRead(adc_pin) >> 2; // TODO: ESP32 is 12bits, AVR is 10, works mostly but break the thermistor tables
 }
-
-uint16_t HAL_adc_get_result(void) {
-	// nop
-	return HAL_adc_result;
-}
+//
+// uint16_t HAL_adc_get_result(void) {
+// 	// nop
+// 	return HAL_adc_result;
+// }
 
 #endif // ARDUINO_ARCH_SAM

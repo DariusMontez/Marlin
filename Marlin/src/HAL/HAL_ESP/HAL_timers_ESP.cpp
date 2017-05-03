@@ -35,6 +35,9 @@
 #include "../HAL.h"
 
 #include "HAL_timers_ESP.h"
+#include "stepper.h"
+#include "temperature.h"
+
 
 // --------------------------------------------------------------------------
 // Externals
@@ -100,6 +103,20 @@ void HAL_timer_start (uint8_t timer_num, uint32_t frequency) {
   uint32_t period = 1000000/frequency;
   timers[timer_num] = timerBegin(timer_num, HAL_TICKS_PER_US, true);
   timerAlarmWrite(timers[timer_num], period, true);
+
+  void (*fn)(void) = NULL;
+  switch (timer_num) {
+    case STEP_TIMER_NUM:
+      fn = &Stepper::isr;
+      break;
+    case TEMP_TIMER_NUM:
+      fn = &Temperature::isr;
+      break;
+  }
+
+  if (fn) {
+    timerAttachInterrupt(timers[timer_num], fn, true);
+  }
 }
 
 // void IRAM_ATTR onStepTimer() {
@@ -110,24 +127,11 @@ void HAL_timer_start (uint8_t timer_num, uint32_t frequency) {
 //   Temp_Handler();
 // }
 
-#include "stepper.h"
-#include "temperature.h"
-
 //
 void HAL_timer_enable_interrupt (uint8_t timer_num) {
   // SERIAL_ECHO("HAL_timer_enable_interrupt\n");
 
-  void (*fn)(void);
-  switch (timer_num) {
-    case STEP_TIMER_NUM:
-      fn = &Stepper::isr;
-      break;
-    case TEMP_TIMER_NUM:
-      fn = &Temperature::isr;
-      break;
-  }
 
-  timerAttachInterrupt(timers[timer_num], fn, true);
   timerAlarmEnable(timers[timer_num]);
 }
 //

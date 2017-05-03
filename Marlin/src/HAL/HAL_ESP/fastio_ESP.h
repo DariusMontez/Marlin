@@ -70,7 +70,7 @@
 #define _SET_OUTPUT(IO)     pinMode(IO, OUTPUT);
 //
 /// set pin as input with pullup mode
-#define _PULLUP(IO, v)      pinMode(IO, INPUT | v);
+#define _PULLUP(IO, v)      pinMode(IO, v ? INPUT_PULLUP : INPUT);
 //
 // /// check if pin is an input
 // #define _GET_INPUT(IO)

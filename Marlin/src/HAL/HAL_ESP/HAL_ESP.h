@@ -73,7 +73,7 @@ void digitalWrite(uint8_t pin, uint8_t val);
 // --------------------------------------------------------------------------
 
 /** result of last ADC conversion */
-extern uint16_t HAL_adc_result;
+extern int HAL_adc_result;
 
 // --------------------------------------------------------------------------
 // Public functions
@@ -123,7 +123,7 @@ inline void HAL_adc_init(void) {}
 //
 void HAL_adc_start_conversion (uint8_t adc_pin);
 //
-uint16_t HAL_adc_get_result(void);
+// uint16_t HAL_adc_get_result(void);
 //
 // //
 // uint16_t HAL_getAdcReading(uint8_t chan);
