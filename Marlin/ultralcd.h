@@ -165,10 +165,10 @@
 #endif // ULTRA_LCD
 
 #if OPTION_ENABLED(AUTO_BED_LEVELING_UBL)
-  void lcd_mesh_edit_setup(float initial);
-  float lcd_mesh_edit();
-  void lcd_z_offset_edit_setup(float);
-  float lcd_z_offset_edit();
+  void lcd_mesh_edit_setup(double initial);
+  double lcd_mesh_edit();
+  void lcd_z_offset_edit_setup(double);
+  double lcd_z_offset_edit();
 #endif
 
 #endif // ULTRALCD_H

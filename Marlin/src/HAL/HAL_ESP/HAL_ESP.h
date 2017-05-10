@@ -41,8 +41,11 @@ void digitalWrite(uint8_t pin, uint8_t val);
 //   #define analogInputToDigitalPin(p) ((p < 12u) ? (p) + 54u : -1)
 // #endif
 //
-#define CRITICAL_SECTION_START	cli();
-#define CRITICAL_SECTION_END    sei();
+// #define CRITICAL_SECTION_START	uint32_t volatile register ilevel = XTOS_DISABLE_ALL_INTERRUPTS;
+// #define CRITICAL_SECTION_END    XTOS_RESTORE_INTLEVEL(ilevel);
+#define CRITICAL_SECTION_START cli()
+#define CRITICAL_SECTION_END sei()
+
 //
 // // On AVR this is in math.h?
 // #define square(x) ((x)*(x))

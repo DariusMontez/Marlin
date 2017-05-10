@@ -28,7 +28,7 @@
 
   uint8_t mesh_bed_leveling::status;
 
-  float mesh_bed_leveling::z_offset,
+  double mesh_bed_leveling::z_offset,
         mesh_bed_leveling::z_values[MESH_NUM_Y_POINTS][MESH_NUM_X_POINTS],
         mesh_bed_leveling::index_to_xpos[MESH_NUM_X_POINTS],
         mesh_bed_leveling::index_to_ypos[MESH_NUM_Y_POINTS];

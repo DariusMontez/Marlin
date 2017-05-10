@@ -42,7 +42,7 @@
 
 /* Compute the linear interpolation between to real numbers.
 */
-inline static float interp(float a, float b, float t) { return (1.0 - t) * a + t * b; }
+inline static double interp(double a, double b, double t) { return (1.0 - t) * a + t * b; }
 
 /**
  * Compute a Bézier curve using the De Casteljau's algorithm (see
@@ -50,13 +50,13 @@ inline static float interp(float a, float b, float t) { return (1.0 - t) * a + t
  * easy to code and has good numerical stability (very important,
  * since Arudino works with limited precision real numbers).
  */
-inline static float eval_bezier(float a, float b, float c, float d, float t) {
-  float iab = interp(a, b, t);
-  float ibc = interp(b, c, t);
-  float icd = interp(c, d, t);
-  float iabc = interp(iab, ibc, t);
-  float ibcd = interp(ibc, icd, t);
-  float iabcd = interp(iabc, ibcd, t);
+inline static double eval_bezier(double a, double b, double c, double d, double t) {
+  double iab = interp(a, b, t);
+  double ibc = interp(b, c, t);
+  double icd = interp(c, d, t);
+  double iabc = interp(iab, ibc, t);
+  double ibcd = interp(ibc, icd, t);
+  double iabcd = interp(iabc, ibcd, t);
   return iabcd;
 }
 
@@ -64,7 +64,7 @@ inline static float eval_bezier(float a, float b, float c, float d, float t) {
  * We approximate Euclidean distance with the sum of the coordinates
  * offset (so-called "norm 1"), which is quicker to compute.
  */
-inline static float dist1(float x1, float y1, float x2, float y2) { return FABS(x1 - x2) + FABS(y1 - y2); }
+inline static double dist1(double x1, double y1, double x2, double y2) { return FABS(x1 - x2) + FABS(y1 - y2); }
 
 /**
  * The algorithm for computing the step is loosely based on the one in Kig
@@ -105,18 +105,18 @@ inline static float dist1(float x1, float y1, float x2, float y2) { return FABS(
  * the mitigation offered by MIN_STEP and the small computational
  * power available on Arduino, I think it is not wise to implement it.
  */
-void cubic_b_spline(const float position[NUM_AXIS], const float target[NUM_AXIS], const float offset[4], float fr_mm_s, uint8_t extruder) {
+void cubic_b_spline(const double position[NUM_AXIS], const double target[NUM_AXIS], const double offset[4], double fr_mm_s, uint8_t extruder) {
   // Absolute first and second control points are recovered.
-  float first0 = position[X_AXIS] + offset[0];
-  float first1 = position[Y_AXIS] + offset[1];
-  float second0 = target[X_AXIS] + offset[2];
-  float second1 = target[Y_AXIS] + offset[3];
-  float t = 0.0;
+  double first0 = position[X_AXIS] + offset[0];
+  double first1 = position[Y_AXIS] + offset[1];
+  double second0 = target[X_AXIS] + offset[2];
+  double second1 = target[Y_AXIS] + offset[3];
+  double t = 0.0;
 
-  float bez_target[4];
+  double bez_target[4];
   bez_target[X_AXIS] = position[X_AXIS];
   bez_target[Y_AXIS] = position[Y_AXIS];
-  float step = MAX_STEP;
+  double step = MAX_STEP;
 
   millis_t next_idle_ms = millis() + 200UL;
 
@@ -132,17 +132,17 @@ void cubic_b_spline(const float position[NUM_AXIS], const float target[NUM_AXIS]
     // First try to reduce the step in order to make it sufficiently
     // close to a linear interpolation.
     bool did_reduce = false;
-    float new_t = t + step;
+    double new_t = t + step;
     NOMORE(new_t, 1.0);
-    float new_pos0 = eval_bezier(position[X_AXIS], first0, second0, target[X_AXIS], new_t);
-    float new_pos1 = eval_bezier(position[Y_AXIS], first1, second1, target[Y_AXIS], new_t);
+    double new_pos0 = eval_bezier(position[X_AXIS], first0, second0, target[X_AXIS], new_t);
+    double new_pos1 = eval_bezier(position[Y_AXIS], first1, second1, target[Y_AXIS], new_t);
     for (;;) {
       if (new_t - t < (MIN_STEP)) break;
-      float candidate_t = 0.5 * (t + new_t);
-      float candidate_pos0 = eval_bezier(position[X_AXIS], first0, second0, target[X_AXIS], candidate_t);
-      float candidate_pos1 = eval_bezier(position[Y_AXIS], first1, second1, target[Y_AXIS], candidate_t);
-      float interp_pos0 = 0.5 * (bez_target[X_AXIS] + new_pos0);
-      float interp_pos1 = 0.5 * (bez_target[Y_AXIS] + new_pos1);
+      double candidate_t = 0.5 * (t + new_t);
+      double candidate_pos0 = eval_bezier(position[X_AXIS], first0, second0, target[X_AXIS], candidate_t);
+      double candidate_pos1 = eval_bezier(position[Y_AXIS], first1, second1, target[Y_AXIS], candidate_t);
+      double interp_pos0 = 0.5 * (bez_target[X_AXIS] + new_pos0);
+      double interp_pos1 = 0.5 * (bez_target[Y_AXIS] + new_pos1);
       if (dist1(candidate_pos0, candidate_pos1, interp_pos0, interp_pos1) <= (SIGMA)) break;
       new_t = candidate_t;
       new_pos0 = candidate_pos0;
@@ -153,12 +153,12 @@ void cubic_b_spline(const float position[NUM_AXIS], const float target[NUM_AXIS]
     // If we did not reduce the step, maybe we should enlarge it.
     if (!did_reduce) for (;;) {
       if (new_t - t > MAX_STEP) break;
-      float candidate_t = t + 2.0 * (new_t - t);
+      double candidate_t = t + 2.0 * (new_t - t);
       if (candidate_t >= 1.0) break;
-      float candidate_pos0 = eval_bezier(position[X_AXIS], first0, second0, target[X_AXIS], candidate_t);
-      float candidate_pos1 = eval_bezier(position[Y_AXIS], first1, second1, target[Y_AXIS], candidate_t);
-      float interp_pos0 = 0.5 * (bez_target[X_AXIS] + candidate_pos0);
-      float interp_pos1 = 0.5 * (bez_target[Y_AXIS] + candidate_pos1);
+      double candidate_pos0 = eval_bezier(position[X_AXIS], first0, second0, target[X_AXIS], candidate_t);
+      double candidate_pos1 = eval_bezier(position[Y_AXIS], first1, second1, target[Y_AXIS], candidate_t);
+      double interp_pos0 = 0.5 * (bez_target[X_AXIS] + candidate_pos0);
+      double interp_pos1 = 0.5 * (bez_target[Y_AXIS] + candidate_pos1);
       if (dist1(new_pos0, new_pos1, interp_pos0, interp_pos1) > (SIGMA)) break;
       new_t = candidate_t;
       new_pos0 = candidate_pos0;

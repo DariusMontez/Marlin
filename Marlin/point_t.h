@@ -34,10 +34,10 @@
  * @param e The e-coordinate of the point.
  */
 struct point_t {
-  float x;
-  float y;
-  float z;
-  float e;
+  double x;
+  double y;
+  double z;
+  double e;
 
   /**
    * @brief Two dimensional point constructor
@@ -45,7 +45,7 @@ struct point_t {
    * @param x The x-coordinate of the point.
    * @param y The y-coordinate of the point.
    */
-  point_t(float const x, float const y)
+  point_t(double const x, double const y)
     : point_t(x, y, NAN, NAN) {}
 
   /**
@@ -55,7 +55,7 @@ struct point_t {
    * @param y The y-coordinate of the point.
    * @param z The z-coordinate of the point.
    */
-  point_t(float const x, float const y, float const z)
+  point_t(double const x, double const y, double const z)
     : point_t(x, y, z, NAN) {}
 
   /**
@@ -66,7 +66,7 @@ struct point_t {
    * @param z The z-coordinate of the point.
    * @param e The e-coordinate of the point.
    */
-  point_t(float const x, float const y, float const z, float const e) {
+  point_t(double const x, double const y, double const z, double const e) {
     this->x = x;
     this->y = y;
     this->z = z;

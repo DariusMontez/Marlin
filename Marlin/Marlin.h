@@ -203,8 +203,8 @@ extern int feedrate_percentage;
 extern bool axis_relative_modes[];
 extern bool volumetric_enabled;
 extern int flow_percentage[EXTRUDERS]; // Extrusion factor for each extruder
-extern float filament_size[EXTRUDERS]; // cross-sectional area of filament (in millimeters), typically around 1.75 or 2.85, 0 disables the volumetric calculations for the extruder.
-extern float volumetric_multiplier[EXTRUDERS]; // reciprocal of cross-sectional area of filament (in square millimeters), stored this way to reduce computational burden in planner
+extern double filament_size[EXTRUDERS]; // cross-sectional area of filament (in millimeters), typically around 1.75 or 2.85, 0 disables the volumetric calculations for the extruder.
+extern double volumetric_multiplier[EXTRUDERS]; // reciprocal of cross-sectional area of filament (in square millimeters), stored this way to reduce computational burden in planner
 extern bool axis_known_position[XYZ]; // axis[n].is_known
 extern bool axis_homed[XYZ]; // axis[n].is_homed
 extern volatile bool wait_for_heatup;
@@ -213,11 +213,11 @@ extern volatile bool wait_for_heatup;
   extern volatile bool wait_for_user;
 #endif
 
-extern float current_position[NUM_AXIS];
+extern double current_position[NUM_AXIS];
 
 // Workspace offsets
 #if OPTION_DISABLED(NO_WORKSPACE_OFFSETS)
-  extern float position_shift[XYZ],
+  extern double position_shift[XYZ],
                home_offset[XYZ],
                workspace_offset[XYZ];
   #define LOGICAL_POSITION(POS, AXIS) ((POS) + workspace_offset[AXIS])
@@ -236,16 +236,16 @@ extern float current_position[NUM_AXIS];
 #define RAW_CURRENT_POSITION(AXIS)  RAW_POSITION(current_position[AXIS], AXIS)
 
 #if HOTENDS > 1
-  extern float hotend_offset[XYZ][HOTENDS];
+  extern double hotend_offset[XYZ][HOTENDS];
 #endif
 
 // Software Endstops
-extern float soft_endstop_min[XYZ];
-extern float soft_endstop_max[XYZ];
+extern double soft_endstop_min[XYZ];
+extern double soft_endstop_max[XYZ];
 
 #if HAS_SOFTWARE_ENDSTOPS
   extern bool soft_endstops_enabled;
-  void clamp_to_software_endstops(float target[XYZ]);
+  void clamp_to_software_endstops(double target[XYZ]);
 #else
   #define soft_endstops_enabled false
   #define clamp_to_software_endstops(x) NOOP
@@ -258,31 +258,31 @@ extern float soft_endstop_max[XYZ];
 // GCode support for external objects
 bool code_seen(char);
 int code_value_int();
-float code_value_temp_abs();
-float code_value_temp_diff();
+double code_value_temp_abs();
+double code_value_temp_diff();
 
 #if IS_KINEMATIC
-  extern float delta[ABC];
-  void inverse_kinematics(const float logical[XYZ]);
+  extern double delta[ABC];
+  void inverse_kinematics(const double logical[XYZ]);
 #endif
 
 #if OPTION_ENABLED(DELTA)
-  extern float endstop_adj[ABC],
+  extern double endstop_adj[ABC],
                delta_radius,
                delta_diagonal_rod,
                delta_segments_per_second,
                delta_diagonal_rod_trim[ABC],
                delta_tower_angle_trim[ABC],
                delta_clip_start_height;
-  void recalc_delta_settings(float radius, float diagonal_rod);
+  void recalc_delta_settings(double radius, double diagonal_rod);
 #elif IS_SCARA
-  void forward_kinematics_SCARA(const float &a, const float &b);
+  void forward_kinematics_SCARA(const double &a, const double &b);
 #endif
 
 #if OPTION_ENABLED(AUTO_BED_LEVELING_BILINEAR)
   extern int bilinear_grid_spacing[2], bilinear_start[2];
-  extern float bed_level_grid[ABL_GRID_MAX_POINTS_X][ABL_GRID_MAX_POINTS_Y];
-  float bilinear_z_offset(float logical[XYZ]);
+  extern double bed_level_grid[ABL_GRID_MAX_POINTS_X][ABL_GRID_MAX_POINTS_Y];
+  double bilinear_z_offset(double logical[XYZ]);
   void set_bed_leveling_enabled(bool enable=true);
 #endif
 
@@ -291,11 +291,11 @@ float code_value_temp_diff();
 #endif
 
 #if OPTION_ENABLED(Z_DUAL_ENDSTOPS)
-  extern float z_endstop_adj;
+  extern double z_endstop_adj;
 #endif
 
 #if HAS_BED_PROBE
-  extern float zprobe_zoffset;
+  extern double zprobe_zoffset;
 #endif
 
 #if OPTION_ENABLED(HOST_KEEPALIVE_FEATURE)
@@ -316,7 +316,7 @@ float code_value_temp_diff();
 
 #if OPTION_ENABLED(FILAMENT_WIDTH_SENSOR)
   extern bool filament_sensor;         // Flag that filament sensor readings should control extrusion
-  extern float filament_width_nominal, // Theoretical filament diameter i.e., 3.00 or 1.75
+  extern double filament_width_nominal, // Theoretical filament diameter i.e., 3.00 or 1.75
                filament_width_meas;    // Measured filament diameter
   extern int8_t measurement_delay[];   // Ring buffer to delay measurement
   extern int filwidth_delay_index[2];  // Ring buffer indexes. Used by planner, temperature, and main code
@@ -334,8 +334,8 @@ float code_value_temp_diff();
 #if OPTION_ENABLED(FWRETRACT)
   extern bool autoretract_enabled;
   extern bool retracted[EXTRUDERS]; // extruder[n].retracted
-  extern float retract_length, retract_length_swap, retract_feedrate_mm_s, retract_zlift;
-  extern float retract_recover_length, retract_recover_length_swap, retract_recover_feedrate_mm_s;
+  extern double retract_length, retract_length_swap, retract_feedrate_mm_s, retract_zlift;
+  extern double retract_recover_length, retract_recover_length_swap, retract_recover_feedrate_mm_s;
 #endif
 
 // Print job timer
@@ -353,7 +353,7 @@ extern uint8_t active_extruder;
 #endif
 
 #if OPTION_ENABLED(MIXING_EXTRUDER)
-  extern float mixing_factor[MIXING_STEPPERS];
+  extern double mixing_factor[MIXING_STEPPERS];
 #endif
 
 void calculate_volumetric_multipliers();
@@ -361,10 +361,10 @@ void calculate_volumetric_multipliers();
 /**
  * Blocking movement and shorthand functions
  */
-void do_blocking_move_to(const float &x, const float &y, const float &z, const float &fr_mm_s=0.0);
-void do_blocking_move_to_x(const float &x, const float &fr_mm_s=0.0);
-void do_blocking_move_to_z(const float &z, const float &fr_mm_s=0.0);
-void do_blocking_move_to_xy(const float &x, const float &y, const float &fr_mm_s=0.0);
+void do_blocking_move_to(const double &x, const double &y, const double &z, const double &fr_mm_s=0.0);
+void do_blocking_move_to_x(const double &x, const double &fr_mm_s=0.0);
+void do_blocking_move_to_z(const double &z, const double &fr_mm_s=0.0);
+void do_blocking_move_to_xy(const double &x, const double &y, const double &fr_mm_s=0.0);
 
 #if OPTION_ENABLED(Z_PROBE_ALLEN_KEY) || OPTION_ENABLED(Z_PROBE_SLED) || HAS_PROBING_PROCEDURE || HOTENDS > 1 || OPTION_ENABLED(NOZZLE_CLEAN_FEATURE) || OPTION_ENABLED(NOZZLE_PARK_FEATURE)
   bool axis_unhomed_error(const bool x, const bool y, const bool z);

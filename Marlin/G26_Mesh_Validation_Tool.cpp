@@ -116,37 +116,37 @@
    *   Y #  Y coordinate  Specify the starting location of the drawing activity.
    */
 
-  extern float feedrate;
+  extern double feedrate;
   extern Planner planner;
   //#if OPTION_ENABLED(ULTRA_LCD)
     extern char lcd_status_message[];
   //#endif
-  extern float destination[XYZE];
+  extern double destination[XYZE];
   extern void set_destination_to_current();
   extern void set_current_to_destination();
-  extern float code_value_float();
+  extern double code_value_double();
   extern bool code_value_bool();
   extern bool code_has_value();
   extern void lcd_init();
   extern void lcd_setstatuspgm(const char* const message, const uint8_t level);
-  #define PLANNER_XY_FEEDRATE() (min(planner.max_feedrate_mm_s[X_AXIS], planner.max_feedrate_mm_s[Y_AXIS])) //bob
+  #define PLANNER_XY_FEEDRATE() (_min(planner.max_feedrate_mm_s[X_AXIS], planner.max_feedrate_mm_s[Y_AXIS])) //bob
   bool prepare_move_to_destination_cartesian();
   void line_to_destination();
-  void line_to_destination(float );
+  void line_to_destination(double );
   void gcode_G28();
   void sync_plan_position_e();
-  void un_retract_filament(float where[XYZE]);
-  void retract_filament(float where[XYZE]);
+  void un_retract_filament(double where[XYZE]);
+  void retract_filament(double where[XYZE]);
   void look_for_lines_to_connect();
   bool parse_G26_parameters();
-  void move_to(const float&, const float&, const float&, const float&) ;
-  void print_line_from_here_to_there(const float&, const float&, const float&, const float&, const float&, const float&);
+  void move_to(const double&, const double&, const double&, const double&) ;
+  void print_line_from_here_to_there(const double&, const double&, const double&, const double&, const double&, const double&);
   bool turn_on_heaters();
   bool prime_nozzle();
   void chirp_at_user();
 
   static uint16_t circle_flags[16], horizontal_mesh_line_flags[16], vertical_mesh_line_flags[16], continue_with_closest = 0;
-  float g26_e_axis_feedrate = 0.020,
+  double g26_e_axis_feedrate = 0.020,
         random_deviation = 0.0,
         layer_height = LAYER_HEIGHT;
 
@@ -155,10 +155,10 @@
                               // less careful because mis-matched retractions and un-retractions
                               // won't leave us in a bad state.
 
-  float valid_trig_angle(float);
-  mesh_index_pair find_closest_circle_to_print(const float&, const float&);
+  double valid_trig_angle(double);
+  mesh_index_pair find_closest_circle_to_print(const double&, const double&);
 
-  static float extrusion_multiplier = EXTRUSION_MULTIPLIER,
+  static double extrusion_multiplier = EXTRUSION_MULTIPLIER,
                retraction_multiplier = RETRACTION_MULTIPLIER,
                nozzle = NOZZLE,
                filament_diameter = FILAMENT,
@@ -179,7 +179,7 @@
    * nozzle in a problem area and doing a G29 P4 R command.
    */
   void gcode_G26() {
-    float tmp, start_angle, end_angle;
+    double tmp, start_angle, end_angle;
     int   i, xi, yi;
     mesh_index_pair location;
 
@@ -227,7 +227,7 @@
      * Declare and generate a sin() & cos() table to be used during the circle drawing.  This will lighten
      * the CPU load and make the arc drawing faster and more smooth
      */
-    float sin_table[360 / 30 + 1], cos_table[360 / 30 + 1];
+    double sin_table[360 / 30 + 1], cos_table[360 / 30 + 1];
     for (i = 0; i <= 360 / 30; i++) {
       cos_table[i] = SIZE_OF_INTERSECTION_CIRCLES * cos(RADIANS(valid_trig_angle(i * 30.0)));
       sin_table[i] = SIZE_OF_INTERSECTION_CIRCLES * sin(RADIANS(valid_trig_angle(i * 30.0)));
@@ -257,7 +257,7 @@
         : find_closest_circle_to_print(x_pos, y_pos); // Find the closest Mesh Intersection to where we are now.
 
       if (location.x_index >= 0 && location.y_index >= 0) {
-        const float circle_x = ubl.mesh_index_to_xpos[location.x_index],
+        const double circle_x = ubl.mesh_index_to_xpos[location.x_index],
                     circle_y = ubl.mesh_index_to_ypos[location.y_index];
 
         // Let's do a couple of quick sanity checks.  We can pull this code out later if we never see it catch a problem
@@ -318,7 +318,7 @@
           if (tmp_div_30 < 0) tmp_div_30 += 360 / 30;
           if (tmp_div_30 > 11) tmp_div_30 -= 360 / 30;
 
-          float x = circle_x + cos_table[tmp_div_30],    // for speed, these are now a lookup table entry
+          double x = circle_x + cos_table[tmp_div_30],    // for speed, these are now a lookup table entry
                 y = circle_y + sin_table[tmp_div_30],
                 xe = circle_x + cos_table[tmp_div_30 + 1],
                 ye = circle_y + sin_table[tmp_div_30 + 1];
@@ -385,14 +385,14 @@
   }
 
 
-  float valid_trig_angle(float d) {
+  double valid_trig_angle(double d) {
     while (d > 360.0) d -= 360.0;
     while (d < 0.0) d += 360.0;
     return d;
   }
 
-  mesh_index_pair find_closest_circle_to_print(const float &X, const float &Y) {
-    float closest = 99999.99;
+  mesh_index_pair find_closest_circle_to_print(const double &X, const double &Y) {
+    double closest = 99999.99;
     mesh_index_pair return_val;
 
     return_val.x_index = return_val.y_index = -1;
@@ -400,11 +400,11 @@
     for (uint8_t i = 0; i < UBL_MESH_NUM_X_POINTS; i++) {
       for (uint8_t j = 0; j < UBL_MESH_NUM_Y_POINTS; j++) {
         if (!is_bit_set(circle_flags, i, j)) {
-          const float mx = ubl.mesh_index_to_xpos[i],  // We found a circle that needs to be printed
+          const double mx = ubl.mesh_index_to_xpos[i],  // We found a circle that needs to be printed
                       my = ubl.mesh_index_to_ypos[j];
 
           // Get the distance to this intersection
-          float f = HYPOT(X - mx, Y - my);
+          double f = HYPOT(X - mx, Y - my);
 
           // It is possible that we are being called with the values
           // to let us find the closest circle to the start position.
@@ -430,7 +430,7 @@
   }
 
   void look_for_lines_to_connect() {
-    float sx, sy, ex, ey;
+    double sx, sy, ex, ey;
 
     for (uint8_t i = 0; i < UBL_MESH_NUM_X_POINTS; i++) {
       for (uint8_t j = 0; j < UBL_MESH_NUM_Y_POINTS; j++) {
@@ -502,9 +502,9 @@
     }
   }
 
-  void move_to(const float &x, const float &y, const float &z, const float &e_delta) {
-    float feed_value;
-    static float last_z = -999.99;
+  void move_to(const double &x, const double &y, const double &z, const double &e_delta) {
+    double feed_value;
+    static double last_z = -999.99;
 
     bool has_xy_component = (x != current_position[X_AXIS] || y != current_position[Y_AXIS]); // Check if X or Y is involved in the movement.
 
@@ -550,7 +550,7 @@
 
   }
 
-  void retract_filament(float where[XYZE]) {
+  void retract_filament(double where[XYZE]) {
     if (!g26_retracted) { // Only retract if we are not already retracted!
       g26_retracted = true;
       //if (ubl.g26_debug_flag) SERIAL_ECHOLNPGM(" Decided to do retract.");
@@ -559,7 +559,7 @@
     }
   }
 
-  void un_retract_filament(float where[XYZE]) {
+  void un_retract_filament(double where[XYZE]) {
     if (g26_retracted) { // Only un-retract if we are retracted.
       move_to(where[X_AXIS], where[Y_AXIS], where[Z_AXIS], 1.2 * retraction_multiplier);
       g26_retracted = false;
@@ -582,8 +582,8 @@
    * segment of a 'circle'.   The time this requires is very short and is easily saved by the other
    * cases where the optimization comes into play.
    */
-  void print_line_from_here_to_there(const float &sx, const float &sy, const float &sz, const float &ex, const float &ey, const float &ez) {
-    const float dx_s = current_position[X_AXIS] - sx,   // find our distance from the start of the actual line segment
+  void print_line_from_here_to_there(const double &sx, const double &sy, const double &sz, const double &ex, const double &ey, const double &ez) {
+    const double dx_s = current_position[X_AXIS] - sx,   // find our distance from the start of the actual line segment
                 dy_s = current_position[Y_AXIS] - sy,
                 dist_start = HYPOT2(dx_s, dy_s),        // We don't need to do a sqrt(), we can compare the distance^2
                                                         // to save computation time
@@ -608,7 +608,7 @@
     }
     move_to(sx, sy, sz, 0.0); // Get to the starting point with no extrusion
 
-    const float e_pos_delta = line_length * g26_e_axis_feedrate * extrusion_multiplier;
+    const double e_pos_delta = line_length * g26_e_axis_feedrate * extrusion_multiplier;
 
     un_retract_filament(destination);
 
@@ -639,7 +639,7 @@
     keep_heaters_on       = false;
 
     if (code_seen('B')) {
-      bed_temp = code_value_float();
+      bed_temp = code_value_double();
       if (!WITHIN(bed_temp, 15.0, 140.0)) {
         SERIAL_PROTOCOLLNPGM("?Specified bed temperature not plausible.");
         return UBL_ERR;
@@ -649,7 +649,7 @@
     if (code_seen('C')) continue_with_closest++;
 
     if (code_seen('L')) {
-      layer_height = code_value_float();
+      layer_height = code_value_double();
       if (!WITHIN(layer_height, 0.0, 2.0)) {
         SERIAL_PROTOCOLLNPGM("?Specified layer height not plausible.");
         return UBL_ERR;
@@ -658,7 +658,7 @@
 
     if (code_seen('Q')) {
       if (code_has_value()) {
-        retraction_multiplier = code_value_float();
+        retraction_multiplier = code_value_double();
         if (!WITHIN(retraction_multiplier, 0.05, 15.0)) {
           SERIAL_PROTOCOLLNPGM("?Specified Retraction Multiplier not plausible.");
           return UBL_ERR;
@@ -671,7 +671,7 @@
     }
 
     if (code_seen('N')) {
-      nozzle = code_value_float();
+      nozzle = code_value_double();
       if (!WITHIN(nozzle, 0.1, 1.0)) {
         SERIAL_PROTOCOLLNPGM("?Specified nozzle size not plausible.");
         return UBL_ERR;
@@ -681,14 +681,14 @@
     if (code_seen('K')) keep_heaters_on++;
 
     if (code_seen('O') && code_has_value())
-      ooze_amount = code_value_float();
+      ooze_amount = code_value_double();
 
     if (code_seen('P')) {
       if (!code_has_value())
         prime_flag = -1;
       else {
         prime_flag++;
-        prime_length = code_value_float();
+        prime_length = code_value_double();
         if (!WITHIN(prime_length, 0.0, 25.0)) {
           SERIAL_PROTOCOLLNPGM("?Specified prime length not plausible.");
           return UBL_ERR;
@@ -697,7 +697,7 @@
     }
 
     if (code_seen('F')) {
-      filament_diameter = code_value_float();
+      filament_diameter = code_value_double();
       if (!WITHIN(filament_diameter, 1.0, 4.0)) {
         SERIAL_PROTOCOLLNPGM("?Specified filament size not plausible.");
         return UBL_ERR;
@@ -710,7 +710,7 @@
     extrusion_multiplier *= filament_diameter * sq(nozzle) / sq(0.3); // Scale up by nozzle size
 
     if (code_seen('H')) {
-      hotend_temp = code_value_float();
+      hotend_temp = code_value_double();
       if (!WITHIN(hotend_temp, 165.0, 280.0)) {
         SERIAL_PROTOCOLLNPGM("?Specified nozzle temperature not plausible.");
         return UBL_ERR;
@@ -719,14 +719,14 @@
 
     if (code_seen('R')) {
       randomSeed(millis());
-      random_deviation = code_has_value() ? code_value_float() : 50.0;
+      random_deviation = code_has_value() ? code_value_double() : 50.0;
     }
 
     x_pos = current_position[X_AXIS];
     y_pos = current_position[Y_AXIS];
 
     if (code_seen('X')) {
-      x_pos = code_value_float();
+      x_pos = code_value_double();
       if (!WITHIN(x_pos, X_MIN_POS, X_MAX_POS)) {
         SERIAL_PROTOCOLLNPGM("?Specified X coordinate not plausible.");
         return UBL_ERR;
@@ -735,7 +735,7 @@
     else
 
     if (code_seen('Y')) {
-      y_pos = code_value_float();
+      y_pos = code_value_double();
       if (!WITHIN(y_pos, Y_MIN_POS, Y_MAX_POS)) {
         SERIAL_PROTOCOLLNPGM("?Specified Y coordinate not plausible.");
         return UBL_ERR;
@@ -805,7 +805,7 @@
    * Prime the nozzle if needed. Return true on error.
    */
   bool prime_nozzle() {
-    float Total_Prime = 0.0;
+    double Total_Prime = 0.0;
 
     if (prime_flag == -1) {  // The user wants to control how much filament gets purged
 

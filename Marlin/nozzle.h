@@ -27,7 +27,7 @@
 #include "point_t.h"
 
 #if OPTION_ENABLED(NOZZLE_CLEAN_FEATURE)
-  constexpr float nozzle_clean_start_point[4] = NOZZLE_CLEAN_START_POINT,
+  constexpr double nozzle_clean_start_point[4] = NOZZLE_CLEAN_START_POINT,
                   nozzle_clean_end_point[4] = NOZZLE_CLEAN_END_POINT,
                   nozzle_clean_length = FABS(nozzle_clean_start_point[X_AXIS] - nozzle_clean_end_point[X_AXIS]), //abs x size of wipe pad
                   nozzle_clean_height = FABS(nozzle_clean_start_point[Y_AXIS] - nozzle_clean_end_point[Y_AXIS]); //abs y size of wipe pad
@@ -83,7 +83,7 @@ class Nozzle {
       __attribute__((unused)) point_t const &start,
       __attribute__((unused)) point_t const &middle,
       __attribute__((unused)) uint8_t const &strokes,
-      __attribute__((unused)) float const &radius
+      __attribute__((unused)) double const &radius
     ) __attribute__((optimize ("Os")));
 
   public:
@@ -97,7 +97,7 @@ class Nozzle {
     static void clean(
       __attribute__((unused)) uint8_t const &pattern,
       __attribute__((unused)) uint8_t const &strokes,
-      __attribute__((unused)) float const &radius,
+      __attribute__((unused)) double const &radius,
       __attribute__((unused)) uint8_t const &objects = 0
     ) __attribute__((optimize ("Os")));
 

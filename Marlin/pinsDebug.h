@@ -942,7 +942,7 @@ inline void report_pin_state_extended(int8_t pin, bool ignore) {
     }
     else {
       if (!get_pinMode(pin)) {
-        pinMode(pin, INPUT_PULLUP);  // make sure input isn't floating
+        pinMode(pin, INPUT_PULLUP);  // make sure input isn't doubleing
         SERIAL_PROTOCOLPAIR("Input  = ", digitalRead_mod(pin));
       }
       else if (pwm_status(pin)) {

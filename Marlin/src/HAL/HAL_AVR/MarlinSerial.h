@@ -136,7 +136,7 @@
 
     private:
       static void printNumber(unsigned long, const uint8_t);
-      static void printFloat(double, uint8_t);
+      static void printdouble(double, uint8_t);
 
     public:
       static FORCE_INLINE void write(const char* str) { while (*str) write(*str++); }

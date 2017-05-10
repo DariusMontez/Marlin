@@ -39,22 +39,22 @@
   void lcd_return_to_status();
   bool lcd_clicked();
   void lcd_implementation_clear();
-  void lcd_mesh_edit_setup(float initial);
-  float lcd_mesh_edit();
-  void lcd_z_offset_edit_setup(float);
-  float lcd_z_offset_edit();
-  extern float meshedit_done;
+  void lcd_mesh_edit_setup(double initial);
+  double lcd_mesh_edit();
+  void lcd_z_offset_edit_setup(double);
+  double lcd_z_offset_edit();
+  extern double meshedit_done;
   extern long babysteps_done;
-  extern float code_value_float();
+  extern double code_value_double();
   extern bool code_value_bool();
   extern bool code_has_value();
-  extern float probe_pt(float x, float y, bool, int);
+  extern double probe_pt(double x, double y, bool, int);
   extern bool set_probe_deployed(bool);
   #define DEPLOY_PROBE() set_probe_deployed(true)
   #define STOW_PROBE() set_probe_deployed(false)
   bool ProbeStay = true;
 
-  constexpr float ubl_3_point_1_X = UBL_PROBE_PT_1_X,
+  constexpr double ubl_3_point_1_X = UBL_PROBE_PT_1_X,
                   ubl_3_point_1_Y = UBL_PROBE_PT_1_Y,
                   ubl_3_point_2_X = UBL_PROBE_PT_2_X,
                   ubl_3_point_2_Y = UBL_PROBE_PT_2_Y,
@@ -304,7 +304,7 @@
   static int g29_verbose_level, phase_value = -1, repetition_cnt,
              storage_slot = 0, map_type; //unlevel_value = -1;
   static bool repeat_flag, c_flag, x_flag, y_flag;
-  static float x_pos, y_pos, measured_z, card_thickness = 0.0, ubl_constant = 0.0;
+  static double x_pos, y_pos, measured_z, card_thickness = 0.0, ubl_constant = 0.0;
 
   #if OPTION_ENABLED(ULTRA_LCD)
     extern void lcd_setstatus(const char* message, const bool persist);
@@ -351,7 +351,7 @@
         case 0:
           for (uint8_t x = 0; x < UBL_MESH_NUM_X_POINTS; x++) {   // Create a bowl shape - similar to
             for (uint8_t y = 0; y < UBL_MESH_NUM_Y_POINTS; y++) { // a poorly calibrated Delta.
-              const float p1 = 0.5 * (UBL_MESH_NUM_X_POINTS) - x,
+              const double p1 = 0.5 * (UBL_MESH_NUM_X_POINTS) - x,
                           p2 = 0.5 * (UBL_MESH_NUM_Y_POINTS) - y;
               ubl.z_values[x][y] += 2.0 * HYPOT(p1, p2);
             }
@@ -437,10 +437,10 @@
             y_pos = current_position[Y_AXIS];
           }
 
-          const float height = code_seen('H') && code_has_value() ? code_value_float() : Z_CLEARANCE_BETWEEN_PROBES;
+          const double height = code_seen('H') && code_has_value() ? code_value_double() : Z_CLEARANCE_BETWEEN_PROBES;
 
           if (code_seen('B')) {
-            card_thickness = code_has_value() ? code_value_float() : measure_business_card_thickness(height);
+            card_thickness = code_has_value() ? code_value_double() : measure_business_card_thickness(height);
 
             if (FABS(card_thickness) > 1.5) {
               SERIAL_PROTOCOLLNPGM("?Error in Business Card measurement.\n");
@@ -455,7 +455,7 @@
           //
           // Populate invalid Mesh areas with a constant
           //
-          const float height = code_seen('C') ? ubl_constant : 0.0;
+          const double height = code_seen('C') ? ubl_constant : 0.0;
           // If no repetition is specified, do the whole Mesh
           if (!repeat_flag) repetition_cnt = 9999;
           while (repetition_cnt--) {
@@ -516,14 +516,14 @@
     }
 
     if (code_seen('T')) {
-      const float lx1 = LOGICAL_X_POSITION(ubl_3_point_1_X),
+      const double lx1 = LOGICAL_X_POSITION(ubl_3_point_1_X),
                   lx2 = LOGICAL_X_POSITION(ubl_3_point_2_X),
                   lx3 = LOGICAL_X_POSITION(ubl_3_point_3_X),
                   ly1 = LOGICAL_Y_POSITION(ubl_3_point_1_Y),
                   ly2 = LOGICAL_Y_POSITION(ubl_3_point_2_Y),
                   ly3 = LOGICAL_Y_POSITION(ubl_3_point_3_Y);
 
-      float z1 = probe_pt(lx1, ly1, false /*Stow Flag*/, g29_verbose_level),
+      double z1 = probe_pt(lx1, ly1, false /*Stow Flag*/, g29_verbose_level),
             z2 = probe_pt(lx2, ly2, false /*Stow Flag*/, g29_verbose_level),
             z3 = probe_pt(lx3, ly3, true  /*Stow Flag*/, g29_verbose_level);
 
@@ -620,7 +620,7 @@
 
     if (code_seen('Z')) {
       if (code_has_value())
-        ubl.state.z_offset = code_value_float();   // do the simple case. Just lock in the specified value
+        ubl.state.z_offset = code_value_double();   // do the simple case. Just lock in the specified value
       else {
         save_ubl_active_state_and_disable();
         //measured_z = probe_pt(x_pos + X_PROBE_OFFSET_FROM_EXTRUDER, y_pos + Y_PROBE_OFFSET_FROM_EXTRUDER, ProbeDeployAndStow, g29_verbose_level);
@@ -685,7 +685,7 @@
   void find_mean_mesh_height() {
     uint8_t x, y;
     int n;
-    float sum, sum_of_diff_squared, sigma, difference, mean;
+    double sum, sum_of_diff_squared, sigma, difference, mean;
 
     sum = sum_of_diff_squared = 0.0;
     n = 0;
@@ -736,7 +736,7 @@
    * Probe all invalidated locations of the mesh that can be reached by the probe.
    * This attempts to fill in locations closest to the nozzle's start location first.
    */
-  void probe_entire_mesh(const float &lx, const float &ly, const bool do_ubl_mesh_map, const bool stow_probe, bool do_furthest) {
+  void probe_entire_mesh(const double &lx, const double &ly, const bool do_ubl_mesh_map, const bool stow_probe, bool do_furthest) {
     mesh_index_pair location;
 
     ubl.has_control_of_lcd_panel++;
@@ -758,7 +758,7 @@
       location = find_closest_mesh_point_of_type(INVALID, lx, ly, 1, NULL, do_furthest );  // the '1' says we want the location to be relative to the probe
       if (location.x_index >= 0 && location.y_index >= 0) {
 
-        const float rawx = ubl.mesh_index_to_xpos[location.x_index],
+        const double rawx = ubl.mesh_index_to_xpos[location.x_index],
                     rawy = ubl.mesh_index_to_ypos[location.y_index];
 
         // TODO: Change to use `position_is_reachable` (for SCARA-compatibility)
@@ -768,7 +768,7 @@
           ubl.has_control_of_lcd_panel = false;
           goto LEAVE;
         }
-        const float measured_z = probe_pt(LOGICAL_X_POSITION(rawx), LOGICAL_Y_POSITION(rawy), stow_probe, g29_verbose_level);
+        const double measured_z = probe_pt(LOGICAL_X_POSITION(rawx), LOGICAL_Y_POSITION(rawy), stow_probe, g29_verbose_level);
         ubl.z_values[location.x_index][location.y_index] = measured_z;
       }
 
@@ -787,8 +787,8 @@
     );
   }
 
-  vector_3 tilt_mesh_based_on_3pts(const float &z1, const float &z2, const float &z3) {
-    float c, d, t;
+  vector_3 tilt_mesh_based_on_3pts(const double &z1, const double &z2, const double &z3) {
+    double c, d, t;
     int i, j;
 
     vector_3 v1 = vector_3( (ubl_3_point_1_X - ubl_3_point_2_X),
@@ -810,7 +810,7 @@
      * We also need Z to be unity because we are going to be treating this triangle
      * as the sin() and cos() of the bed's tilt
      */
-    const float inv_z = 1.0 / normal.z;
+    const double inv_z = 1.0 / normal.z;
     normal.x *= inv_z;
     normal.y *= inv_z;
     normal.z = 1.0;
@@ -852,12 +852,12 @@
     return normal;
   }
 
-  float use_encoder_wheel_to_measure_point() {
+  double use_encoder_wheel_to_measure_point() {
     KEEPALIVE_STATE(PAUSED_FOR_USER);
     while (!ubl_lcd_clicked()) {     // we need the loop to move the nozzle based on the encoder wheel here!
       idle();
       if (ubl.encoder_diff) {
-        do_blocking_move_to_z(current_position[Z_AXIS] + 0.01 * float(ubl.encoder_diff));
+        do_blocking_move_to_z(current_position[Z_AXIS] + 0.01 * double(ubl.encoder_diff));
         ubl.encoder_diff = 0;
       }
     }
@@ -865,22 +865,22 @@
     return current_position[Z_AXIS];
   }
 
-  float measure_business_card_thickness(const float &in_height) {
+  double measure_business_card_thickness(const double &in_height) {
 
     ubl.has_control_of_lcd_panel++;
     save_ubl_active_state_and_disable();   // we don't do bed level correction because we want the raw data when we probe
 
     SERIAL_PROTOCOLLNPGM("Place Shim Under Nozzle and Perform Measurement.");
     do_blocking_move_to_z(in_height);
-    do_blocking_move_to_xy((float(X_MAX_POS) - float(X_MIN_POS)) / 2.0, (float(Y_MAX_POS) - float(Y_MIN_POS)) / 2.0);
+    do_blocking_move_to_xy((double(X_MAX_POS) - double(X_MIN_POS)) / 2.0, (double(Y_MAX_POS) - double(Y_MIN_POS)) / 2.0);
       //, min( planner.max_feedrate_mm_s[X_AXIS], planner.max_feedrate_mm_s[Y_AXIS])/2.0);
 
-    const float z1 = use_encoder_wheel_to_measure_point();
+    const double z1 = use_encoder_wheel_to_measure_point();
     do_blocking_move_to_z(current_position[Z_AXIS] + SIZE_OF_LITTLE_RAISE);
     ubl.has_control_of_lcd_panel = false;
 
     SERIAL_PROTOCOLLNPGM("Remove Shim and Measure Bed Height.");
-    const float z2 = use_encoder_wheel_to_measure_point();
+    const double z2 = use_encoder_wheel_to_measure_point();
     do_blocking_move_to_z(current_position[Z_AXIS] + SIZE_OF_LITTLE_RAISE);
 
     if (g29_verbose_level > 1) {
@@ -892,14 +892,14 @@
     return abs(z1 - z2);
   }
 
-  void manually_probe_remaining_mesh(const float &lx, const float &ly, const float &z_clearance, const float &card_thickness, const bool do_ubl_mesh_map) {
+  void manually_probe_remaining_mesh(const double &lx, const double &ly, const double &z_clearance, const double &card_thickness, const bool do_ubl_mesh_map) {
 
     ubl.has_control_of_lcd_panel++;
     save_ubl_active_state_and_disable();   // we don't do bed level correction because we want the raw data when we probe
     do_blocking_move_to_z(z_clearance);
     do_blocking_move_to_xy(lx, ly);
 
-    float last_x = -9999.99, last_y = -9999.99;
+    double last_x = -9999.99, last_y = -9999.99;
     mesh_index_pair location;
     do {
       if (do_ubl_mesh_map) ubl.display_map(map_type);
@@ -908,7 +908,7 @@
       // It doesn't matter if the probe can't reach the NAN location. This is a manual probe.
       if (location.x_index < 0 && location.y_index < 0) continue;
 
-      const float rawx = ubl.mesh_index_to_xpos[location.x_index],
+      const double rawx = ubl.mesh_index_to_xpos[location.x_index],
                   rawy = ubl.mesh_index_to_ypos[location.y_index];
 
       // TODO: Change to use `position_is_reachable` (for SCARA-compatibility)
@@ -919,7 +919,7 @@
         goto LEAVE;
       }
 
-      const float xProbe = LOGICAL_X_POSITION(rawx),
+      const double xProbe = LOGICAL_X_POSITION(rawx),
                   yProbe = LOGICAL_Y_POSITION(rawy),
                   dx = xProbe - last_x,
                   dy = yProbe - last_y;
@@ -940,7 +940,7 @@
       while (!ubl_lcd_clicked()) {     // we need the loop to move the nozzle based on the encoder wheel here!
         idle();
         if (ubl.encoder_diff) {
-          do_blocking_move_to_z(current_position[Z_AXIS] + float(ubl.encoder_diff) / 100.0);
+          do_blocking_move_to_z(current_position[Z_AXIS] + double(ubl.encoder_diff) / 100.0);
           ubl.encoder_diff = 0;
         }
       }
@@ -990,14 +990,14 @@
     }
 
     x_flag = code_seen('X') && code_has_value();
-    x_pos = x_flag ? code_value_float() : current_position[X_AXIS];
+    x_pos = x_flag ? code_value_double() : current_position[X_AXIS];
     if (!WITHIN(RAW_X_POSITION(x_pos), X_MIN_POS, X_MAX_POS)) {
       SERIAL_PROTOCOLLNPGM("Invalid X location specified.\n");
       return UBL_ERR;
     }
 
     y_flag = code_seen('Y') && code_has_value();
-    y_pos = y_flag ? code_value_float() : current_position[Y_AXIS];
+    y_pos = y_flag ? code_value_double() : current_position[Y_AXIS];
     if (!WITHIN(RAW_Y_POSITION(y_pos), Y_MIN_POS, Y_MAX_POS)) {
       SERIAL_PROTOCOLLNPGM("Invalid Y location specified.\n");
       return UBL_ERR;
@@ -1015,7 +1015,7 @@
     }
 
     c_flag = code_seen('C') && code_has_value();
-    ubl_constant = c_flag ? code_value_float() : 0.0;
+    ubl_constant = c_flag ? code_value_double() : 0.0;
 
     if (code_seen('D')) {     // Disable the Unified Bed Leveling System
       ubl.state.active = 0;
@@ -1025,7 +1025,7 @@
 
     #if OPTION_ENABLED(ENABLE_LEVELING_FADE_HEIGHT)
       if (code_seen('F') && code_has_value()) {
-        const float fh = code_value_float();
+        const double fh = code_value_double();
         if (!WITHIN(fh, 0.0, 100.0)) {
           SERIAL_PROTOCOLLNPGM("?Bed Level Correction Fade Height Not Plausible.\n");
           return UBL_ERR;
@@ -1065,7 +1065,7 @@
    * This function goes away after G29 debug is complete. But for right now, it is a handy
    * routine to dump binary data structures.
    */
-  void dump(char * const str, const float &f) {
+  void dump(char * const str, const double &f) {
     char *ptr;
 
     SERIAL_PROTOCOL(str);
@@ -1240,7 +1240,7 @@
    * use cases for the users. So we can wait and see what to do with it.
    */
   void g29_compare_current_mesh_to_stored_mesh() {
-    float tmp_z_values[UBL_MESH_NUM_X_POINTS][UBL_MESH_NUM_Y_POINTS];
+    double tmp_z_values[UBL_MESH_NUM_X_POINTS][UBL_MESH_NUM_Y_POINTS];
 
     if (!code_has_value()) {
       SERIAL_PROTOCOLLNPGM("?Mesh # required.\n");
@@ -1267,17 +1267,17 @@
         ubl.z_values[x][y] -= tmp_z_values[x][y];
   }
 
-  mesh_index_pair find_closest_mesh_point_of_type(const MeshPointType type, const float &lx, const float &ly, const bool probe_as_reference, unsigned int bits[16], bool far_flag) {
-    float distance, closest = far_flag ? -99999.99 : 99999.99;
+  mesh_index_pair find_closest_mesh_point_of_type(const MeshPointType type, const double &lx, const double &ly, const bool probe_as_reference, unsigned int bits[16], bool far_flag) {
+    double distance, closest = far_flag ? -99999.99 : 99999.99;
     mesh_index_pair return_val;
 
     return_val.x_index = return_val.y_index = -1;
 
-    const float current_x = current_position[X_AXIS],
+    const double current_x = current_position[X_AXIS],
                 current_y = current_position[Y_AXIS];
 
     // Get our reference position. Either the nozzle or probe location.
-    const float px = lx - (probe_as_reference ? X_PROBE_OFFSET_FROM_EXTRUDER : 0),
+    const double px = lx - (probe_as_reference ? X_PROBE_OFFSET_FROM_EXTRUDER : 0),
                 py = ly - (probe_as_reference ? Y_PROBE_OFFSET_FROM_EXTRUDER : 0);
 
     for (uint8_t i = 0; i < UBL_MESH_NUM_X_POINTS; i++) {
@@ -1290,7 +1290,7 @@
 
           // We only get here if we found a Mesh Point of the specified type
 
-          const float rawx = ubl.mesh_index_to_xpos[i], // Check if we can probe this mesh location
+          const double rawx = ubl.mesh_index_to_xpos[i], // Check if we can probe this mesh location
                       rawy = ubl.mesh_index_to_ypos[j];
 
           // If using the probe as the reference there are some unreachable locations.
@@ -1303,7 +1303,7 @@
           // Unreachable. Check if it's the closest location to the nozzle.
           // Add in a weighting factor that considers the current location of the nozzle.
 
-          const float mx = LOGICAL_X_POSITION(rawx), // Check if we can probe this mesh location
+          const double mx = LOGICAL_X_POSITION(rawx), // Check if we can probe this mesh location
                       my = LOGICAL_Y_POSITION(rawy);
 
           distance = HYPOT(px - mx, py - my) + HYPOT(current_x - mx, current_y - my) * 0.1;
@@ -1332,7 +1332,7 @@
     return return_val;
   }
 
-  void fine_tune_mesh(const float &lx, const float &ly, const bool do_ubl_mesh_map) {
+  void fine_tune_mesh(const double &lx, const double &ly, const bool do_ubl_mesh_map) {
     mesh_index_pair location;
     uint16_t not_done[16];
     int32_t round_off;
@@ -1357,7 +1357,7 @@
       bit_clear(not_done, location.x_index, location.y_index);  // Mark this location as 'adjusted' so we will find a
                                                                 // different location the next time through the loop
 
-      const float rawx = ubl.mesh_index_to_xpos[location.x_index],
+      const double rawx = ubl.mesh_index_to_xpos[location.x_index],
                   rawy = ubl.mesh_index_to_ypos[location.y_index];
 
       // TODO: Change to use `position_is_reachable` (for SCARA-compatibility)
@@ -1371,10 +1371,10 @@
       do_blocking_move_to_z(Z_CLEARANCE_DEPLOY_PROBE);    // Move the nozzle to where we are going to edit
       do_blocking_move_to_xy(LOGICAL_X_POSITION(rawx), LOGICAL_Y_POSITION(rawy));
 
-      float new_z = ubl.z_values[location.x_index][location.y_index];
+      double new_z = ubl.z_values[location.x_index][location.y_index];
 
       round_off = (int32_t)(new_z * 1000.0);    // we chop off the last digits just to be clean. We are rounding to the
-      new_z = float(round_off) / 1000.0;
+      new_z = double(round_off) / 1000.0;
 
       KEEPALIVE_STATE(PAUSED_FOR_USER);
       ubl.has_control_of_lcd_panel = true;

@@ -4,61 +4,55 @@
 
 #define LARGE_FLASH true
 
-//
-// Servos
-//
-#ifdef IS_RAMPS_13
-  #define SERVO0_PIN        7 // RAMPS_13 // Will conflict with BTN_EN2 on LCD_I2C_VIKI
-#else
-  #define SERVO0_PIN       11
-#endif
-#define SERVO1_PIN          6
-#define SERVO2_PIN          5
-#define SERVO3_PIN          4
+// //
+// // Servos
+// //
+// #ifdef IS_RAMPS_13
+//   #define SERVO0_PIN        7 // RAMPS_13 // Will conflict with BTN_EN2 on LCD_I2C_VIKI
+// #else
+//   #define SERVO0_PIN       11
+// #endif
+// #define SERVO1_PIN          6
+// #define SERVO2_PIN          5
+// #define SERVO3_PIN          4
 
 //
 // Limit Switches
 //
-#define X_MIN_PIN           3
-#ifndef X_MAX_PIN
-  #define X_MAX_PIN         2
-#endif
-#define Y_MIN_PIN          14
-#define Y_MAX_PIN          15
-#define Z_MIN_PIN          18
-#define Z_MAX_PIN          19
+#define X_MIN_PIN          19
+#define Y_MIN_PIN          18
+#define Z_MIN_PIN          5
 
 //
 // Z Probe (when not Z_MIN_PIN)
 //
-#ifndef Z_MIN_PROBE_PIN
-  #define Z_MIN_PROBE_PIN  32
-#endif
+
+//#define Z_MIN_PROBE_PIN  5
 
 #define SLED_PIN           -1
 
 //
 // Steppers
 //
-#define X_STEP_PIN         54
-#define X_DIR_PIN          55
-#define X_ENABLE_PIN       38
-#define X_CS_PIN           53
+#define X_STEP_PIN         21
+#define X_DIR_PIN          22
+#define X_ENABLE_PIN       -1
+#define X_CS_PIN           -1
 
-#define Y_STEP_PIN         60
-#define Y_DIR_PIN          61
-#define Y_ENABLE_PIN       56
-#define Y_CS_PIN           49
+#define Y_STEP_PIN         16
+#define Y_DIR_PIN          17
+#define Y_ENABLE_PIN       -1
+#define Y_CS_PIN           -1
 
-#define Z_STEP_PIN         46
-#define Z_DIR_PIN          48
-#define Z_ENABLE_PIN       62
-#define Z_CS_PIN           40
+#define Z_STEP_PIN         27
+#define Z_DIR_PIN          26
+#define Z_ENABLE_PIN       -1
+#define Z_CS_PIN           -1
 
-#define E0_STEP_PIN        26
-#define E0_DIR_PIN         28
-#define E0_ENABLE_PIN      24
-#define E0_CS_PIN          42
+#define E0_STEP_PIN        2
+#define E0_DIR_PIN         4
+#define E0_ENABLE_PIN      -1
+#define E0_CS_PIN          -1
 
 // #define E1_STEP_PIN        36
 // #define E1_DIR_PIN         34
@@ -69,7 +63,6 @@
 // Temperature Sensors
 //
 #define TEMP_0_PIN         36   // Analog Input
-// #define TEMP_1_PIN         15   // Analog Input
 #define TEMP_BED_PIN       39   // Analog Input
 
 // SPI for Max6675 or Max31855 Thermocouple
@@ -114,6 +107,8 @@
 
 #define HEATER_0_PIN     5
 #define FAN_PIN          4
+
+#define HEATER_BED_PIN   34
 
 // #if OPTION_ENABLED(IS_RAMPS_EFB)                      // Hotend, Fan, Bed
 //   #define FAN_PIN        RAMPS_D9_PIN
@@ -173,11 +168,11 @@
     #define LCD_PINS_RS 16
     #define LCD_PINS_ENABLE 17
     #define LCD_PINS_D4 23
-    #define LCD_PINS_D5 25
+    #define LCD_PINS_D5 -1
     #define LCD_PINS_D6 27
     #define LCD_PINS_D7 29
     #if OPTION_DISABLED(NEWPANEL)
-      #define BEEPER_PIN 33
+      #define BEEPER_PIN -1
       // Buttons are attached to a shift register
       // Not wired yet
       //#define SHIFT_CLK 38
@@ -193,7 +188,7 @@
       #define BEEPER_PIN 37
 
       #define BTN_EN1 31
-      #define BTN_EN2 33
+      #define BTN_EN2 -1
       #define BTN_ENC 35
 
       #define SD_DETECT_PIN 49
@@ -224,7 +219,7 @@
       #define LCD_SDSS 53
       #define SD_DETECT_PIN 49
     #elif OPTION_ENABLED(VIKI2) || OPTION_ENABLED(miniVIKI)
-      #define BEEPER_PIN       33
+      #define BEEPER_PIN       -1
 
       // Pins for DOGM SPI LCD Support
       #define DOGLCD_A0        44
@@ -253,7 +248,7 @@
       #define BEEPER_PIN 23
       #define DOGLCD_CS 29
       #define DOGLCD_A0 27
-      #define LCD_BACKLIGHT_PIN 33
+      #define LCD_BACKLIGHT_PIN -1
     #elif OPTION_ENABLED(MINIPANEL)
       #define BEEPER_PIN 42
       // Pins for DOGM SPI LCD Support
@@ -279,7 +274,7 @@
     #else
 
       // Beeper on AUX-4
-      #define BEEPER_PIN 33
+      #define BEEPER_PIN -1
 
       // buttons are directly attached using AUX-2
       #if OPTION_ENABLED(REPRAPWORLD_KEYPAD)

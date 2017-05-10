@@ -46,7 +46,7 @@
 
 vector_3::vector_3() : x(0), y(0), z(0) { }
 
-vector_3::vector_3(float x_, float y_, float z_) : x(x_), y(y_), z(z_) { }
+vector_3::vector_3(double x_, double y_, double z_) : x(x_), y(y_), z(z_) { }
 
 vector_3 vector_3::cross(vector_3 left, vector_3 right) {
   return vector_3(left.y * right.z - left.z * right.y,
@@ -63,17 +63,17 @@ vector_3 vector_3::get_normal() {
   return normalized;
 }
 
-float vector_3::get_length() { return SQRT((x * x) + (y * y) + (z * z)); }
+double vector_3::get_length() { return SQRT((x * x) + (y * y) + (z * z)); }
 
 void vector_3::normalize() {
-  const float inv_length = 1.0 / get_length();
+  const double inv_length = 1.0 / get_length();
   x *= inv_length;
   y *= inv_length;
   z *= inv_length;
 }
 
 void vector_3::apply_rotation(matrix_3x3 matrix) {
-  const float resultX = x * matrix.matrix[3 * 0 + 0] + y * matrix.matrix[3 * 1 + 0] + z * matrix.matrix[3 * 2 + 0],
+  const double resultX = x * matrix.matrix[3 * 0 + 0] + y * matrix.matrix[3 * 1 + 0] + z * matrix.matrix[3 * 2 + 0],
               resultY = x * matrix.matrix[3 * 0 + 1] + y * matrix.matrix[3 * 1 + 1] + z * matrix.matrix[3 * 2 + 1],
               resultZ = x * matrix.matrix[3 * 0 + 2] + y * matrix.matrix[3 * 1 + 2] + z * matrix.matrix[3 * 2 + 2];
   x = resultX;
@@ -92,7 +92,7 @@ void vector_3::debug(const char title[]) {
   SERIAL_EOL;
 }
 
-void apply_rotation_xyz(matrix_3x3 matrix, float &x, float &y, float &z) {
+void apply_rotation_xyz(matrix_3x3 matrix, double &x, double &y, double &z) {
   vector_3 vector = vector_3(x, y, z);
   vector.apply_rotation(matrix);
   x = vector.x;

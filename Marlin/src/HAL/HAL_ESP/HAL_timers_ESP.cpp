@@ -32,11 +32,12 @@
 // Includes
 // --------------------------------------------------------------------------
 
+#include "../../../Marlin.h"
 #include "../HAL.h"
 
 #include "HAL_timers_ESP.h"
-#include "stepper.h"
-#include "temperature.h"
+#include "../../../stepper.h"
+#include "../../../temperature.h"
 
 
 // --------------------------------------------------------------------------
@@ -48,108 +49,73 @@
 // --------------------------------------------------------------------------
 
 #define NUM_HARDWARE_TIMERS 4
-//
-// #define PRESCALER 2
-// // --------------------------------------------------------------------------
-// // Types
-// // --------------------------------------------------------------------------
-//
-//
-// // --------------------------------------------------------------------------
-// // Public Variables
-// // --------------------------------------------------------------------------
-//
-// // --------------------------------------------------------------------------
-// // Private Variables
-// // --------------------------------------------------------------------------
-//
-// const tTimerConfig TimerConfig [NUM_HARDWARE_TIMERS] = {
-//   { TC0, 0, TC0_IRQn, 0},  // 0 - [servo timer5]
-//   { TC0, 1, TC1_IRQn, 0},  // 1
-//   { TC0, 2, TC2_IRQn, 0},  // 2
-//   { TC1, 0, TC3_IRQn, 2},  // 3 - stepper
-//   { TC1, 1, TC4_IRQn, 15}, // 4 - temperature
-//   { TC1, 2, TC5_IRQn, 0},  // 5 - [servo timer3]
-//   { TC2, 0, TC6_IRQn, 0},  // 6
-//   { TC2, 1, TC7_IRQn, 0},  // 7
-//   { TC2, 2, TC8_IRQn, 0},  // 8
-// };
-//
+
+// --------------------------------------------------------------------------
+// Types
+// --------------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------------
+// Public Variables
+// --------------------------------------------------------------------------
+
+// --------------------------------------------------------------------------
+// Private Variables
+// --------------------------------------------------------------------------
+
 hw_timer_t *timers[NUM_HARDWARE_TIMERS];
-//
-// // --------------------------------------------------------------------------
-// // Function prototypes
-// // --------------------------------------------------------------------------
-//
-// // --------------------------------------------------------------------------
-// // Private functions
-// // --------------------------------------------------------------------------
-//
-// // --------------------------------------------------------------------------
-// // Public functions
-// // --------------------------------------------------------------------------
-//
-// /*
-//   Timer_clock1: Prescaler 2 -> 42MHz
-//   Timer_clock2: Prescaler 8 -> 10.5MHz
-//   Timer_clock3: Prescaler 32 -> 2.625MHz
-//   Timer_clock4: Prescaler 128 -> 656.25kHz
-// */
-//
-#include "Marlin.h"
+
+// --------------------------------------------------------------------------
+// Function prototypes
+// --------------------------------------------------------------------------
+
+// --------------------------------------------------------------------------
+// Private functions
+// --------------------------------------------------------------------------
+
+// --------------------------------------------------------------------------
+// Public functions
+// --------------------------------------------------------------------------
+
 //
 void HAL_timer_start (uint8_t timer_num, uint32_t frequency) {
-  // SERIAL_ECHO("HAL_TIMER_START\n");
-  uint32_t period = 1000000/frequency;
-  timers[timer_num] = timerBegin(timer_num, HAL_TICKS_PER_US, true);
-  timerAlarmWrite(timers[timer_num], period, true);
-
-  void (*fn)(void) = NULL;
   switch (timer_num) {
     case STEP_TIMER_NUM:
-      fn = &Stepper::isr;
+      timers[timer_num] = timerBegin(timer_num, STEP_TIMER_PRESCALE, true);
+      timerAlarmWrite(timers[timer_num], STEP_TIMER_RATE / frequency, true);
+      timerAttachInterrupt(timers[timer_num], &Step_Handler, true);
       break;
     case TEMP_TIMER_NUM:
-      fn = &Temperature::isr;
+      timers[timer_num] = timerBegin(timer_num, TEMP_TIMER_PRESCALE, true);
+      timerAlarmWrite(timers[timer_num], TEMP_TIMER_RATE / frequency, true);
+      timerAttachInterrupt(timers[timer_num], &Temp_Handler, true);
       break;
-  }
-
-  if (fn) {
-    timerAttachInterrupt(timers[timer_num], fn, true);
   }
 }
 
-// void IRAM_ATTR onStepTimer() {
-//   Step_Handler();
-// }
-//
-// void IRAM_ATTR onTempTimer() {
-//   Temp_Handler();
-// }
+void HAL_timer_set_count(uint8_t timer_num, HAL_TIMER_TYPE count) {
+  timerWrite(timers[timer_num], count);
+}
 
 //
 void HAL_timer_enable_interrupt (uint8_t timer_num) {
-  // SERIAL_ECHO("HAL_timer_enable_interrupt\n");
-
-
   timerAlarmEnable(timers[timer_num]);
 }
 //
 void HAL_timer_disable_interrupt (uint8_t timer_num) {
-  // SERIAL_ECHO("HAL_timer_disable_interrupt\n");
-
   timerAlarmDisable(timers[timer_num]);
-  // timerDetachInterrupt(timers[timer_num]);
 }
 
 HAL_TIMER_TYPE HAL_timer_get_count (uint8_t timer_num) {
-  // SERIAL_ECHO("HAL_timer_get_count\n");
-  timerGetCountUp(timers[timer_num]);
+  return timerAlarmRead(timers[timer_num]);
 }
 
-uint32_t HAL_timer_get_current_count(uint8_t timer_num) {
-  // SERIAL_ECHO("HAL_timer_get_current_count\n");
-  timerRead(timers[timer_num]);
+HAL_TIMER_TYPE HAL_timer_get_current_count(uint8_t timer_num) {
+  return timerRead(timers[timer_num]);
 }
 
-#endif // ARDUINO_ARCH_SAM
+void HAL_timer_isr_prologue(uint8_t timer_num) {
+  timerWrite(timers[timer_num], 0);
+}
+
+#endif // ARDUINO_ARCH_ESP32

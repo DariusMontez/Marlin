@@ -52,6 +52,8 @@
 class Stepper;
 extern Stepper stepper;
 
+HAL_STEP_TIMER_ISR;
+
 class Stepper {
 
   public:
@@ -192,13 +194,13 @@ class Stepper {
     //
     // Get the position (mm) of an axis based on stepper position(s)
     //
-    static float get_axis_position_mm(AxisEnum axis);
+    static double get_axis_position_mm(AxisEnum axis);
 
     //
     // SCARA AB axes are in degrees, not mm
     //
     #if IS_SCARA
-      static FORCE_INLINE float get_axis_position_degrees(AxisEnum axis) { return get_axis_position_mm(axis); }
+      static FORCE_INLINE double get_axis_position_degrees(AxisEnum axis) { return get_axis_position_mm(axis); }
     #endif
 
     //
@@ -255,7 +257,7 @@ class Stepper {
     //
     // Triggered position of an axis in mm (not core-savvy)
     //
-    static FORCE_INLINE float triggered_position_mm(AxisEnum axis) {
+    static FORCE_INLINE double triggered_position_mm(AxisEnum axis) {
       return endstops_trigsteps[axis] * planner.steps_to_mm[axis];
     }
 
@@ -298,7 +300,7 @@ class Stepper {
       #endif
 
       #ifdef CPU_32_BIT
-        // In case of high-performance processor, it is able to calculate in real-time 
+        // In case of high-performance processor, it is able to calculate in real-time
         timer = (uint32_t)(HAL_STEPPER_TIMER_RATE) / step_rate;
         if (timer < (HAL_STEPPER_TIMER_RATE / (STEP_DOUBLER_FREQUENCY * 2))) { // (STEP_DOUBLER_FREQUENCY * 2 kHz - this should never happen)
           timer = (HAL_STEPPER_TIMER_RATE / (STEP_DOUBLER_FREQUENCY * 2));

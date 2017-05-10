@@ -62,7 +62,7 @@ void Nozzle::zigzag(
   __attribute__((unused)) uint8_t const &objects
 ) {
   #if OPTION_ENABLED(NOZZLE_CLEAN_FEATURE)
-    float const A =  nozzle_clean_horizontal ? nozzle_clean_height : nozzle_clean_length, // [twice the] Amplitude
+    double const A =  nozzle_clean_horizontal ? nozzle_clean_height : nozzle_clean_length, // [twice the] Amplitude
                 P = (nozzle_clean_horizontal ? nozzle_clean_length : nozzle_clean_height) / (objects << 1); // Period
 
     // Don't allow impossible triangles
@@ -80,7 +80,7 @@ void Nozzle::zigzag(
 
     for (uint8_t j = 0; j < strokes; j++) {
       for (uint8_t i = 0; i < objects << 1; i++) {
-        float const m1 = i * P,
+        double const m1 = i * P,
                     m2 = (A / P) * (P - FABS(FMOD(m1, (2 * P)) - P)),
                     x = start.x + (nozzle_clean_horizontal ? m1 : m2),
                     y = start.y + (nozzle_clean_horizontal ? m2 : m1);
@@ -89,7 +89,7 @@ void Nozzle::zigzag(
       }
 
       for (int8_t i = objects << 1; i >= 0; i--) {
-        float const m1 = i * P,
+        double const m1 = i * P,
                     m2 = (A / P) * (P - FABS(FMOD(m1, (2 * P)) - P)),
                     x = start.x + (nozzle_clean_horizontal ? m1 : m2),
                     y = start.y + (nozzle_clean_horizontal ? m2 : m1);
@@ -119,7 +119,7 @@ void Nozzle::circle(
   __attribute__((unused)) point_t const &start,
   __attribute__((unused)) point_t const &middle,
   __attribute__((unused)) uint8_t const &strokes,
-  __attribute__((unused)) float const &radius
+  __attribute__((unused)) double const &radius
 ) {
   #if OPTION_ENABLED(NOZZLE_CLEAN_FEATURE)
     if (strokes == 0) return;
@@ -143,7 +143,7 @@ void Nozzle::circle(
       do_blocking_move_to_xy(start.x, start.y);
     }
 
-    float x, y;
+    double x, y;
     for (uint8_t s = 0; s < strokes; s++) {
       for (uint8_t i = 0; i < NOZZLE_CLEAN_CIRCLE_FN; i++) {
         x = middle.x + sin((M_2_PI / NOZZLE_CLEAN_CIRCLE_FN) * i) * radius;
@@ -181,7 +181,7 @@ void Nozzle::circle(
 void Nozzle::clean(
   __attribute__((unused)) uint8_t const &pattern,
   __attribute__((unused)) uint8_t const &strokes,
-  __attribute__((unused)) float const &radius,
+  __attribute__((unused)) double const &radius,
   __attribute__((unused)) uint8_t const &objects
 ) {
   #if OPTION_ENABLED(NOZZLE_CLEAN_FEATURE)
@@ -214,7 +214,7 @@ void Nozzle::park(
   __attribute__((unused)) uint8_t const &z_action
 ) {
   #if OPTION_ENABLED(NOZZLE_PARK_FEATURE)
-    float const z = current_position[Z_AXIS];
+    double const z = current_position[Z_AXIS];
     point_t const park = NOZZLE_PARK_POINT;
 
     switch(z_action) {

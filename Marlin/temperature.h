@@ -50,11 +50,13 @@
   #define EXTRUDER_IDX  active_extruder
 #endif
 
+HAL_TEMP_TIMER_ISR;
+
 class Temperature {
 
   public:
 
-    static float current_temperature[HOTENDS],
+    static double current_temperature[HOTENDS],
                  current_temperature_bed;
     static int   current_temperature_raw[HOTENDS],
                  target_temperature[HOTENDS],
@@ -64,7 +66,7 @@ class Temperature {
     static volatile bool in_temp_isr;
 
     #if OPTION_ENABLED(TEMP_SENSOR_1_AS_REDUNDANT)
-      static float redundant_temperature;
+      static double redundant_temperature;
     #endif
 
     static uint8_t soft_pwm_bed;
@@ -86,17 +88,17 @@ class Temperature {
 
       #if OPTION_ENABLED(PID_PARAMS_PER_HOTEND) && HOTENDS > 1
 
-        static float Kp[HOTENDS], Ki[HOTENDS], Kd[HOTENDS];
+        static double Kp[HOTENDS], Ki[HOTENDS], Kd[HOTENDS];
         #if OPTION_ENABLED(PID_EXTRUSION_SCALING)
-          static float Kc[HOTENDS];
+          static double Kc[HOTENDS];
         #endif
         #define PID_PARAM(param, h) Temperature::param[h]
 
       #else
 
-        static float Kp, Ki, Kd;
+        static double Kp, Ki, Kd;
         #if OPTION_ENABLED(PID_EXTRUSION_SCALING)
-          static float Kc;
+          static double Kc;
         #endif
         #define PID_PARAM(param, h) Temperature::param
 
@@ -111,7 +113,7 @@ class Temperature {
     #endif
 
     #if OPTION_ENABLED(PIDTEMPBED)
-      static float bedKp, bedKi, bedKd;
+      static double bedKp, bedKi, bedKd;
     #endif
 
     #if OPTION_ENABLED(BABYSTEPPING)
@@ -130,7 +132,7 @@ class Temperature {
 
     #if OPTION_ENABLED(PREVENT_COLD_EXTRUSION)
       static bool allow_cold_extrude;
-      static float extrude_min_temp;
+      static double extrude_min_temp;
       static bool tooColdToExtrude(uint8_t e) {
         #if HOTENDS == 1
           UNUSED(e);
@@ -145,31 +147,31 @@ class Temperature {
 
     #if OPTION_ENABLED(TEMP_SENSOR_1_AS_REDUNDANT)
       static int redundant_temperature_raw;
-      static float redundant_temperature;
+      static double redundant_temperature;
     #endif
 
     static volatile bool temp_meas_ready;
 
     #if OPTION_ENABLED(PIDTEMP)
-      static float temp_iState[HOTENDS],
+      static double temp_iState[HOTENDS],
                    temp_dState[HOTENDS],
                    pTerm[HOTENDS],
                    iTerm[HOTENDS],
                    dTerm[HOTENDS];
 
       #if OPTION_ENABLED(PID_EXTRUSION_SCALING)
-        static float cTerm[HOTENDS];
+        static double cTerm[HOTENDS];
         static long last_e_position;
         static long lpq[LPQ_MAX_LEN];
         static int lpq_ptr;
       #endif
 
-      static float pid_error[HOTENDS];
+      static double pid_error[HOTENDS];
       static bool pid_reset[HOTENDS];
     #endif
 
     #if OPTION_ENABLED(PIDTEMPBED)
-      static float temp_iState_bed,
+      static double temp_iState_bed,
                    temp_dState_bed,
                    pTerm_bed,
                    iTerm_bed,
@@ -235,8 +237,8 @@ class Temperature {
     /**
      * Static (class) methods
      */
-    static float analog2temp(int raw, uint8_t e);
-    static float analog2tempBed(int raw);
+    static double analog2temp(int raw, uint8_t e);
+    static double analog2tempBed(int raw);
 
     /**
      * Called from the Temperature ISR
@@ -276,7 +278,7 @@ class Temperature {
     #endif
 
     #if OPTION_ENABLED(FILAMENT_WIDTH_SENSOR)
-      static float analog2widthFil(); // Convert raw Filament Width to millimeters
+      static double analog2widthFil(); // Convert raw Filament Width to millimeters
       static int widthFil_to_size_ratio(); // Convert raw Filament Width to an extrusion ratio
     #endif
 
@@ -285,31 +287,31 @@ class Temperature {
     //inline so that there is no performance decrease.
     //deg=degreeCelsius
 
-    static float degHotend(uint8_t e) {
+    static double degHotend(uint8_t e) {
       #if HOTENDS == 1
         UNUSED(e);
       #endif
       return current_temperature[HOTEND_INDEX];
     }
-    static float degBed() { return current_temperature_bed; }
+    static double degBed() { return current_temperature_bed; }
 
     #if OPTION_ENABLED(SHOW_TEMP_ADC_VALUES)
-    static float rawHotendTemp(uint8_t e) {
+    static double rawHotendTemp(uint8_t e) {
       #if HOTENDS == 1
         UNUSED(e);
       #endif
       return current_temperature_raw[HOTEND_INDEX];
     }
-    static float rawBedTemp() { return current_temperature_bed_raw; }
+    static double rawBedTemp() { return current_temperature_bed_raw; }
     #endif
 
-    static float degTargetHotend(uint8_t e) {
+    static double degTargetHotend(uint8_t e) {
       #if HOTENDS == 1
         UNUSED(e);
       #endif
       return target_temperature[HOTEND_INDEX];
     }
-    static float degTargetBed() { return target_temperature_bed; }
+    static double degTargetBed() { return target_temperature_bed; }
 
     #if OPTION_ENABLED(THERMAL_PROTECTION_HOTENDS) && WATCH_TEMP_PERIOD > 0
       static void start_watching_heater(uint8_t e = 0);
@@ -319,7 +321,7 @@ class Temperature {
       static void start_watching_bed();
     #endif
 
-    static void setTargetHotend(const float& celsius, uint8_t e) {
+    static void setTargetHotend(const double& celsius, uint8_t e) {
       #if HOTENDS == 1
         UNUSED(e);
       #endif
@@ -335,7 +337,7 @@ class Temperature {
       #endif
     }
 
-    static void setTargetBed(const float& celsius) {
+    static void setTargetBed(const double& celsius) {
       target_temperature_bed = celsius;
       #if OPTION_ENABLED(THERMAL_PROTECTION_BED) && WATCH_BED_TEMP_PERIOD > 0
         start_watching_bed();
@@ -372,7 +374,7 @@ class Temperature {
      * Perform auto-tuning for hotend or bed in response to M303
      */
     #if HAS_PID_HEATING
-      static void PID_autotune(float temp, int hotend, int ncycles, bool set_result=false);
+      static void PID_autotune(double temp, int hotend, int ncycles, bool set_result=false);
     #endif
 
     /**
@@ -434,10 +436,10 @@ class Temperature {
 
     static void checkExtruderAutoFans();
 
-    static float get_pid_output(int e);
+    static double get_pid_output(int e);
 
     #if OPTION_ENABLED(PIDTEMPBED)
-      static float get_pid_output_bed();
+      static double get_pid_output_bed();
     #endif
 
     static void _temp_error(int e, const char* serial_msg, const char* lcd_msg);
@@ -448,7 +450,7 @@ class Temperature {
 
       typedef enum TRState { TRInactive, TRFirstHeating, TRStable, TRRunaway } TRstate;
 
-      static void thermal_runaway_protection(TRState* state, millis_t* timer, float temperature, float target_temperature, int heater_id, int period_seconds, int hysteresis_degc);
+      static void thermal_runaway_protection(TRState* state, millis_t* timer, double temperature, double target_temperature, int heater_id, int period_seconds, int hysteresis_degc);
 
       #if OPTION_ENABLED(THERMAL_PROTECTION_HOTENDS)
         static TRState thermal_runaway_state_machine[HOTENDS];

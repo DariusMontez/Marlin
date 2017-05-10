@@ -46,7 +46,7 @@
   class mesh_bed_leveling {
   public:
     static uint8_t status; // Has Mesh and Is Active bits
-    static float z_offset,
+    static double z_offset,
                  z_values[MESH_NUM_Y_POINTS][MESH_NUM_X_POINTS],
                  index_to_xpos[MESH_NUM_X_POINTS],
                  index_to_ypos[MESH_NUM_Y_POINTS];
@@ -55,7 +55,7 @@
 
     static void reset();
 
-    static void set_z(const int8_t px, const int8_t py, const float &z) { z_values[py][px] = z; }
+    static void set_z(const int8_t px, const int8_t py, const double &z) { z_values[py][px] = z; }
 
     static bool active()                       { return TEST(status, MBL_STATUS_ACTIVE_BIT); }
     static void set_active(const bool onOff)   { onOff ? SBI(status, MBL_STATUS_ACTIVE_BIT) : CBI(status, MBL_STATUS_ACTIVE_BIT); }
@@ -70,45 +70,45 @@
       if (py & 1) px = (MESH_NUM_X_POINTS - 1) - px; // Zig zag
     }
 
-    static void set_zigzag_z(const int8_t index, const float &z) {
+    static void set_zigzag_z(const int8_t index, const double &z) {
       int8_t px, py;
       zigzag(index, px, py);
       set_z(px, py, z);
     }
 
-    static int8_t cell_index_x(const float &x) {
+    static int8_t cell_index_x(const double &x) {
       int8_t cx = (x - (MESH_MIN_X)) * (1.0 / (MESH_X_DIST));
       return constrain(cx, 0, (MESH_NUM_X_POINTS) - 2);
     }
 
-    static int8_t cell_index_y(const float &y) {
+    static int8_t cell_index_y(const double &y) {
       int8_t cy = (y - (MESH_MIN_Y)) * (1.0 / (MESH_Y_DIST));
       return constrain(cy, 0, (MESH_NUM_Y_POINTS) - 2);
     }
 
-    static int8_t probe_index_x(const float &x) {
+    static int8_t probe_index_x(const double &x) {
       int8_t px = (x - (MESH_MIN_X) + 0.5 * (MESH_X_DIST)) * (1.0 / (MESH_X_DIST));
       return WITHIN(px, 0, MESH_NUM_X_POINTS - 1) ? px : -1;
     }
 
-    static int8_t probe_index_y(const float &y) {
+    static int8_t probe_index_y(const double &y) {
       int8_t py = (y - (MESH_MIN_Y) + 0.5 * (MESH_Y_DIST)) * (1.0 / (MESH_Y_DIST));
       return WITHIN(py, 0, MESH_NUM_Y_POINTS - 1) ? py : -1;
     }
 
-    static float calc_z0(const float &a0, const float &a1, const float &z1, const float &a2, const float &z2) {
-      const float delta_z = (z2 - z1) / (a2 - a1);
-      const float delta_a = a0 - a1;
+    static double calc_z0(const double &a0, const double &a1, const double &z1, const double &a2, const double &z2) {
+      const double delta_z = (z2 - z1) / (a2 - a1);
+      const double delta_a = a0 - a1;
       return z1 + delta_a * delta_z;
     }
 
-    static float get_z(const float &x0, const float &y0
+    static double get_z(const double &x0, const double &y0
       #if OPTION_ENABLED(ENABLE_LEVELING_FADE_HEIGHT)
-        , const float &factor
+        , const double &factor
       #endif
     ) {
       const int8_t cx = cell_index_x(x0), cy = cell_index_y(y0);
-      const float z1 = calc_z0(x0, index_to_xpos[cx], z_values[cy][cx], index_to_xpos[cx + 1], z_values[cy][cx + 1]),
+      const double z1 = calc_z0(x0, index_to_xpos[cx], z_values[cy][cx], index_to_xpos[cx + 1], z_values[cy][cx + 1]),
                   z2 = calc_z0(x0, index_to_xpos[cx], z_values[cy + 1][cx], index_to_xpos[cx + 1], z_values[cy + 1][cx + 1]),
                   z0 = calc_z0(y0, index_to_ypos[cy], z1, index_to_ypos[cy + 1], z2);
 

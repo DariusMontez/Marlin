@@ -45,17 +45,17 @@
 class matrix_3x3;
 
 struct vector_3 {
-  float x, y, z;
+  double x, y, z;
 
   vector_3();
-  vector_3(float x, float y, float z);
+  vector_3(double x, double y, double z);
 
   static vector_3 cross(vector_3 a, vector_3 b);
 
   vector_3 operator+(vector_3 v);
   vector_3 operator-(vector_3 v);
   void normalize();
-  float get_length();
+  double get_length();
   vector_3 get_normal();
 
   void debug(const char title[]);
@@ -64,7 +64,7 @@ struct vector_3 {
 };
 
 struct matrix_3x3 {
-  float matrix[9];
+  double matrix[9];
 
   static matrix_3x3 create_from_rows(vector_3 row_0, vector_3 row_1, vector_3 row_2);
   static matrix_3x3 create_look_at(vector_3 target);
@@ -76,7 +76,7 @@ struct matrix_3x3 {
 };
 
 
-void apply_rotation_xyz(matrix_3x3 rotationMatrix, float& x, float& y, float& z);
+void apply_rotation_xyz(matrix_3x3 rotationMatrix, double& x, double& y, double& z);
 #endif // HAS_ABL
 
 #endif // VECTOR_3_H

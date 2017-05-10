@@ -105,8 +105,8 @@ void safe_delay(millis_t ms) {
     return conv;
   }
 
-  // Convert unsigned float to string with 1.23 format
-  char* ftostr12ns(const float& x) {
+  // Convert unsigned double to string with 1.23 format
+  char* ftostr12ns(const double& x) {
     long xx = abs(x * 100);
     conv[0] = DIGIMOD(xx, 100);
     conv[1] = '.';
@@ -116,8 +116,8 @@ void safe_delay(millis_t ms) {
     return conv;
   }
 
-  // Convert signed float to fixed-length string with 023.45 / -23.45 format
-  char *ftostr32(const float& x) {
+  // Convert signed double to fixed-length string with 023.45 / -23.45 format
+  char *ftostr32(const double& x) {
     long xx = x * 100;
     conv[0] = MINUSOR(xx, DIGIMOD(xx, 10000));
     conv[1] = DIGIMOD(xx, 1000);
@@ -131,8 +131,8 @@ void safe_delay(millis_t ms) {
 
   #if OPTION_ENABLED(LCD_DECIMAL_SMALL_XY)
 
-    // Convert float to rj string with 1234, _123, -123, _-12, 12.3, _1.2, or -1.2 format
-    char *ftostr4sign(const float& fx) {
+    // Convert double to rj string with 1234, _123, -123, _-12, 12.3, _1.2, or -1.2 format
+    char *ftostr4sign(const double& fx) {
       int x = fx * 10;
       if (WITHIN(x, -99, 999)) return itostr4sign((int)fx);
       int xx = abs(x);
@@ -146,8 +146,8 @@ void safe_delay(millis_t ms) {
 
   #endif // LCD_DECIMAL_SMALL_XY
 
-  // Convert float to fixed-length string with +123.4 / -123.4 format
-  char* ftostr41sign(const float& x) {
+  // Convert double to fixed-length string with +123.4 / -123.4 format
+  char* ftostr41sign(const double& x) {
     int xx = x * 10;
     conv[0] = MINUSOR(xx, '+');
     conv[1] = DIGIMOD(xx, 1000);
@@ -159,8 +159,8 @@ void safe_delay(millis_t ms) {
     return conv;
   }
 
-  // Convert signed float to string (6 digit) with -1.234 / _0.000 / +1.234 format
-  char* ftostr43sign(const float& x, char plus/*=' '*/) {
+  // Convert signed double to string (6 digit) with -1.234 / _0.000 / +1.234 format
+  char* ftostr43sign(const double& x, char plus/*=' '*/) {
     long xx = x * 1000;
     conv[0] = xx ? MINUSOR(xx, plus) : ' ';
     conv[1] = DIGIMOD(xx, 1000);
@@ -172,8 +172,8 @@ void safe_delay(millis_t ms) {
     return conv;
   }
 
-  // Convert unsigned float to rj string with 12345 format
-  char* ftostr5rj(const float& x) {
+  // Convert unsigned double to rj string with 12345 format
+  char* ftostr5rj(const double& x) {
     long xx = abs(x);
     conv[0] = RJDIGIT(xx, 10000);
     conv[1] = RJDIGIT(xx, 1000);
@@ -184,8 +184,8 @@ void safe_delay(millis_t ms) {
     return conv;
   }
 
-  // Convert signed float to string with +1234.5 format
-  char* ftostr51sign(const float& x) {
+  // Convert signed double to string with +1234.5 format
+  char* ftostr51sign(const double& x) {
     long xx = x * 10;
     conv[0] = MINUSOR(xx, '+');
     conv[1] = DIGIMOD(xx, 10000);
@@ -198,8 +198,8 @@ void safe_delay(millis_t ms) {
     return conv;
   }
 
-  // Convert signed float to string with +123.45 format
-  char* ftostr52sign(const float& x) {
+  // Convert signed double to string with +123.45 format
+  char* ftostr52sign(const double& x) {
     long xx = x * 100;
     conv[0] = MINUSOR(xx, '+');
     conv[1] = DIGIMOD(xx, 10000);
@@ -212,8 +212,8 @@ void safe_delay(millis_t ms) {
     return conv;
   }
 
-  // Convert unsigned float to string with 1234.56 format omitting trailing zeros
-  char* ftostr62rj(const float& x) {
+  // Convert unsigned double to string with 1234.56 format omitting trailing zeros
+  char* ftostr62rj(const double& x) {
     long xx = abs(x * 100);
     conv[0] = RJDIGIT(xx, 100000);
     conv[1] = RJDIGIT(xx, 10000);
@@ -226,8 +226,8 @@ void safe_delay(millis_t ms) {
     return conv;
   }
 
-  // Convert signed float to space-padded string with -_23.4_ format
-  char* ftostr52sp(const float& x) {
+  // Convert signed double to space-padded string with -_23.4_ format
+  char* ftostr52sp(const double& x) {
     long xx = x * 100;
     uint8_t dig;
     conv[0] = MINUSOR(xx, RJDIGIT(xx, 10000));

@@ -290,18 +290,17 @@ void Stepper::set_directions() {
  */
 
 HAL_STEP_TIMER_ISR {
+  digitalWrite(33, HIGH);
   HAL_timer_isr_prologue(STEP_TIMER_NUM);
   #if OPTION_ENABLED(ADVANCE) || OPTION_ENABLED(LIN_ADVANCE)
     Stepper::advance_isr_scheduler();
   #else
     Stepper::isr();
   #endif
+  digitalWrite(33, LOW);
 }
 
-#define _ENABLE_ISRs() do { cli(); if (thermalManager.in_temp_isr)DISABLE_TEMPERATURE_INTERRUPT(); else ENABLE_TEMPERATURE_INTERRUPT(); ENABLE_STEPPER_DRIVER_INTERRUPT(); } while(0)
-
 void Stepper::isr() {
-
   static uint32_t step_remaining = 0;
 
   HAL_TIMER_TYPE ocr_val;
@@ -313,7 +312,9 @@ void Stepper::isr() {
     // Disable Timer0 ISRs and enable global ISR again to capture UART events (incoming chars)
     DISABLE_TEMPERATURE_INTERRUPT(); // Temperature ISR
     DISABLE_STEPPER_DRIVER_INTERRUPT();
-    sei();
+    #if !defined(CPU_32_BIT)
+      sei();
+    #endif
   #endif
 
   #define _SPLIT(L) (ocr_val = (HAL_TIMER_TYPE)L)
@@ -347,7 +348,7 @@ void Stepper::isr() {
         NOLESS(OCR1A, TCNT1 + 16);
       #endif
 
-      _ENABLE_ISRs(); // re-enable ISRs
+      HAL_ENABLE_ISRs(); // re-enable ISRs
       return;
     }
   # endif
@@ -360,7 +361,7 @@ void Stepper::isr() {
       if (!cleaning_buffer_counter && (SD_FINISHED_STEPPERRELEASE)) enqueue_and_echo_commands_P(PSTR(SD_FINISHED_RELEASECOMMAND));
     #endif
     _NEXT_ISR(HAL_STEPPER_TIMER_RATE / 10000); // Run at max speed - 10 KHz
-    _ENABLE_ISRs(); // re-enable ISRs
+    HAL_ENABLE_ISRs(); // re-enable ISRs
     return;
   }
 
@@ -394,7 +395,7 @@ void Stepper::isr() {
         if (current_block->steps[Z_AXIS] > 0) {
           enable_z();
           _NEXT_ISR(HAL_STEPPER_TIMER_RATE / 1000); // Run at slow speed - 1 KHz
-          _ENABLE_ISRs(); // re-enable ISRs
+          HAL_ENABLE_ISRs(); // re-enable ISRs
           return;
         }
       #endif
@@ -405,7 +406,7 @@ void Stepper::isr() {
     }
     else {
       _NEXT_ISR(HAL_STEPPER_TIMER_RATE / 1000); // Run at slow speed - 1 KHz
-      _ENABLE_ISRs(); // re-enable ISRs
+      HAL_ENABLE_ISRs(); // re-enable ISRs
       return;
     }
   }
@@ -760,7 +761,7 @@ void Stepper::isr() {
     planner.discard_current_block();
   }
   #if OPTION_DISABLED(ADVANCE) && OPTION_DISABLED(LIN_ADVANCE)
-    _ENABLE_ISRs(); // re-enable ISRs
+    HAL_ENABLE_ISRs(); // re-enable ISRs
   #endif
 }
 
@@ -869,20 +870,19 @@ void Stepper::isr() {
     NOLESS(OCR1A, TCNT1 + 16);
 
     // Restore original ISR settings
-    _ENABLE_ISRs();
+    HAL_ENABLE_ISRs(); // re-enable ISRs
   }
 
 #endif // ADVANCE or LIN_ADVANCE
 
 void Stepper::init() {
-
   // Init Digipot Motor Current
   #if HAS_DIGIPOTSS || HAS_MOTOR_CURRENT_PWM
     digipot_init();
   #endif
 
   #if MB(ALLIGATOR)
-    const float motor_current[] = MOTOR_CURRENT;
+    const double motor_current[] = MOTOR_CURRENT;
     unsigned int digipot_motor = 0;
     for (uint8_t i = 0; i < 3 + EXTRUDERS; i++) {
       digipot_motor = 255 * (motor_current[i] / 2.5);
@@ -1155,8 +1155,8 @@ long Stepper::position(AxisEnum axis) {
  * Get an axis position according to stepper position(s)
  * For CORE machines apply translation from ABC to XYZ.
  */
-float Stepper::get_axis_position_mm(AxisEnum axis) {
-  float axis_steps;
+double Stepper::get_axis_position_mm(AxisEnum axis) {
+  double axis_steps;
   #if IS_CORE
     // Requesting one of the "core" axes?
     if (axis == CORE_AXIS_1 || axis == CORE_AXIS_2) {

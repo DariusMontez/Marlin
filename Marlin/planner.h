@@ -95,16 +95,16 @@ typedef struct {
   // Advance extrusion
   #if OPTION_ENABLED(LIN_ADVANCE)
     bool use_advance_lead;
-    uint32_t abs_adv_steps_multiplier8; // Factorised by 2^8 to avoid float
+    uint32_t abs_adv_steps_multiplier8; // Factorised by 2^8 to avoid double
   #elif OPTION_ENABLED(ADVANCE)
     int32_t advance_rate;
     volatile int32_t initial_advance;
     volatile int32_t final_advance;
-    float advance;
+    double advance;
   #endif
 
   // Fields used by the motion planner to manage acceleration
-  float nominal_speed,                      // The nominal speed for this block in mm/sec
+  double nominal_speed,                      // The nominal speed for this block in mm/sec
         entry_speed,                        // Entry speed at previous-current junction in mm/sec
         max_entry_speed,                    // Maximum allowable junction entry speed in mm/sec
         millimeters,                        // The total travel of this block in mm
@@ -145,14 +145,14 @@ class Planner {
       static uint8_t last_extruder;             // Respond to extruder change
     #endif
 
-    static float max_feedrate_mm_s[XYZE_N],     // Max speeds in mm per second
+    static double max_feedrate_mm_s[XYZE_N],     // Max speeds in mm per second
                  axis_steps_per_mm[XYZE_N],
                  steps_to_mm[XYZE_N];
     static uint32_t max_acceleration_steps_per_s2[XYZE_N],
                     max_acceleration_mm_per_s2[XYZE_N]; // Use M201 to override by software
 
     static millis_t min_segment_time;
-    static float min_feedrate_mm_s,
+    static double min_feedrate_mm_s,
                  acceleration,         // Normal acceleration mm/s^2  DEFAULT ACCELERATION for all printing moves. M204 SXXXX
                  retract_acceleration, // Retract acceleration mm/s^2 filament pull-back and push-forward while standing still in the other axes M204 TXXXX
                  travel_acceleration,  // Travel acceleration mm/s^2  DEFAULT ACCELERATION for all NON printing moves. M204 MXXXX
@@ -165,7 +165,7 @@ class Planner {
     #endif
 
     #if OPTION_ENABLED(ENABLE_LEVELING_FADE_HEIGHT)
-      static float z_fade_height, inverse_z_fade_height;
+      static double z_fade_height, inverse_z_fade_height;
     #endif
 
   private:
@@ -179,12 +179,12 @@ class Planner {
     /**
      * Speed of previous path line segment
      */
-    static float previous_speed[NUM_AXIS];
+    static double previous_speed[NUM_AXIS];
 
     /**
      * Nominal speed of previous path line segment
      */
-    static float previous_nominal_speed;
+    static double previous_nominal_speed;
 
     /**
      * Limit where 64bit math is necessary for acceleration calculation
@@ -208,9 +208,9 @@ class Planner {
     #endif
 
     #if OPTION_ENABLED(LIN_ADVANCE)
-      static float position_float[NUM_AXIS];
-      static float extruder_advance_k;
-      static float advance_ed_ratio;
+      static double position_double[NUM_AXIS];
+      static double extruder_advance_k;
+      static double advance_ed_ratio;
     #endif
 
     #if OPTION_ENABLED(ULTRA_LCD)
@@ -246,30 +246,30 @@ class Planner {
 
     #if PLANNER_LEVELING && OPTION_DISABLED(AUTO_BED_LEVELING_UBL)
 
-      #define ARG_X float lx
-      #define ARG_Y float ly
-      #define ARG_Z float lz
+      #define ARG_X double lx
+      #define ARG_Y double ly
+      #define ARG_Z double lz
 
       /**
        * Apply leveling to transform a cartesian position
        * as it will be given to the planner and steppers.
        */
-      static void apply_leveling(float &lx, float &ly, float &lz);
-      static void apply_leveling(float logical[XYZ]) { apply_leveling(logical[X_AXIS], logical[Y_AXIS], logical[Z_AXIS]); }
-      static void unapply_leveling(float logical[XYZ]);
+      static void apply_leveling(double &lx, double &ly, double &lz);
+      static void apply_leveling(double logical[XYZ]) { apply_leveling(logical[X_AXIS], logical[Y_AXIS], logical[Z_AXIS]); }
+      static void unapply_leveling(double logical[XYZ]);
 
     #else
 
-      #define ARG_X const float &lx
-      #define ARG_Y const float &ly
-      #define ARG_Z const float &lz
+      #define ARG_X const double &lx
+      #define ARG_Y const double &ly
+      #define ARG_Z const double &lz
 
     #endif
 
     #if OPTION_ENABLED(LIN_ADVANCE)
-      static void set_extruder_advance_k(const float &k) { extruder_advance_k = k; };
-      static float get_extruder_advance_k() { return extruder_advance_k; };
-      static void set_advance_ed_ratio(const float &ratio) { advance_ed_ratio = ratio; };
+      static void set_extruder_advance_k(const double &k) { extruder_advance_k = k; };
+      static double get_extruder_advance_k() { return extruder_advance_k; };
+      static void set_advance_ed_ratio(const double &ratio) { advance_ed_ratio = ratio; };
     #endif
 
     /**
@@ -283,9 +283,9 @@ class Planner {
      *  fr_mm_s   - (target) speed of the move (mm/s)
      *  extruder  - target extruder
      */
-    static void _buffer_line(const float &a, const float &b, const float &c, const float &e, float fr_mm_s, const uint8_t extruder);
+    static void _buffer_line(const double &a, const double &b, const double &c, const double &e, double fr_mm_s, const uint8_t extruder);
 
-    static void _set_position_mm(const float &a, const float &b, const float &c, const float &e);
+    static void _set_position_mm(const double &a, const double &b, const double &c, const double &e);
 
     /**
      * Add a new linear movement to the buffer.
@@ -299,7 +299,7 @@ class Planner {
      *  fr_mm_s      - (target) speed of the move (mm/s)
      *  extruder     - target extruder
      */
-    static FORCE_INLINE void buffer_line(ARG_X, ARG_Y, ARG_Z, const float &e, const float &fr_mm_s, const uint8_t extruder) {
+    static FORCE_INLINE void buffer_line(ARG_X, ARG_Y, ARG_Z, const double &e, const double &fr_mm_s, const uint8_t extruder) {
       #if PLANNER_LEVELING && OPTION_DISABLED(AUTO_BED_LEVELING_UBL) && IS_CARTESIAN
         apply_leveling(lx, ly, lz);
       #endif
@@ -315,12 +315,12 @@ class Planner {
      *  fr_mm_s  - (target) speed of the move (mm/s)
      *  extruder - target extruder
      */
-    static FORCE_INLINE void buffer_line_kinematic(const float ltarget[XYZE], const float &fr_mm_s, const uint8_t extruder) {
+    static FORCE_INLINE void buffer_line_kinematic(const double ltarget[XYZE], const double &fr_mm_s, const uint8_t extruder) {
       #if PLANNER_LEVELING && OPTION_DISABLED(AUTO_BED_LEVELING_UBL)
-        float lpos[XYZ] = { ltarget[X_AXIS], ltarget[Y_AXIS], ltarget[Z_AXIS] };
+        double lpos[XYZ] = { ltarget[X_AXIS], ltarget[Y_AXIS], ltarget[Z_AXIS] };
         apply_leveling(lpos);
       #else
-        const float * const lpos = ltarget;
+        const double * const lpos = ltarget;
       #endif
       #if IS_KINEMATIC
         inverse_kinematics(lpos);
@@ -339,16 +339,16 @@ class Planner {
      *
      * Clears previous speed values.
      */
-    static FORCE_INLINE void set_position_mm(ARG_X, ARG_Y, ARG_Z, const float &e) {
+    static FORCE_INLINE void set_position_mm(ARG_X, ARG_Y, ARG_Z, const double &e) {
       #if PLANNER_LEVELING && OPTION_DISABLED(AUTO_BED_LEVELING_UBL) && IS_CARTESIAN
         apply_leveling(lx, ly, lz);
       #endif
       _set_position_mm(lx, ly, lz, e);
     }
-    static void set_position_mm_kinematic(const float position[NUM_AXIS]);
-    static void set_position_mm(const AxisEnum axis, const float &v);
-    static FORCE_INLINE void set_z_position_mm(const float &z) { set_position_mm(Z_AXIS, z); }
-    static FORCE_INLINE void set_e_position_mm(const float &e) { set_position_mm(AxisEnum(E_AXIS), e); }
+    static void set_position_mm_kinematic(const double position[NUM_AXIS]);
+    static void set_position_mm(const AxisEnum axis, const double &v);
+    static FORCE_INLINE void set_z_position_mm(const double &z) { set_position_mm(Z_AXIS, z); }
+    static FORCE_INLINE void set_e_position_mm(const double &e) { set_position_mm(AxisEnum(E_AXIS), e); }
 
     /**
      * Sync from the stepper positions. (e.g., after an interrupted move)
@@ -414,7 +414,7 @@ class Planner {
     #endif
 
     #if OPTION_ENABLED(AUTOTEMP)
-      static float autotemp_min, autotemp_max, autotemp_factor;
+      static double autotemp_min, autotemp_max, autotemp_factor;
       static bool autotemp_enabled;
       static void getHighESpeed();
       static void autotemp_M104_M109();
@@ -432,7 +432,7 @@ class Planner {
      * Calculate the distance (not time) it takes to accelerate
      * from initial_rate to target_rate using the given acceleration:
      */
-    static float estimate_acceleration_distance(const float &initial_rate, const float &target_rate, const float &accel) {
+    static double estimate_acceleration_distance(const double &initial_rate, const double &target_rate, const double &accel) {
       if (accel == 0) return 0; // accel was 0, set acceleration distance to 0
       return (sq(target_rate) - sq(initial_rate)) / (accel * 2);
     }
@@ -445,7 +445,7 @@ class Planner {
      * This is used to compute the intersection point between acceleration and deceleration
      * in cases where the "trapezoid" has no plateau (i.e., never reaches maximum speed)
      */
-    static float intersection_distance(const float &initial_rate, const float &final_rate, const float &accel, const float &distance) {
+    static double intersection_distance(const double &initial_rate, const double &final_rate, const double &accel, const double &distance) {
       if (accel == 0) return 0; // accel was 0, set intersection distance to 0
       return (accel * 2 * distance - sq(initial_rate) + sq(final_rate)) / (accel * 4);
     }
@@ -455,11 +455,11 @@ class Planner {
      * to reach 'target_velocity' using 'acceleration' within a given
      * 'distance'.
      */
-    static float max_allowable_speed(const float &accel, const float &target_velocity, const float &distance) {
+    static double max_allowable_speed(const double &accel, const double &target_velocity, const double &distance) {
       return SQRT(sq(target_velocity) - 2 * accel * distance);
     }
 
-    static void calculate_trapezoid_for_block(block_t* const block, const float &entry_factor, const float &exit_factor);
+    static void calculate_trapezoid_for_block(block_t* const block, const double &entry_factor, const double &exit_factor);
 
     static void reverse_pass_kernel(block_t* const current, const block_t *next);
     static void forward_pass_kernel(const block_t *previous, block_t* const current);

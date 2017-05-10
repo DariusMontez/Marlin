@@ -74,7 +74,7 @@
 #define NUMERIC_SIGNED(a) (NUMERIC(a) || (a) == '-')
 #define COUNT(a) (sizeof(a)/sizeof(*a))
 #define ZERO(a) memset(a,0,sizeof(a))
-#define COPY(a,b) memcpy(a,b,min(sizeof(a),sizeof(b)))
+#define COPY(a,b) memcpy(a,b,_min(sizeof(a),sizeof(b)))
 
 // Macros for initializing arrays
 #define ARRAY_6(v1, v2, v3, v4, v5, v6, ...) { v1, v2, v3, v4, v5, v6 }
@@ -122,8 +122,8 @@
 
 #define CEILING(x,y) (((x) + (y) - 1) / (y))
 
-#define MIN3(a, b, c)    min(min(a, b), c)
-#define MIN4(a, b, c, d) min(min(a, b), min(c, d))
+#define MIN3(a, b, c)    _min(_min(a, b), c)
+#define MIN4(a, b, c, d) _min(_min(a, b), _min(c, d))
 #define MAX3(a, b, c)    max(max(a, b), c)
 #define MAX4(a, b, c, d) max(max(a, b), max(c, d))
 
@@ -132,7 +132,7 @@
 #define NEAR(x,y) NEAR_ZERO((x)-(y))
 
 #define RECIPROCAL(x) (NEAR_ZERO(x) ? 0.0 : 1.0 / (x))
-#define FIXFLOAT(f) (f + 0.00001)
+#define FIXdouble(f) (f + 0.00001)
 
 //
 // Maths macros that can be overridden by HAL

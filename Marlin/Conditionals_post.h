@@ -34,9 +34,9 @@
   #define X_MAX_LENGTH (X_MAX_POS - (X_MIN_POS))
   #define Y_MAX_LENGTH (Y_MAX_POS - (Y_MIN_POS))
   #define Z_MAX_LENGTH (Z_MAX_POS - (Z_MIN_POS))
-  #define X_CENTER float((X_MIN_POS + X_MAX_POS) * 0.5)
-  #define Y_CENTER float((Y_MIN_POS + Y_MAX_POS) * 0.5)
-  #define Z_CENTER float((Z_MIN_POS + Z_MAX_POS) * 0.5)
+  #define X_CENTER double((X_MIN_POS + X_MAX_POS) * 0.5)
+  #define Y_CENTER double((Y_MIN_POS + Y_MAX_POS) * 0.5)
+  #define Z_CENTER double((Z_MIN_POS + Z_MAX_POS) * 0.5)
 
   /**
    * CoreXY, CoreXZ, and CoreYZ - and their reverse
@@ -776,9 +776,9 @@
   #else
     // Boundaries for probing based on set limits
     #define MIN_PROBE_X (max(X_MIN_POS, X_MIN_POS + X_PROBE_OFFSET_FROM_EXTRUDER))
-    #define MAX_PROBE_X (min(X_MAX_POS, X_MAX_POS + X_PROBE_OFFSET_FROM_EXTRUDER))
+    #define MAX_PROBE_X (_min(X_MAX_POS, X_MAX_POS + X_PROBE_OFFSET_FROM_EXTRUDER))
     #define MIN_PROBE_Y (max(Y_MIN_POS, Y_MIN_POS + Y_PROBE_OFFSET_FROM_EXTRUDER))
-    #define MAX_PROBE_Y (min(Y_MAX_POS, Y_MAX_POS + Y_PROBE_OFFSET_FROM_EXTRUDER))
+    #define MAX_PROBE_Y (_min(Y_MAX_POS, Y_MAX_POS + Y_PROBE_OFFSET_FROM_EXTRUDER))
   #endif
 
   // Stepper pulse duration, in cycles
@@ -809,7 +809,7 @@
     #define LCD_TIMEOUT_TO_STATUS 15000
   #endif
 
-  // Use float instead of double. Needs profiling.
+  // Use double instead of double. Needs profiling.
   #if defined(ARDUINO_ARCH_SAM) && OPTION_ENABLED(DELTA_FAST_SQRT)
     #undef ATAN2
     #undef FABS

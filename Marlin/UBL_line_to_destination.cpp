@@ -29,7 +29,7 @@
   #include <avr/io.h>
   #include <math.h>
 
-  extern float destination[XYZE];
+  extern double destination[XYZE];
   extern void set_current_to_destination();
 
   static void debug_echo_axis(const AxisEnum axis) {
@@ -45,23 +45,23 @@
     // ignore the status of the g26_debug_flag
     if (*title != '!' && !ubl.g26_debug_flag) return;
 
-    const float de = destination[E_AXIS] - current_position[E_AXIS];
+    const double de = destination[E_AXIS] - current_position[E_AXIS];
 
     if (de == 0.0) return;
 
-    const float dx = current_position[X_AXIS] - destination[X_AXIS],
+    const double dx = current_position[X_AXIS] - destination[X_AXIS],
                 dy = current_position[Y_AXIS] - destination[Y_AXIS],
                 xy_dist = HYPOT(dx, dy);
 
     if (xy_dist == 0.0) {
       return;
       //SERIAL_ECHOPGM("   FPMM=");
-      //const float fpmm = de / xy_dist;
+      //const double fpmm = de / xy_dist;
       //SERIAL_PROTOCOL_F(fpmm, 6);
     }
     else {
       SERIAL_ECHOPGM("   fpmm=");
-      const float fpmm = de / xy_dist;
+      const double fpmm = de / xy_dist;
       SERIAL_ECHO_F(fpmm, 6);
     }
 
@@ -93,13 +93,13 @@
     //}
   }
 
-  void ubl_line_to_destination(const float &feed_rate, uint8_t extruder) {
+  void ubl_line_to_destination(const double &feed_rate, uint8_t extruder) {
     /**
      * Much of the nozzle movement will be within the same cell. So we will do as little computation
      * as possible to determine if this is the case. If this move is within the same cell, we will
      * just do the required Z-Height correction, call the Planner's buffer_line() routine, and leave
      */
-    const float start[XYZE] = {
+    const double start[XYZE] = {
                   current_position[X_AXIS],
                   current_position[Y_AXIS],
                   current_position[Z_AXIS],
@@ -152,15 +152,15 @@
       FINAL_MOVE:
 
       /**
-       * Optimize some floating point operations here. We could call float get_z_correction(float x0, float y0) to
+       * Optimize some doubleing point operations here. We could call double get_z_correction(double x0, double y0) to
        * generate the correction for us. But we can lighten the load on the CPU by doing a modified version of the function.
        * We are going to only calculate the amount we are from the first mesh line towards the second mesh line once.
        * We will use this fraction in both of the original two Z Height calculations for the bi-linear interpolation. And,
        * instead of doing a generic divide of the distance, we know the distance is MESH_X_DIST so we can use the preprocessor
-       * to create a 1-over number for us. That will allow us to do a floating point multiply instead of a floating point divide.
+       * to create a 1-over number for us. That will allow us to do a doubleing point multiply instead of a doubleing point divide.
        */
 
-      const float xratio = (RAW_X_POSITION(end[X_AXIS]) - ubl.mesh_index_to_xpos[cell_dest_xi]) * (1.0 / (MESH_X_DIST)),
+      const double xratio = (RAW_X_POSITION(end[X_AXIS]) - ubl.mesh_index_to_xpos[cell_dest_xi]) * (1.0 / (MESH_X_DIST)),
                   z1 = ubl.z_values[cell_dest_xi    ][cell_dest_yi    ] + xratio *
                       (ubl.z_values[cell_dest_xi + 1][cell_dest_yi    ] - ubl.z_values[cell_dest_xi][cell_dest_yi    ]),
                   z2 = ubl.z_values[cell_dest_xi    ][cell_dest_yi + 1] + xratio *
@@ -169,9 +169,9 @@
       // we are done with the fractional X distance into the cell. Now with the two Z-Heights we have calculated, we
       // are going to apply the Y-Distance into the cell to interpolate the final Z correction.
 
-      const float yratio = (RAW_Y_POSITION(end[Y_AXIS]) - ubl.mesh_index_to_ypos[cell_dest_yi]) * (1.0 / (MESH_Y_DIST));
+      const double yratio = (RAW_Y_POSITION(end[Y_AXIS]) - ubl.mesh_index_to_ypos[cell_dest_yi]) * (1.0 / (MESH_Y_DIST));
 
-      float z0 = z1 + (z2 - z1) * yratio;
+      double z0 = z1 + (z2 - z1) * yratio;
 
       /**
        * Debug code to use non-optimized get_z_correction() and to do a sanity check
@@ -220,13 +220,13 @@
      * blocks of code:
      */
 
-    const float dx = end[X_AXIS] - start[X_AXIS],
+    const double dx = end[X_AXIS] - start[X_AXIS],
                 dy = end[Y_AXIS] - start[Y_AXIS];
 
     const int left_flag = dx < 0.0 ? 1 : 0,
               down_flag = dy < 0.0 ? 1 : 0;
 
-    const float adx = left_flag ? -dx : dx,
+    const double adx = left_flag ? -dx : dx,
                 ady = down_flag ? -dy : dy;
 
     const int dxi = cell_start_xi == cell_dest_xi ? 0 : left_flag ? -1 : 1,
@@ -235,7 +235,7 @@
     /**
      * Compute the scaling factor for the extruder for each partial move.
      * We need to watch out for zero length moves because it will cause us to
-     * have an infinate scaling factor. We are stuck doing a floating point
+     * have an infinate scaling factor. We are stuck doing a doubleing point
      * divide to get our scaling factor, but after that, we just multiply by this
      * number. We also pick our scaling factor based on whether the X or Y
      * component is larger. We use the biggest of the two to preserve precision.
@@ -243,16 +243,16 @@
 
     const bool use_x_dist = adx > ady;
 
-    float on_axis_distance = use_x_dist ? dx : dy,
+    double on_axis_distance = use_x_dist ? dx : dy,
           e_position = end[E_AXIS] - start[E_AXIS],
           z_position = end[Z_AXIS] - start[Z_AXIS];
 
-    const float e_normalized_dist = e_position / on_axis_distance,
+    const double e_normalized_dist = e_position / on_axis_distance,
                 z_normalized_dist = z_position / on_axis_distance;
 
     int current_xi = cell_start_xi, current_yi = cell_start_yi;
 
-    const float m = dy / dx,
+    const double m = dy / dx,
                 c = start[Y_AXIS] - m * start[X_AXIS];
 
     const bool inf_normalized_flag = NEAR_ZERO(on_axis_distance),
@@ -267,16 +267,16 @@
       current_yi += down_flag;  // Line is heading down, we just want to go to the bottom
       while (current_yi != cell_dest_yi + down_flag) {
         current_yi += dyi;
-        const float next_mesh_line_y = LOGICAL_Y_POSITION(ubl.mesh_index_to_ypos[current_yi]);
+        const double next_mesh_line_y = LOGICAL_Y_POSITION(ubl.mesh_index_to_ypos[current_yi]);
 
         /**
          * inf_m_flag? the slope of the line is infinite, we won't do the calculations
          * else, we know the next X is the same so we can recover and continue!
          * Calculate X at the next Y mesh line
          */
-        const float x = inf_m_flag ? start[X_AXIS] : (next_mesh_line_y - c) / m;
+        const double x = inf_m_flag ? start[X_AXIS] : (next_mesh_line_y - c) / m;
 
-        float z0 = ubl.z_correction_for_x_on_horizontal_mesh_line(x, current_xi, current_yi);
+        double z0 = ubl.z_correction_for_x_on_horizontal_mesh_line(x, current_xi, current_yi);
 
         /**
          * Debug code to use non-optimized get_z_correction() and to do a sanity check
@@ -309,7 +309,7 @@
          */
         if (isnan(z0)) z0 = 0.0;
 
-        const float y = LOGICAL_Y_POSITION(ubl.mesh_index_to_ypos[current_yi]);
+        const double y = LOGICAL_Y_POSITION(ubl.mesh_index_to_ypos[current_yi]);
 
         /**
          * Without this check, it is possible for the algorithm to generate a zero length move in the case
@@ -358,10 +358,10 @@
                                 // edge of this cell for the first move.
       while (current_xi != cell_dest_xi + left_flag) {
         current_xi += dxi;
-        const float next_mesh_line_x = LOGICAL_X_POSITION(ubl.mesh_index_to_xpos[current_xi]),
+        const double next_mesh_line_x = LOGICAL_X_POSITION(ubl.mesh_index_to_xpos[current_xi]),
                     y = m * next_mesh_line_x + c;   // Calculate X at the next Y mesh line
 
-        float z0 = ubl.z_correction_for_y_on_vertical_mesh_line(y, current_xi, current_yi);
+        double z0 = ubl.z_correction_for_y_on_vertical_mesh_line(y, current_xi, current_yi);
 
         /**
          * Debug code to use non-optimized get_z_correction() and to do a sanity check
@@ -394,7 +394,7 @@
          */
         if (isnan(z0)) z0 = 0.0;
 
-        const float x = LOGICAL_X_POSITION(ubl.mesh_index_to_xpos[current_xi]);
+        const double x = LOGICAL_X_POSITION(ubl.mesh_index_to_xpos[current_xi]);
 
         /**
          * Without this check, it is possible for the algorithm to generate a zero length move in the case
@@ -444,7 +444,7 @@
 
     while (xi_cnt > 0 || yi_cnt > 0) {
 
-      const float next_mesh_line_x = LOGICAL_X_POSITION(ubl.mesh_index_to_xpos[current_xi + dxi]),
+      const double next_mesh_line_x = LOGICAL_X_POSITION(ubl.mesh_index_to_xpos[current_xi + dxi]),
                   next_mesh_line_y = LOGICAL_Y_POSITION(ubl.mesh_index_to_ypos[current_yi + dyi]),
                   y = m * next_mesh_line_x + c,   // Calculate Y at the next X mesh line
                   x = (next_mesh_line_y - c) / m; // Calculate X at the next Y mesh line
@@ -456,7 +456,7 @@
         //
         // Yes!  Crossing a Y Mesh Line next
         //
-        float z0 = ubl.z_correction_for_x_on_horizontal_mesh_line(x, current_xi - left_flag, current_yi + dyi);
+        double z0 = ubl.z_correction_for_x_on_horizontal_mesh_line(x, current_xi - left_flag, current_yi + dyi);
 
         /**
          * Debug code to use non-optimized get_z_correction() and to do a sanity check
@@ -507,7 +507,7 @@
         //
         // Yes!  Crossing a X Mesh Line next
         //
-        float z0 = ubl.z_correction_for_y_on_vertical_mesh_line(y, current_xi + dxi, current_yi - down_flag);
+        double z0 = ubl.z_correction_for_y_on_vertical_mesh_line(y, current_xi + dxi, current_yi - down_flag);
 
         /**
          * Debug code to use non-optimized get_z_correction() and to do a sanity check

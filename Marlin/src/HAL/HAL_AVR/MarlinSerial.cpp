@@ -407,7 +407,7 @@
   }
 
   void MarlinSerial::print(double n, int digits) {
-    printFloat(n, digits);
+    printdouble(n, digits);
   }
 
   void MarlinSerial::println(void) {
@@ -477,7 +477,7 @@
       print('0');
   }
 
-  void MarlinSerial::printFloat(double number, uint8_t digits) {
+  void MarlinSerial::printdouble(double number, uint8_t digits) {
     // Handle negative numbers
     if (number < 0.0) {
       print('-');
